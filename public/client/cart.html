@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giỏ hàng - GosuCore</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .cart-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 5%;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .cart-header {
+      padding: 2rem 5% 0;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .cart-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 0.25rem;
+    }
+
+    .cart-header p {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    /* CART ITEMS */
+    .cart-items { }
+
+    .cart-item {
+      display: flex;
+      gap: 1.25rem;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border-light);
+      align-items: center;
+    }
+
+    .cart-item:last-child { border-bottom: none; }
+
+    .cart-item-img {
+      width: 90px; height: 90px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      padding: 0.5rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .cart-item-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .cart-item-info { flex: 1; }
+
+    .cart-item-brand {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.2rem;
+    }
+
+    .cart-item-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+    }
+
+    .cart-item-name:hover { color: var(--accent); }
+
+    .cart-item-price {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .cart-item-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.75rem;
+    }
+
+    .cart-item-subtotal {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .cart-qty-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-secondary);
+      border-radius: 50px;
+      padding: 0.2rem 0.5rem;
+    }
+
+    .cart-qty-btn {
+      width: 28px; height: 28px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .cart-qty-btn:hover { background: var(--border); }
+
+    .cart-qty-num {
+      font-size: 0.9rem;
+      font-weight: 600;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .remove-btn {
+      font-size: 0.75rem;
+      color: var(--danger);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-weight: 500;
+      padding: 0;
+    }
+
+    .remove-btn:hover { text-decoration: underline; }
+
+    /* ORDER SUMMARY */
+    .order-summary {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      position: sticky;
+      top: 80px;
+      border: 1px solid var(--border-light);
+    }
+
+    .order-summary h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      font-size: 0.875rem;
+    }
+
+    .summary-row .label { color: var(--text-secondary); }
+    .summary-row .value { font-weight: 600; }
+
+    .summary-row.total {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-light);
+      font-size: 1rem;
+    }
+
+    .summary-row.total .value {
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .voucher-input {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1.25rem 0;
+    }
+
+    .voucher-input input {
+      flex: 1;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 0.6rem 0.875rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      outline: none;
+      font-family: inherit;
+      text-transform: uppercase;
+    }
+
+    .voucher-input input:focus {
+      border-color: var(--accent);
+    }
+
+    .voucher-result {
+      font-size: 0.8rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.75rem;
+      display: none;
+    }
+
+    .voucher-result.success {
+      background: #f0fdf4;
+      color: var(--success);
+      display: block;
+    }
+
+    .voucher-result.error {
+      background: #fff1f2;
+      color: var(--danger);
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .cart-page {
+        grid-template-columns: 1fr;
+      }
+      .order-summary { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">Gosu<span style="color:var(--accent)">Core</span></a>
+    <div class="navbar-menu">
+      <a href="index.html">Cửa Hàng</a>
+      <a href="orders.html">Đơn hàng</a>
+    </div>
+    <div class="navbar-actions">
+      <div class="navbar-icon cart-icon" onclick="window.location.href='cart.html'">
+        🛒<span class="cart-count">0</span>
+      </div>
+      <div id="auth-area"></div>
+    </div>
+  </nav>
+
+  <div class="cart-header">
+    <h1>Giỏ hàng</h1>
+    <p id="cart-summary-text"></p>
+  </div>
+
+  <div class="cart-page">
+    <!-- CART ITEMS -->
+    <div id="cart-items-container"></div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="order-summary">
+      <h2>Tóm tắt đơn hàng</h2>
+
+      <div class="summary-row">
+        <span class="label">Tạm tính</span>
+        <span class="value" id="subtotal">0₫</span>
+      </div>
+
+      <div class="summary-row" id="discount-row" style="display:none">
+        <span class="label" style="color:var(--success)">Giảm giá</span>
+        <span class="value" style="color:var(--success)" id="discount-amount">-0₫</span>
+      </div>
+
+      <div class="summary-row">
+        <span class="label">Vận chuyển</span>
+        <span class="value" id="shipping-fee">Miễn phí</span>
+      </div>
+
+      <div class="summary-row total">
+        <span class="label">Tổng cộng</span>
+        <span class="value" id="total-price">0₫</span>
+      </div>
+
+      <!-- VOUCHER -->
+      <div style="margin-top:1rem">
+        <div style="font-size:0.83rem;font-weight:600;margin-bottom:0.5rem">Mã giảm giá</div>
+        <div class="voucher-input">
+          <input type="text" id="voucher-code" placeholder="Nhập mã..." maxlength="20">
+          <button class="btn btn-outline btn-sm" onclick="applyVoucher()">Áp dụng</button>
+        </div>
+        <div class="voucher-result" id="voucher-result"></div>
+      </div>
+
+      <button class="btn btn-dark btn-full btn-lg" onclick="goCheckout()" id="checkout-btn">
+        Tiến hành thanh toán →
+      </button>
+
+      <a href="index.html" style="display:block;text-align:center;margin-top:1rem;font-size:0.83rem;color:var(--accent)">
+        ← Tiếp tục mua sắm
+      </a>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    let appliedVoucher = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCart();
+    });
+
+    const renderCart = () => {
+      const items     = cart.get();
+      const container = document.getElementById('cart-items-container');
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">🛒</div>
+            <h3>Giỏ hàng trống</h3>
+            <p>Hãy thêm sản phẩm vào giỏ hàng để tiếp tục.</p>
+            <a href="index.html" class="btn btn-primary" style="margin-top:1.5rem">Mua sắm ngay</a>
+          </div>`;
+        document.getElementById('cart-summary-text').textContent = '0 sản phẩm';
+        document.getElementById('checkout-btn').disabled = true;
+        updateSummary();
+        return;
+      }
+
+      document.getElementById('cart-summary-text').textContent = `${cart.count()} sản phẩm`;
+
+      container.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <span style="font-size:0.83rem;color:var(--text-secondary)">${items.length} loại sản phẩm</span>
+          <button class="btn btn-sm" style="color:var(--danger);background:none;border:none;cursor:pointer;font-size:0.83rem" onclick="clearCart()">Xóa tất cả</button>
+        </div>
+        ${items.map(item => `
+          <div class="cart-item" id="item-${item.product_id}">
+            <div class="cart-item-img" onclick="window.location.href='product.html?id=${item.product_id}'">
+              <img src="${item.image_url || 'https://placehold.co/90x90/f5f5f7/999?text=IMG'}"
+                   alt="${item.name}"
+                   onerror="this.src='https://placehold.co/90x90/f5f5f7/999?text=IMG'">
+            </div>
+            <div class="cart-item-info">
+              <div class="cart-item-brand">${item.brand || ''}</div>
+              <div class="cart-item-name" onclick="window.location.href='product.html?id=${item.product_id}'">${item.name}</div>
+              <div class="cart-item-price">${formatPrice(item.price)} / cái</div>
+            </div>
+            <div class="cart-item-actions">
+              <div class="cart-item-subtotal">${formatPrice(item.price * item.quantity)}</div>
+              <div class="cart-qty-control">
+                <button class="cart-qty-btn" onclick="updateQty(${item.product_id}, ${item.quantity - 1})">−</button>
+                <span class="cart-qty-num">${item.quantity}</span>
+                <button class="cart-qty-btn" onclick="updateQty(${item.product_id}, ${item.quantity + 1})">+</button>
+              </div>
+              <button class="remove-btn" onclick="removeItem(${item.product_id})">Xóa</button>
+            </div>
+          </div>`).join('')}`;
+
+      updateSummary();
+    };
+
+    const updateQty = (product_id, qty) => {
+      if (qty <= 0) {
+        removeItem(product_id);
+        return;
+      }
+      const items = cart.get();
+      const item  = items.find(i => i.product_id === product_id);
+      if (item) {
+        item.quantity = qty;
+        cart.save(items);
+        renderCart();
+      }
+    };
+
+    const removeItem = (product_id) => {
+      cart.remove(product_id);
+      renderCart();
+      toast.info('Đã xóa sản phẩm khỏi giỏ hàng.');
+    };
+
+    const clearCart = () => {
+      if (!confirm('Xóa toàn bộ giỏ hàng?')) return;
+      cart.clear();
+      renderCart();
+    };
+
+    const updateSummary = () => {
+      const subtotal = cart.total();
+      let discount   = 0;
+
+      if (appliedVoucher) {
+        discount = subtotal * appliedVoucher.discount_percent / 100;
+      }
+
+      const total = subtotal - discount;
+
+      document.getElementById('subtotal').textContent   = formatPrice(subtotal);
+      document.getElementById('total-price').textContent = formatPrice(total);
+
+      const discountRow = document.getElementById('discount-row');
+      if (discount > 0) {
+        discountRow.style.display = 'flex';
+        document.getElementById('discount-amount').textContent = `-${formatPrice(discount)}`;
+      } else {
+        discountRow.style.display = 'none';
+      }
+    };
+
+    const applyVoucher = async () => {
+      const code      = document.getElementById('voucher-code').value.trim();
+      const resultEl  = document.getElementById('voucher-result');
+
+      if (!code) {
+        resultEl.className = 'voucher-result error';
+        resultEl.textContent = 'Vui lòng nhập mã giảm giá.';
+        return;
+      }
+
+      try {
+        const data = await api.post('/vouchers/apply', {
+          code,
+          total_price: cart.total(),
+        });
+
+        appliedVoucher = data.data;
+        resultEl.className = 'voucher-result success';
+        resultEl.textContent = `✅ ${data.message} — Tiết kiệm ${formatPrice(data.data.discount_amount)}`;
+        updateSummary();
+
+      } catch (e) {
+        appliedVoucher = null;
+        resultEl.className = 'voucher-result error';
+        resultEl.textContent = `❌ ${e.message}`;
+        updateSummary();
+      }
+    };
+
+    const goCheckout = () => {
+      if (cart.count() === 0) {
+        toast.error('Giỏ hàng trống!');
+        return;
+      }
+      if (!isLoggedIn()) {
+        toast.info('Vui lòng đăng nhập để thanh toán.');
+        setTimeout(() => window.location.href = 'login.html', 1500);
+        return;
+      }
+      // Lưu voucher vào session
+      if (appliedVoucher) {
+        sessionStorage.setItem('applied_voucher', JSON.stringify(appliedVoucher));
+        sessionStorage.setItem('voucher_code', document.getElementById('voucher-code').value.trim());
+      } else {
+        sessionStorage.removeItem('applied_voucher');
+        sessionStorage.removeItem('voucher_code');
+      }
+      window.location.href = 'checkout.html';
+    };
+  </script>
+</body>
+</html>

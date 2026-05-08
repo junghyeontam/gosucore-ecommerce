@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Tài khoản - GosuCore Admin</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div>
+        <div class="sidebar-logo-text">Gosu<span>Core</span></div>
+        <span class="sidebar-logo-sub">Admin Panel</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">Tổng quan</div>
+    <a href="index.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+
+    <div class="sidebar-section">Quản lý</div>
+    <a href="products.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Sản phẩm
+    </a>
+    <a href="orders.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Đơn hàng
+    </a>
+    <a href="users.html" class="sidebar-item active">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Tài khoản
+    </a>
+    <a href="categories.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 17h7M17.5 14v7"/></svg>
+      Danh mục
+    </a>
+    <a href="vouchers.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Voucher
+    </a>
+
+    <div class="sidebar-section">Hệ thống</div>
+    <a href="../client/index.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Xem trang web
+    </a>
+    <div class="sidebar-item" onclick="logout()">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Đăng xuất
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-user-card">
+        <div class="admin-avatar" id="admin-avatar">A</div>
+        <div>
+          <div class="admin-user-name" id="admin-name">Admin</div>
+          <div class="admin-user-role" id="admin-role">Manager</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-left">
+        <h2>Quản lý Tài khoản</h2>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-primary btn-sm" onclick="openAddUserModal()">+ Thêm tài khoản</button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div class="toolbar">
+        <div class="toolbar-search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search" placeholder="Tìm username, email, họ tên..." oninput="debounceSearch()">
+        </div>
+        <select id="filter-role" onchange="loadUsers()">
+          <option value="">Tất cả vai trò</option>
+          <option value="customer">Khách hàng</option>
+          <option value="staff">Nhân viên</option>
+          <option value="manager">Quản lý</option>
+        </select>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Tài khoản</th>
+              <th>Email</th>
+              <th>Điện thoại</th>
+              <th>Vai trò</th>
+              <th>Trạng thái</th>
+              <th>Ngày tạo</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="users-table">
+            <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-3)">Đang tải...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL THÊM TÀI KHOẢN -->
+<div class="modal-overlay" id="add-user-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3>Thêm tài khoản mới</h3>
+      <button class="modal-close" onclick="closeAddUserModal()">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Username *</label>
+        <input type="text" id="nu-username" placeholder="username">
+      </div>
+      <div class="form-group">
+        <label>Họ tên</label>
+        <input type="text" id="nu-fullname" placeholder="Nguyễn Văn A">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email *</label>
+      <input type="email" id="nu-email" placeholder="email@gmail.com">
+    </div>
+    <div class="form-group">
+      <label>Số điện thoại</label>
+      <input type="tel" id="nu-phone" placeholder="0901234567">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Mật khẩu *</label>
+        <input type="password" id="nu-password" placeholder="Ít nhất 6 ký tự">
+      </div>
+      <div class="form-group">
+        <label>Vai trò</label>
+        <select id="nu-role">
+          <option value="customer">Khách hàng</option>
+          <option value="staff">Nhân viên</option>
+          <option value="manager">Quản lý</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem">
+      <button class="btn btn-light" onclick="closeAddUserModal()">Hủy</button>
+      <button class="btn btn-primary" id="add-user-btn" onclick="addNewUser()">Tạo tài khoản</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SỬA TÀI KHOẢN -->
+<div class="modal-overlay" id="user-modal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <h3>Chỉnh sửa tài khoản</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <input type="hidden" id="edit-user-id">
+    <div class="form-group">
+      <label>Họ tên</label>
+      <input type="text" id="u-fullname" placeholder="Nguyễn Văn A">
+    </div>
+    <div class="form-group">
+      <label>Số điện thoại</label>
+      <input type="text" id="u-phone" placeholder="0901234567">
+    </div>
+    <div class="form-group">
+      <label>Vai trò</label>
+      <select id="u-role">
+        <option value="customer">Khách hàng</option>
+        <option value="staff">Nhân viên</option>
+        <option value="manager">Quản lý</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Trạng thái</label>
+      <select id="u-active">
+        <option value="1">✅ Hoạt động</option>
+        <option value="0">❌ Đã khóa</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem">
+      <button class="btn btn-light" onclick="closeModal()">Hủy</button>
+      <button class="btn btn-primary" onclick="saveUser()">Lưu thay đổi</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+  if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
+    window.location.href = '../client/login.html';
+  }
+
+  const user = getUser();
+  if (user) {
+    document.getElementById('admin-name').textContent   = user.full_name || user.username;
+    document.getElementById('admin-role').textContent   = user.role === 'manager' ? 'Quản lý' : 'Nhân viên';
+    document.getElementById('admin-avatar').textContent = (user.full_name || user.username)[0].toUpperCase();
+  }
+
+  let searchTimer = null;
+
+  document.addEventListener('DOMContentLoaded', () => { loadUsers(); });
+
+  const loadUsers = async () => {
+    const tbody = document.getElementById('users-table');
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-3)">Đang tải...</td></tr>';
+
+    const search = document.getElementById('search').value;
+    const role   = document.getElementById('filter-role').value;
+
+    let url = '/admin/users?limit=50';
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    if (role)   url += `&role=${role}`;
+
+    try {
+      const data      = await api.get(url);
+      const users     = data.data;
+      const isManager = user?.role === 'manager';
+
+      if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-3)">Không tìm thấy tài khoản</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="user-avatar">${(u.full_name || u.username)[0].toUpperCase()}</div>
+              <div>
+                <div style="font-weight:600;font-size:13px">${u.full_name || u.username}</div>
+                <div style="font-size:11px;color:var(--text-3)">@${u.username}</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:13px">${u.email}</td>
+          <td style="font-size:13px">${u.phone || '—'}</td>
+          <td>
+            <span class="role-badge role-${u.role}">
+              ${u.role === 'manager' ? '👑 Quản lý' : u.role === 'staff' ? '👤 Nhân viên' : '🛒 Khách hàng'}
+            </span>
+          </td>
+          <td>
+            <span class="badge ${u.is_active ? 'badge-done' : 'badge-cancelled'}">
+              ${u.is_active ? 'Hoạt động' : 'Đã khóa'}
+            </span>
+          </td>
+          <td style="font-size:12px;color:var(--text-2)">${formatDate(u.created_at)}</td>
+          <td>
+            <div class="action-btns">
+              <button class="btn btn-outline btn-sm" onclick="openEditModal(${u.id}, '${(u.full_name||'').replace(/'/g,"\\'")}', '${(u.phone||'').replace(/'/g,"\\'")}', '${u.role}', ${u.is_active ? 1 : 0})">
+                ✏️ Sửa
+              </button>
+              ${isManager && u.id !== user.id
+                ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id}, '${u.username}')">🗑️</button>`
+                : ''}
+            </div>
+          </td>
+        </tr>`).join('');
+
+    } catch(e) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--red)">${e.message}</td></tr>`;
+    }
+  };
+
+  const debounceSearch = () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(loadUsers, 500);
+  };
+
+  const openAddUserModal = () => {
+    ['nu-username','nu-fullname','nu-email','nu-phone','nu-password'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('nu-role').value = 'customer';
+    document.getElementById('add-user-modal').classList.add('active');
+  };
+
+  const closeAddUserModal = () => {
+    document.getElementById('add-user-modal').classList.remove('active');
+  };
+
+  const addNewUser = async () => {
+    const username  = document.getElementById('nu-username').value.trim();
+    const full_name = document.getElementById('nu-fullname').value.trim();
+    const email     = document.getElementById('nu-email').value.trim();
+    const phone     = document.getElementById('nu-phone').value.trim();
+    const password  = document.getElementById('nu-password').value;
+    const role      = document.getElementById('nu-role').value;
+    const btn       = document.getElementById('add-user-btn');
+
+    if (!username || !email || !password) {
+      toast.error('Vui lòng điền username, email và mật khẩu!');
+      return;
+    }
+    if (password.length < 6) {
+      toast.error('Mật khẩu phải có ít nhất 6 ký tự!');
+      return;
+    }
+
+    btn.textContent = 'Đang tạo...';
+    btn.disabled    = true;
+
+    try {
+      await api.post('/auth/register', { username, full_name, email, phone, password });
+      if (role !== 'customer') {
+        const res     = await api.get(`/admin/users?search=${encodeURIComponent(email)}`);
+        const newUser = res.data.find(u => u.email === email);
+        if (newUser) await api.put(`/admin/users/${newUser.id}`, { role });
+      }
+      toast.success('Tạo tài khoản thành công!');
+      closeAddUserModal();
+      loadUsers();
+    } catch(e) {
+      toast.error(e.message);
+    } finally {
+      btn.textContent = 'Tạo tài khoản';
+      btn.disabled    = false;
+    }
+  };
+
+  const openEditModal = (id, fullname, phone, role, isActive) => {
+    document.getElementById('edit-user-id').value = id;
+    document.getElementById('u-fullname').value   = fullname;
+    document.getElementById('u-phone').value      = phone;
+    document.getElementById('u-role').value       = role;
+    document.getElementById('u-active').value     = isActive ? '1' : '0';
+    document.getElementById('user-modal').classList.add('active');
+  };
+
+  const closeModal = () => {
+    document.getElementById('user-modal').classList.remove('active');
+  };
+
+  const saveUser = async () => {
+    const id = document.getElementById('edit-user-id').value;
+    try {
+      await api.put(`/admin/users/${id}`, {
+        full_name: document.getElementById('u-fullname').value,
+        phone:     document.getElementById('u-phone').value,
+        role:      document.getElementById('u-role').value,
+        is_active: document.getElementById('u-active').value === '1',
+      });
+      toast.success('Cập nhật tài khoản thành công!');
+      closeModal();
+      loadUsers();
+    } catch(e) {
+      toast.error(e.message);
+    }
+  };
+
+  const deleteUser = async (id, username) => {
+    if (!confirm(`Khóa tài khoản "${username}"?`)) return;
+    try {
+      await api.delete(`/admin/users/${id}`);
+      toast.success('Đã khóa tài khoản!');
+      loadUsers();
+    } catch(e) {
+      toast.error(e.message);
+    }
+  };
+</script>
+</body>
+</html>

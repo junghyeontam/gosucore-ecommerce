@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GosuCore - Gaming Gear Chính Hãng</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ── Category nav sticky ── */
+    .category-nav { position: sticky; top: 52px; z-index: 90; background: var(--bg-primary); box-shadow: 0 1px 0 var(--border-light); }
+    .category-nav-item { padding: 0.55rem 0.9rem !important; min-width: 72px !important; transition: background 0.2s ease, color 0.2s ease; border-radius: 8px 8px 0 0; border-bottom: 2px solid transparent !important; }
+    .category-nav-item .cat-icon { width: 34px !important; height: 34px !important; transition: transform 0.2s ease; display: flex; align-items: center; justify-content: center; }
+    .category-nav-item .cat-icon .icon { width: 22px; height: 22px; stroke: currentColor; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .category-nav-item span { font-size: 0.67rem !important; }
+    .category-nav-item:hover { background: var(--bg-secondary); color: var(--text-primary); }
+    .category-nav-item:hover .cat-icon { transform: scale(1.1) translateY(-2px); }
+    .category-nav-item.active { background: var(--accent-light); border-bottom-color: transparent !important; }
+    .category-nav-item.active span { color: var(--accent) !important; font-weight: 600; }
+    .category-nav-item.active .cat-icon { transform: scale(1.05) translateY(-2px); }
+    .navbar-menu span { padding: 0.3rem 0.6rem; border-radius: 6px; transition: background 0.2s ease, color 0.2s ease; cursor: pointer; font-size: 0.82rem; }
+    .navbar-menu span:hover { background: var(--bg-secondary); color: var(--text-primary); }
+    .navbar-menu span.nav-active { color: var(--accent) !important; background: var(--accent-light); font-weight: 600; }
+    .navbar-search-btn { display: flex; align-items: center; gap: 7px; padding: 6px 12px 6px 10px; border-radius: 999px; border: 1.5px solid var(--border); background: var(--bg-secondary); color: var(--text-secondary); cursor: pointer; font-size: 13px; font-family: inherit; transition: all 0.2s ease; white-space: nowrap; }
+    .navbar-search-btn:hover { border-color: var(--accent); background: #fff; color: var(--text-primary); box-shadow: 0 2px 10px rgba(37,99,235,0.1); }
+    .navbar-search-btn svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .navbar-search-btn .kbd { display: inline-flex; align-items: center; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 10px; color: var(--text-muted); line-height: 1.6; }
+    .navbar-search { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); display: flex; align-items: center; padding: 0 5%; z-index: 1001; transform: translateY(-100%); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 2px 16px rgba(0,0,0,0.08); }
+    .navbar-search.open { transform: translateY(0); }
+    .navbar-search-wrap { display: flex; align-items: center; gap: 0.75rem; width: 100%; max-width: 560px; margin: 0 auto; background: var(--bg-secondary); border: 1.5px solid var(--border); border-radius: 50px; padding: 0.45rem 1rem; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .navbar-search-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
+    .search-icon { display: flex; align-items: center; color: var(--text-muted); flex-shrink: 0; }
+    .navbar-search-wrap input { flex: 1; border: none; background: transparent; font-size: 0.9rem; color: var(--text-primary); outline: none; font-family: inherit; }
+    .navbar-search-wrap input::placeholder { color: var(--text-muted); }
+    .search-close { display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 50%; cursor: pointer; color: var(--text-secondary); transition: all 0.15s ease; flex-shrink: 0; }
+    .search-close:hover { background: var(--border); color: var(--text-primary); transform: rotate(90deg); }
+    .search-close svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    .products-grid { animation: fadeInUp 0.3s ease both; }
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    .product-card { animation: fadeIn 0.25s ease both; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .skeleton { background: linear-gradient(90deg, var(--bg-secondary) 25%, #e8e8ec 50%, var(--bg-secondary) 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite; border-radius: var(--radius-sm); }
+    @keyframes shimmer { 0%{ background-position: 200% 0; } 100%{ background-position:-200% 0; } }
+
+    /* ═══ HERO ═══ */
+    .hero-structured { background: var(--bg-secondary); padding: 1.25rem 5% 0; }
+    .hero-structured-inner { display: grid; grid-template-columns: 1fr 280px; gap: 1rem; align-items: stretch; }
+    .hero-main-banner { position: relative; border-radius: var(--radius-lg); overflow: hidden; height: 360px; }
+    .hero-main-banner .hero-slides { position: absolute; inset: 0; }
+    .hero-main-banner .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s ease; }
+    .hero-main-banner .hero-slide.active { opacity: 1; }
+    .hero-slide-overlay { position: absolute; inset: 0; background: linear-gradient(120deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.05) 100%); }
+    .hero-banner-content { position: absolute; bottom: 0; left: 0; padding: 2rem 2rem 2.25rem; z-index: 2; }
+    .hero-banner-tag { display: inline-block; background: var(--accent); color: #fff; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px; padding: 0.2rem 0.65rem; border-radius: 50px; margin-bottom: 0.6rem; text-transform: uppercase; }
+    .hero-banner-title { font-size: clamp(1.5rem, 2.5vw, 2.1rem); font-weight: 800; color: #fff; letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 0.4rem; }
+    .hero-banner-sub { font-size: 0.85rem; color: rgba(255,255,255,0.75); margin-bottom: 0.85rem; line-height: 1.5; }
+    .hero-banner-price { font-size: 0.85rem; color: rgba(255,255,255,0.75); margin-bottom: 1.1rem; }
+    .hero-banner-price strong { color: #fff; font-size: 1.2rem; font-weight: 700; }
+    .hero-banner-btn { display: inline-flex; align-items: center; padding: 0.55rem 1.5rem; background: var(--accent); color: #fff; border: none; border-radius: 50px; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s ease; }
+    .hero-banner-btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37,99,235,0.4); }
+    .hero-main-banner .hero-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; opacity: 0; }
+    .hero-main-banner:hover .hero-arrow { opacity: 1; }
+    .hero-main-banner .hero-arrow:hover { background: rgba(37,99,235,0.7); border-color: var(--accent); transform: translateY(-50%) scale(1.05); }
+    .hero-main-banner .hero-arrow svg { width: 16px; height: 16px; }
+    .hero-main-banner .hero-arrow-left { left: 14px; }
+    .hero-main-banner .hero-arrow-right { right: 14px; }
+    .hero-main-banner .hero-dots { position: absolute; bottom: 16px; right: 18px; z-index: 3; display: flex; gap: 6px; }
+    .hero-main-banner .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.3s ease; border: none; }
+    .hero-main-banner .hero-dot.active { background: white; width: 20px; border-radius: 3px; }
+    .hero-side-cards { display: flex; flex-direction: column; gap: 1rem; }
+    .hero-side-card { flex: 1; border-radius: var(--radius-md); background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); padding: 1.25rem 1.25rem 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; overflow: hidden; position: relative; }
+    .hero-side-card::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+    .hero-side-card-2 { background: linear-gradient(135deg, #1a3a2a 0%, #16a34a 100%); }
+    .hero-side-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .hero-side-card-info { z-index: 1; }
+    .hero-side-card-tag { display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 50px; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .hero-side-card-name { font-size: 0.88rem; font-weight: 700; color: #fff; line-height: 1.35; margin-bottom: 0.85rem; }
+    .hero-side-card-btn { display: inline-flex; align-items: center; padding: 0.35rem 1rem; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); color: #fff; border-radius: 50px; font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s ease; }
+    .hero-side-card-btn:hover { background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.6); }
+    .hero-side-card-icon { font-size: 2.8rem; opacity: 0.85; z-index: 1; flex-shrink: 0; margin-left: 0.5rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); transition: transform 0.3s ease; }
+    .hero-side-card:hover .hero-side-card-icon { transform: scale(1.1) rotate(-5deg); }
+    .hero-feature-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 1rem; border-top: 1px solid var(--border-light); background: var(--bg-primary); }
+    .hero-feature-item { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.5rem; border-right: 1px solid var(--border-light); }
+    .hero-feature-item:last-child { border-right: none; }
+    .hero-feature-item svg { width: 22px; height: 22px; stroke: var(--accent); flex-shrink: 0; }
+    .hero-feature-title { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+    .hero-feature-sub { font-size: 0.72rem; color: var(--text-secondary); white-space: nowrap; }
+
+    /* ═══ FLASH SALE ═══ */
+    .flash-sale-section { padding: 2.5rem 5%; background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%); position: relative; overflow: hidden; }
+    .flash-sale-section::before { content: ''; position: absolute; top: -60px; right: -60px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%); pointer-events: none; }
+    .flash-sale-section::after { content: ''; position: absolute; bottom: -80px; left: 10%; width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, rgba(220,38,38,0.12) 0%, transparent 70%); pointer-events: none; }
+    .flash-sale-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; position: relative; z-index: 1; }
+    .flash-sale-title-group { display: flex; align-items: center; gap: 1rem; }
+    .flash-sale-badge { display: flex; align-items: center; gap: 0.4rem; background: #dc2626; color: #fff; padding: 0.4rem 1rem; border-radius: 8px; font-size: 1rem; font-weight: 800; letter-spacing: 0.5px; animation: pulse-red 2s infinite; }
+    @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); } 50% { box-shadow: 0 0 0 8px rgba(220,38,38,0); } }
+    .flash-countdown { display: flex; align-items: center; gap: 0.5rem; }
+    .countdown-label { color: rgba(255,255,255,0.6); font-size: 0.8rem; font-weight: 500; }
+    .countdown-units { display: flex; align-items: center; gap: 0.35rem; }
+    .countdown-unit { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 0.3rem 0.6rem; text-align: center; min-width: 40px; }
+    .countdown-num { display: block; color: #fff; font-size: 1.1rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+    .countdown-sep { color: rgba(255,255,255,0.5); font-size: 1rem; font-weight: 700; }
+    .flash-see-all { color: rgba(255,255,255,0.7); font-size: 0.82rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: color 0.2s; background: none; border: none; font-family: inherit; }
+    .flash-see-all:hover { color: #fff; }
+    .h-scroll-track { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.75rem; scrollbar-width: none; position: relative; z-index: 1; }
+    .h-scroll-track::-webkit-scrollbar { display: none; }
+    .flash-card { flex-shrink: 0; width: 200px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease; backdrop-filter: blur(4px); }
+    .flash-card:hover { transform: translateY(-4px); border-color: rgba(37,99,235,0.5); background: rgba(255,255,255,0.09); }
+    .flash-card-img-wrap { background: rgba(255,255,255,0.06); height: 140px; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; }
+    .flash-card-img { width: 100%; height: 100%; object-fit: contain; }
+    .flash-discount-badge { position: absolute; top: 8px; left: 8px; background: #dc2626; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 4px; }
+    .flash-card-body { padding: 0.85rem; }
+    .flash-card-brand { font-size: 0.65rem; color: rgba(255,255,255,0.45); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; }
+    .flash-card-name { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.9); line-height: 1.35; margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .flash-card-prices { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.6rem; }
+    .flash-price-sale { font-size: 0.95rem; font-weight: 700; color: #f87171; }
+    .flash-price-orig { font-size: 0.72rem; color: rgba(255,255,255,0.35); text-decoration: line-through; }
+    .flash-progress-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-bottom: 0.5rem; }
+    .flash-progress-fill { height: 100%; background: linear-gradient(90deg, #f87171, #dc2626); border-radius: 2px; }
+    .flash-stock-text { font-size: 0.65rem; color: rgba(255,255,255,0.4); }
+
+    /* ═══ BRAND STRIP ═══ */
+    .brand-strip { padding: 1.5rem 5%; background: var(--bg-primary); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
+    .brand-strip-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+    .brand-strip-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+    .brand-logos { display: flex; align-items: center; gap: 2rem; flex: 1; justify-content: space-between; }
+    .brand-logo-item { font-size: 0.9rem; font-weight: 800; color: var(--text-muted); letter-spacing: -0.5px; cursor: pointer; transition: color 0.2s ease, transform 0.2s ease; text-transform: uppercase; }
+    .brand-logo-item:hover { color: var(--text-primary); transform: scale(1.05); }
+
+    /* ═══ BEST SELLERS ═══ */
+    .bestseller-section { padding: 3rem 5%; background: var(--bg-primary); }
+    .showcase-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1.5rem; }
+    .showcase-eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 0.3rem; }
+    .showcase-title { font-size: clamp(1.4rem, 2.5vw, 1.8rem); font-weight: 800; letter-spacing: -0.5px; color: var(--text-primary); line-height: 1.1; }
+    .showcase-see-all { display: flex; align-items: center; gap: 0.3rem; font-size: 0.82rem; font-weight: 600; color: var(--accent); cursor: pointer; background: none; border: none; font-family: inherit; transition: gap 0.2s ease; padding: 0; }
+    .showcase-see-all:hover { gap: 0.5rem; }
+    .bestseller-card { flex-shrink: 0; width: 210px; background: var(--bg-secondary); border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid transparent; position: relative; }
+    .bestseller-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--border-light); }
+    .bestseller-rank { position: absolute; top: 10px; left: 10px; width: 26px; height: 26px; border-radius: 50%; background: var(--text-primary); color: #fff; font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; justify-content: center; z-index: 2; }
+    .bestseller-rank.rank-1 { background: #f59e0b; }
+    .bestseller-rank.rank-2 { background: #6b7280; }
+    .bestseller-rank.rank-3 { background: #92400e; }
+    .bestseller-img-wrap { height: 160px; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; padding: 1.25rem; }
+    .bestseller-img { width: 100%; height: 100%; object-fit: contain; }
+    .bestseller-body { padding: 0.9rem 1rem 1rem; }
+    .bestseller-brand { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; }
+    .bestseller-name { font-size: 0.83rem; font-weight: 600; color: var(--text-primary); line-height: 1.35; margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .bestseller-rating { display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.6rem; }
+    .stars-sm { font-size: 0.7rem; color: #f59e0b; }
+    .rating-sm { font-size: 0.68rem; color: var(--text-muted); }
+    .bestseller-footer { display: flex; align-items: center; justify-content: space-between; }
+    .bestseller-price { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+    .bestseller-sold { font-size: 0.65rem; color: var(--text-muted); }
+
+
+
+    @media (max-width: 900px) {
+      .hero-structured-inner { grid-template-columns: 1fr; }
+      .hero-side-cards { flex-direction: row; }
+      .hero-feature-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .hero-main-banner { height: 260px; }
+      .hero-side-cards { flex-direction: column; }
+      .hero-feature-strip { grid-template-columns: 1fr 1fr; }
+      .flash-sale-header { flex-wrap: wrap; gap: 0.75rem; }
+      .brand-strip-inner { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SEARCH OVERLAY -->
+  <div class="navbar-search" id="navbar-search">
+    <div class="navbar-search-wrap">
+      <span class="search-icon">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <input type="text" id="navbar-search-input" placeholder="Tìm sản phẩm gaming..." oninput="navbarSearch(this.value)">
+      <button class="search-close" onclick="closeSearch()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="main-navbar">
+    <a href="index.html" class="navbar-brand">Gosu<span style="color:var(--accent)">Core</span></a>
+    <div class="navbar-menu">
+      <span onclick="selectAll()" id="nav-all">Cửa Hàng</span>
+      <span onclick="clickNavCategory(1,'Chuột Gaming')">Chuột</span>
+      <span onclick="clickNavCategory(2,'Bàn phím Gaming')">Bàn Phím</span>
+      <span onclick="clickNavCategory(3,'Tai nghe Gaming')">Tai Nghe</span>
+      <span onclick="clickNavCategory(4,'Màn hình Gaming')">Màn Hình</span>
+    </div>
+    <div class="navbar-actions">
+      <button class="navbar-search-btn" onclick="openSearch()">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Tìm kiếm <span class="kbd">/</span>
+      </button>
+      <div class="navbar-icon cart-icon" onclick="window.location.href='cart.html'">🛒<span class="cart-count">0</span></div>
+      <div id="auth-area"></div>
+    </div>
+  </nav>
+
+  <!-- ANNOUNCEMENT BAR -->
+  <div class="announcement-bar" id="announce-bar">
+    Miễn phí vận chuyển cho đơn hàng từ 500.000₫ &nbsp;|&nbsp; <a href="#">Mua ngay →</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero-structured" id="hero-section">
+    <div class="hero-structured-inner">
+      <div class="hero-main-banner">
+        <div class="hero-slides">
+          <div class="hero-slide active" style="background-image:url('../assets/images/hero_slai/banner_msi.1.jpg');background-size:cover;background-position:center">
+            <div class="hero-slide-overlay"></div>
+            <div class="hero-banner-content">
+              <div class="hero-banner-tag">Mới ra mắt</div>
+              <h2 class="hero-banner-title">MSI Gaming Series</h2>
+              <p class="hero-banner-sub">Hiệu suất đỉnh cao, thiết kế chiến binh</p>
+              <div class="hero-banner-price">Từ <strong>25.990.000₫</strong></div>
+              <button class="hero-banner-btn" onclick="scrollToProducts()">Mua ngay</button>
+            </div>
+          </div>
+          <div class="hero-slide" style="background-image:url('../assets/images/hero_slai/gearvn-pc-gvn-t11-slider.jpg');background-size:cover;background-position:center">
+            <div class="hero-slide-overlay"></div>
+            <div class="hero-banner-content">
+              <div class="hero-banner-tag">Bán chạy</div>
+              <h2 class="hero-banner-title">GearVN PC Custom</h2>
+              <p class="hero-banner-sub">PC gaming tối ưu cho từng tựa game</p>
+              <div class="hero-banner-price">Từ <strong>18.500.000₫</strong></div>
+              <button class="hero-banner-btn" onclick="scrollToProducts()">Mua ngay</button>
+            </div>
+          </div>
+          <div class="hero-slide" style="background-image:url('../assets/images/hero_slai/gigabyte_4f904ee7aecc4e56a0d3daaf355b4a13.jpg');background-size:cover;background-position:center">
+            <div class="hero-slide-overlay"></div>
+            <div class="hero-banner-content">
+              <div class="hero-banner-tag">Hot deal</div>
+              <h2 class="hero-banner-title">Gigabyte AORUS</h2>
+              <p class="hero-banner-sub">RGB không giới hạn, sức mạnh vô hạn</p>
+              <div class="hero-banner-price">Từ <strong>3.290.000₫</strong></div>
+              <button class="hero-banner-btn" onclick="scrollToProducts()">Mua ngay</button>
+            </div>
+          </div>
+          <div class="hero-slide" style="background-image:url('../assets/images/hero_slai/nitro_propanel-kv.png');background-size:cover;background-position:center">
+            <div class="hero-slide-overlay"></div>
+            <div class="hero-banner-content">
+              <div class="hero-banner-tag">Mới nhất</div>
+              <h2 class="hero-banner-title">Acer Nitro ProPanel</h2>
+              <p class="hero-banner-sub">Màn hình 180Hz · 100% sRGB · RTX™ 50</p>
+              <div class="hero-banner-price">Từ <strong>7.990.000₫</strong></div>
+              <button class="hero-banner-btn" onclick="clickNavCategory(4,'Màn hình Gaming')">Mua ngay</button>
+            </div>
+          </div>
+        </div>
+        <div class="hero-dots">
+          <span class="hero-dot active" onclick="goToSlide(0)"></span>
+          <span class="hero-dot" onclick="goToSlide(1)"></span>
+          <span class="hero-dot" onclick="goToSlide(2)"></span>
+          <span class="hero-dot" onclick="goToSlide(3)"></span>
+        </div>
+        <button class="hero-arrow hero-arrow-left" onclick="prevSlide()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="hero-arrow hero-arrow-right" onclick="nextSlide()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <div class="hero-side-cards">
+        <div class="hero-side-card" onclick="clickNavCategory(1,'Chuột Gaming')">
+          <div class="hero-side-card-info">
+            <div class="hero-side-card-tag">Giảm 20%</div>
+            <div class="hero-side-card-name">Chuột Gaming<br>Razer DeathAdder</div>
+            <button class="hero-side-card-btn">Mua ngay</button>
+          </div>
+          <div class="hero-side-card-icon">🖱️</div>
+        </div>
+        <div class="hero-side-card hero-side-card-2" onclick="clickNavCategory(2,'Bàn phím Gaming')">
+          <div class="hero-side-card-info">
+            <div class="hero-side-card-tag">Giảm 15%</div>
+            <div class="hero-side-card-name">Bàn Phím Cơ<br>Logitech G Pro X</div>
+            <button class="hero-side-card-btn">Mua ngay</button>
+          </div>
+          <div class="hero-side-card-icon">⌨️</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-feature-strip">
+      <div class="hero-feature-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h5l3 5v3h-8V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <div><div class="hero-feature-title">Miễn phí giao hàng</div><div class="hero-feature-sub">Cho đơn từ 500k</div></div>
+      </div>
+      <div class="hero-feature-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div><div class="hero-feature-title">Thanh toán an toàn</div><div class="hero-feature-sub">100% bảo mật</div></div>
+      </div>
+      <div class="hero-feature-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+        <div><div class="hero-feature-title">Đổi trả dễ dàng</div><div class="hero-feature-sub">Trong 7 ngày</div></div>
+      </div>
+      <div class="hero-feature-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92v2z"/></svg>
+        <div><div class="hero-feature-title">Hỗ trợ 24/7</div><div class="hero-feature-sub">1900 1234</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FLASH SALE ═══ -->
+  <section class="flash-sale-section" id="flash-sale-section">
+    <div class="flash-sale-header">
+      <div class="flash-sale-title-group">
+        <div class="flash-sale-badge">⚡ FLASH SALE</div>
+        <div class="flash-countdown">
+          <span class="countdown-label">Kết thúc sau:</span>
+          <div class="countdown-units">
+            <div class="countdown-unit"><span class="countdown-num" id="cd-h">08</span></div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit"><span class="countdown-num" id="cd-m">34</span></div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit"><span class="countdown-num" id="cd-s">12</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="flash-see-all" onclick="selectAll()">Xem tất cả →</button>
+    </div>
+    <div class="h-scroll-track" id="flash-sale-track">
+      <div style="color:rgba(255,255,255,0.3);font-size:0.8rem;padding:1rem">Đang tải...</div>
+    </div>
+  </section>
+
+  <!-- ═══ BRAND STRIP ═══ -->
+  <div class="brand-strip">
+    <div class="brand-strip-inner">
+      <span class="brand-strip-label">Thương hiệu</span>
+      <div class="brand-logos">
+        <span class="brand-logo-item" onclick="filterByBrand('Logitech')">Logitech</span>
+        <span class="brand-logo-item" onclick="filterByBrand('Razer')">Razer</span>
+        <span class="brand-logo-item" onclick="filterByBrand('Corsair')">Corsair</span>
+        <span class="brand-logo-item" onclick="filterByBrand('SteelSeries')">SteelSeries</span>
+        <span class="brand-logo-item" onclick="filterByBrand('ASUS')">ASUS ROG</span>
+        <span class="brand-logo-item" onclick="filterByBrand('MSI')">MSI</span>
+        <span class="brand-logo-item" onclick="filterByBrand('LG')">LG</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BEST SELLERS ═══ -->
+  <section class="bestseller-section">
+    <div class="showcase-header">
+      <div class="showcase-header-left">
+        <div class="showcase-eyebrow">🔥 Top picks</div>
+        <div class="showcase-title">Sản phẩm bán chạy</div>
+      </div>
+      <button class="showcase-see-all" onclick="selectAll()">Xem tất cả <span>→</span></button>
+    </div>
+    <div class="h-scroll-track" id="bestseller-track">
+      <div style="color:var(--text-muted);font-size:0.8rem;padding:1rem">Đang tải...</div>
+    </div>
+  </section>
+
+
+
+  <!-- CATEGORY NAV -->
+  <div class="category-nav" id="cat-nav-bar">
+    <div class="category-nav-inner" id="category-nav">
+      <div class="category-nav-item active" id="cat-all">
+        <div class="cat-icon">
+          <svg viewBox="0 0 24 24" class="icon"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </div>
+        <span>Tất cả</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS SECTION -->
+  <section class="section" id="products-section">
+    <div class="section-header-row">
+      <h2 id="section-title">Tất cả sản phẩm</h2>
+      <span id="product-count" style="color:var(--text-secondary);font-size:0.875rem;"></span>
+    </div>
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>🔍</label>
+        <input type="text" id="search" placeholder="Tìm sản phẩm..." oninput="debounceSearch()">
+      </div>
+      <div class="filter-group">
+        <label>Hãng</label>
+        <select id="brand" onchange="loadProducts()"><option value="">Tất cả</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Giá từ</label>
+        <input type="number" id="min_price" placeholder="0" onchange="loadProducts()">
+      </div>
+      <div class="filter-group">
+        <label>Đến</label>
+        <input type="number" id="max_price" placeholder="50,000,000" onchange="loadProducts()">
+      </div>
+      <div class="filter-group">
+        <label>Sắp xếp</label>
+        <select id="sort" onchange="loadProducts()">
+          <option value="newest">Mới nhất</option>
+          <option value="price_asc">Giá thấp → cao</option>
+          <option value="price_desc">Giá cao → thấp</option>
+          <option value="name_asc">Tên A → Z</option>
+        </select>
+      </div>
+    </div>
+    <div id="products-container"><div class="loading"><div class="spinner"></div></div></div>
+    <div id="pagination" style="display:flex;gap:0.5rem;justify-content:center;margin-top:2.5rem;"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-brand-name">GosuCore</div>
+        <p>Nền tảng mua sắm thiết bị gaming chính hãng hàng đầu Việt Nam.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Sản phẩm</h4>
+        <a href="#">Chuột Gaming</a><a href="#">Bàn Phím</a><a href="#">Tai Nghe</a><a href="#">Màn Hình</a>
+      </div>
+      <div class="footer-col">
+        <h4>Hỗ trợ</h4>
+        <a href="#">Chính sách đổi trả</a><a href="#">Bảo hành</a><a href="#">Liên hệ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Tài khoản</h4>
+        <a href="login.html">Đăng nhập</a><a href="register.html">Đăng ký</a><a href="orders.html">Đơn hàng</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 GosuCore. All rights reserved.</span>
+      <span>Gaming Gear Chính Hãng</span>
+    </div>
+  </footer>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    let currentPage     = 1;
+    let currentCategory = null;
+    let currentCatName  = 'Tất cả sản phẩm';
+    let searchTimer     = null;
+    let isLoading       = false;
+
+    const catIcons = {
+      'Chuột Gaming': `<svg viewBox="0 0 24 24" class="icon"><rect x="8" y="2" width="8" height="20" rx="4"/><path d="M12 6v3"/></svg>`,
+      'Bàn phím Gaming': `<svg viewBox="0 0 24 24" class="icon"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 11h.01M10 11h.01M13 11h.01M16 11h.01"/></svg>`,
+      'Tai nghe Gaming': `<svg viewBox="0 0 24 24" class="icon"><path d="M4 13a8 8 0 0 1 16 0"/><rect x="4" y="13" width="3" height="6" rx="1.5"/><rect x="17" y="13" width="3" height="6" rx="1.5"/></svg>`,
+      'Màn hình Gaming': `<svg viewBox="0 0 24 24" class="icon"><rect x="4" y="5" width="16" height="10" rx="2"/><path d="M10 19h4"/></svg>`,
+      'Lót chuột': `<svg viewBox="0 0 24 24" class="icon"><rect x="4" y="6" width="16" height="12" rx="2"/></svg>`,
+      'Ghế Gaming': `<svg viewBox="0 0 24 24" class="icon"><rect x="9" y="3" width="6" height="8" rx="2"/><path d="M7 11h10M10 11v6M14 11v6"/></svg>`,
+    };
+
+    const openSearch = () => { document.getElementById('navbar-search').classList.add('open'); setTimeout(() => document.getElementById('navbar-search-input').focus(), 250); };
+    const closeSearch = () => { document.getElementById('navbar-search').classList.remove('open'); document.getElementById('navbar-search-input').value = ''; document.getElementById('search').value = ''; };
+    const navbarSearch = (val) => {
+      document.getElementById('search').value = val;
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => { currentPage = 1; loadProducts(); const s = document.getElementById('products-section'); window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - 120, behavior:'smooth' }); }, 450);
+    };
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeSearch();
+      if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') { e.preventDefault(); openSearch(); }
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      document.getElementById('cat-all').onclick = () => selectAll();
+      await loadCategories();
+      await loadBrands();
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('category')) currentCategory = params.get('category');
+      await loadProducts();
+      document.getElementById('nav-all').classList.add('nav-active');
+      loadFlashSale();
+      loadBestSellers();
+      startCountdown();
+    });
+
+    const selectAll = () => {
+      if (isLoading) return;
+      currentCategory = null; currentCatName = 'Tất cả sản phẩm'; currentPage = 1;
+      window.history.pushState({}, '', window.location.pathname);
+      setActiveNav(document.getElementById('cat-all'));
+      document.getElementById('section-title').textContent = 'Tất cả sản phẩm';
+      document.querySelectorAll('.navbar-menu span').forEach(s => s.classList.remove('nav-active'));
+      document.getElementById('nav-all').classList.add('nav-active');
+      scrollAndLoad();
+    };
+
+    const loadCategories = async () => {
+      try {
+        const data = await api.get('/products/categories');
+        const nav  = document.getElementById('category-nav');
+        data.data.forEach(cat => {
+          const item = document.createElement('div');
+          item.className  = 'category-nav-item'; item.dataset.id = cat.id;
+          item.innerHTML  = `<div class="cat-icon">${catIcons[cat.name] || '<svg viewBox="0 0 24 24" class="icon"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>'}</div><span>${cat.name}</span>`;
+          item.onclick = () => filterCategory(cat.id, cat.name, item);
+          nav.appendChild(item);
+          if (String(cat.id) === String(currentCategory)) { currentCatName = cat.name; setTimeout(() => setActiveNav(item), 50); }
+        });
+      } catch(e) { console.error(e); }
+    };
+
+    const loadBrands = async () => {
+      try {
+        const data = await api.get('/products/brands');
+        const sel  = document.getElementById('brand');
+        data.data.forEach(b => { sel.innerHTML += `<option value="${b.brand}">${b.brand} (${b.product_count})</option>`; });
+      } catch(e) {}
+    };
+
+    const setActiveNav = (el) => { document.querySelectorAll('.category-nav-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); };
+
+    const filterCategory = (id, name, el) => {
+      if (isLoading) return;
+      currentCategory = id; currentCatName = name; currentPage = 1;
+      window.history.pushState({}, '', `${window.location.pathname}?category=${id}`);
+      setActiveNav(el); document.getElementById('section-title').textContent = name; scrollAndLoad();
+    };
+
+    const clickNavCategory = (id, name) => {
+      if (isLoading) return;
+      currentCategory = id; currentCatName = name; currentPage = 1;
+      window.history.pushState({}, '', `${window.location.pathname}?category=${id}`);
+      document.querySelectorAll('.category-nav-item').forEach(item => { if (String(item.dataset.id) === String(id)) { setActiveNav(item); item.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' }); } });
+      document.querySelectorAll('.navbar-menu span').forEach(s => s.classList.remove('nav-active'));
+      event.target.classList.add('nav-active');
+      document.getElementById('section-title').textContent = name;
+      scrollAndLoad();
+    };
+
+    const filterByBrand = (brandName) => {
+      document.getElementById('brand').value = brandName; currentPage = 1; scrollAndLoad();
+    };
+
+    const scrollAndLoad = () => {
+      const s = document.getElementById('products-section');
+      const top = s.getBoundingClientRect().top + window.scrollY - 120;
+      if (window.scrollY < top - 10) { window.scrollTo({ top, behavior:'smooth' }); setTimeout(loadProducts, 480); }
+      else loadProducts();
+    };
+
+    const debounceSearch = () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { currentPage = 1; loadProducts(); }, 450); };
+
+    const renderSkeleton = () => `<div class="products-grid">${Array(8).fill('').map(() => `<div style="border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-secondary)"><div class="skeleton" style="height:200px"></div><div style="padding:1.25rem"><div class="skeleton" style="height:9px;width:38%;margin-bottom:0.6rem"></div><div class="skeleton" style="height:13px;width:85%;margin-bottom:0.6rem"></div><div class="skeleton" style="height:9px;width:52%;margin-bottom:1rem"></div><div class="skeleton" style="height:16px;width:44%"></div></div></div>`).join('')}</div>`;
+
+    const loadProducts = async () => {
+      if (isLoading) return; isLoading = true;
+      const container = document.getElementById('products-container'); container.innerHTML = renderSkeleton();
+      const search = document.getElementById('search').value, brand = document.getElementById('brand').value,
+            min_price = document.getElementById('min_price').value, max_price = document.getElementById('max_price').value,
+            sort = document.getElementById('sort').value;
+      let url = `/products?page=${currentPage}&limit=12&sort=${sort}`;
+      if (currentCategory) url += `&category=${currentCategory}`;
+      if (search) url += `&search=${encodeURIComponent(search)}`;
+      if (brand) url += `&brand=${encodeURIComponent(brand)}`;
+      if (min_price) url += `&min_price=${min_price}`;
+      if (max_price) url += `&max_price=${max_price}`;
+      try {
+        const data = await api.get(url);
+        const { data: products, pagination } = data;
+        document.getElementById('section-title').textContent = currentCatName;
+        document.getElementById('product-count').textContent = `${pagination.total} sản phẩm`;
+        if (!products.length) { container.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><h3>Không tìm thấy sản phẩm</h3><p>Thử thay đổi bộ lọc hoặc từ khóa khác.</p><button class="btn btn-primary" style="margin-top:1rem" onclick="selectAll()">Xem tất cả</button></div>`; document.getElementById('pagination').innerHTML = ''; return; }
+        await new Promise(r => setTimeout(r, 120));
+        container.innerHTML = `<div class="products-grid">${products.map(renderProductCard).join('')}</div>`;
+        renderPagination(pagination);
+      } catch(e) { container.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><h3>Lỗi tải sản phẩm</h3><p>${e.message}</p></div>`; }
+      finally { isLoading = false; }
+    };
+
+    const renderProductCard = (p, index) => {
+      const stars = renderStars(p.avg_rating || 0), price = formatPrice(p.price), lowStock = p.stock <= 5;
+      return `<div class="product-card" style="animation-delay:${(index||0)*0.04}s" onclick="window.location.href='product.html?id=${p.id}'">
+        <div class="product-card-img-wrap"><img class="product-card-img" src="${p.image_url || 'https://placehold.co/300x200/f5f5f7/999?text=No+Image'}" alt="${p.name}" onerror="this.src='https://placehold.co/300x200/f5f5f7/999?text=No+Image'" loading="lazy"></div>
+        <div class="product-card-body">
+          <div class="product-card-brand">${p.brand || ''}</div>
+          <div class="product-card-name">${p.name}</div>
+          <div class="product-card-rating"><span class="stars">${stars}</span><span class="rating-count">(${p.review_count})</span></div>
+          <div class="product-card-footer"><div class="product-price">${price}</div><div class="product-stock ${lowStock?'low':''}">${lowStock ? `Còn ${p.stock}` : 'Còn hàng'}</div></div>
+          <button class="btn btn-dark btn-full btn-sm" style="margin-top:0.75rem" onclick="event.stopPropagation();addToCartFromList(${JSON.stringify(p).replace(/"/g,'&quot;')})">Thêm vào giỏ</button>
+        </div></div>`;
+    };
+
+    const addToCartFromList = (p) => { cart.add(p,1); cart.updateCount(); };
+
+    const renderPagination = ({ page, total_pages }) => {
+      const el = document.getElementById('pagination');
+      if (total_pages <= 1) { el.innerHTML = ''; return; }
+      let h = '';
+      if (page > 1) h += `<button class="btn btn-light btn-sm" onclick="changePage(${page-1})">← Trước</button>`;
+      for (let i = 1; i <= total_pages; i++) {
+        if (i === page) h += `<button class="btn btn-primary btn-sm">${i}</button>`;
+        else if (Math.abs(i-page) <= 2) h += `<button class="btn btn-light btn-sm" onclick="changePage(${i})">${i}</button>`;
+      }
+      if (page < total_pages) h += `<button class="btn btn-light btn-sm" onclick="changePage(${page+1})">Tiếp →</button>`;
+      el.innerHTML = h;
+    };
+
+    const changePage = (p) => { currentPage = p; const s = document.getElementById('products-section'); window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - 120, behavior:'smooth' }); setTimeout(loadProducts, 400); };
+    const scrollToProducts = () => { const s = document.getElementById('products-section'); window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - 120, behavior:'smooth' }); };
+
+    /* ═══ FLASH SALE ═══ */
+    const DISC = [0.10, 0.15, 0.20, 0.25, 0.30];
+    const loadFlashSale = async () => {
+      try {
+        const data = await api.get('/products?limit=12&sort=price_desc');
+        const products = data.data || [];
+        const track = document.getElementById('flash-sale-track');
+        if (!products.length) { track.innerHTML = '<p style="color:rgba(255,255,255,0.4);padding:2rem">Không có sản phẩm.</p>'; return; }
+        track.innerHTML = products.map((p, i) => {
+          const rate = DISC[i % DISC.length], salePrice = Math.round(p.price * (1 - rate));
+          const sold = Math.floor(Math.random() * 60) + 20, rem = Math.floor(Math.random() * 40) + 5;
+          const pct = Math.round((sold / (sold + rem)) * 100);
+          return `<div class="flash-card" onclick="window.location.href='product.html?id=${p.id}'">
+            <div class="flash-card-img-wrap">
+              <img class="flash-card-img" src="${p.image_url || 'https://placehold.co/200x140/1a1a2e/555?text=Gaming'}" alt="${p.name}" onerror="this.src='https://placehold.co/200x140/1a1a2e/555?text=Gaming'" loading="lazy">
+              <span class="flash-discount-badge">-${Math.round(rate*100)}%</span>
+            </div>
+            <div class="flash-card-body">
+              <div class="flash-card-brand">${p.brand || ''}</div>
+              <div class="flash-card-name">${p.name}</div>
+              <div class="flash-card-prices"><span class="flash-price-sale">${formatPrice(salePrice)}</span><span class="flash-price-orig">${formatPrice(p.price)}</span></div>
+              <div class="flash-progress-bar"><div class="flash-progress-fill" style="width:${pct}%"></div></div>
+              <div class="flash-stock-text">Đã bán ${sold}/${sold + rem}</div>
+            </div></div>`;
+        }).join('');
+      } catch(e) { document.getElementById('flash-sale-track').innerHTML = '<p style="color:rgba(255,255,255,0.4);padding:2rem">Không thể tải.</p>'; }
+    };
+
+    /* ═══ BEST SELLERS ═══ */
+    const loadBestSellers = async () => {
+      try {
+        const data = await api.get('/products?limit=10&sort=newest');
+        const products = data.data || [];
+        const track = document.getElementById('bestseller-track');
+        if (!products.length) { track.innerHTML = '<p style="color:var(--text-muted);padding:2rem">Không có sản phẩm.</p>'; return; }
+        track.innerHTML = products.map((p, i) => {
+          const stars = renderStars(p.avg_rating || (4 + Math.random() * 0.9));
+          const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : '';
+          const sold = 1200 - i * 95 + Math.floor(Math.random() * 50);
+          return `<div class="bestseller-card" onclick="window.location.href='product.html?id=${p.id}'">
+            <span class="bestseller-rank ${rankClass}">${i+1}</span>
+            <div class="bestseller-img-wrap"><img class="bestseller-img" src="${p.image_url || 'https://placehold.co/210x160/f5f5f7/999?text=No+Image'}" alt="${p.name}" onerror="this.src='https://placehold.co/210x160/f5f5f7/999?text=No+Image'" loading="lazy"></div>
+            <div class="bestseller-body">
+              <div class="bestseller-brand">${p.brand || ''}</div>
+              <div class="bestseller-name">${p.name}</div>
+              <div class="bestseller-rating"><span class="stars-sm">${stars}</span><span class="rating-sm">(${p.review_count || 0})</span></div>
+              <div class="bestseller-footer"><div class="bestseller-price">${formatPrice(p.price)}</div><div class="bestseller-sold">Đã bán ${sold.toLocaleString()}</div></div>
+            </div></div>`;
+        }).join('');
+      } catch(e) { document.getElementById('bestseller-track').innerHTML = '<p style="color:var(--text-muted);padding:2rem">Không thể tải.</p>'; }
+    };
+
+    /* ═══ COUNTDOWN ═══ */
+    const startCountdown = () => {
+      const endTime = Date.now() + (8 * 3600 + 34 * 60 + 12) * 1000;
+      const tick = () => {
+        const diff = Math.max(0, endTime - Date.now());
+        document.getElementById('cd-h').textContent = String(Math.floor(diff / 3600000)).padStart(2,'0');
+        document.getElementById('cd-m').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
+        document.getElementById('cd-s').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
+      };
+      tick(); setInterval(tick, 1000);
+    };
+
+    /* ═══ HERO SLIDESHOW ═══ */
+    let currentSlide = 0, slideInterval = null;
+    const totalSlides = 4;
+    const goToSlide = (n) => {
+      document.querySelectorAll('.hero-main-banner .hero-slide').forEach((s, i) => s.classList.toggle('active', i === n));
+      document.querySelectorAll('.hero-main-banner .hero-dot').forEach((d, i) => d.classList.toggle('active', i === n));
+      currentSlide = n;
+    };
+    const nextSlide = () => goToSlide((currentSlide + 1) % totalSlides);
+    const prevSlide = () => goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+    const startSlideshow = () => { slideInterval = setInterval(nextSlide, 2000); };
+    const stopSlideshow  = () => clearInterval(slideInterval);
+    const heroBanner = document.querySelector('.hero-main-banner');
+    if (heroBanner) {
+      heroBanner.addEventListener('mouseenter', stopSlideshow);
+      heroBanner.addEventListener('mouseleave', startSlideshow);
+      let _tx = 0;
+      heroBanner.addEventListener('touchstart', e => { _tx = e.changedTouches[0].clientX; stopSlideshow(); }, { passive: true });
+      heroBanner.addEventListener('touchend', e => { const d = _tx - e.changedTouches[0].clientX; if (Math.abs(d) > 50) d > 0 ? nextSlide() : prevSlide(); startSlideshow(); }, { passive: true });
+    }
+    startSlideshow();
+  </script>
+</body>
+</html>

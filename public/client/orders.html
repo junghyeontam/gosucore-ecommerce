@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đơn hàng của tôi - GosuCore</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .orders-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 5%;
+    }
+
+    .orders-page h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .orders-page > p {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
+    }
+
+    .order-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      margin-bottom: 1rem;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .order-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .order-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      background: var(--bg-secondary);
+      cursor: pointer;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .order-card-header:hover {
+      background: var(--bg-hover);
+    }
+
+    .order-id {
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .order-date {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 0.2rem;
+    }
+
+    .order-card-body {
+      padding: 1.25rem 1.5rem;
+      display: none;
+    }
+
+    .order-card-body.open {
+      display: block;
+    }
+
+    .order-item-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .order-item-row:last-child { border-bottom: none; }
+
+    .order-item-row img {
+      width: 55px; height: 55px;
+      object-fit: contain;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      padding: 0.25rem;
+      cursor: pointer;
+    }
+
+    .order-item-info { flex: 1; }
+
+    .order-item-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 0.2rem;
+    }
+
+    .order-item-name:hover { color: var(--accent); }
+
+    .order-item-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .order-item-price {
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+
+    .order-footer {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .order-total {
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .order-shipping {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+    }
+
+    .status-timeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 1rem 0;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .timeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 80px;
+      position: relative;
+    }
+
+    .timeline-step::before {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: -50%;
+      width: 100%;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+
+    .timeline-step:first-child::before { display: none; }
+
+    .timeline-step.done::before { background: var(--success); }
+
+    .timeline-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      z-index: 1;
+      position: relative;
+    }
+
+    .timeline-step.done .timeline-dot {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .timeline-step.current .timeline-dot {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .timeline-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .timeline-step.done .timeline-label,
+    .timeline-step.current .timeline-label {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-tab {
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      transition: var(--transition);
+    }
+
+    .filter-tab.active {
+      background: var(--text-primary);
+      color: white;
+      border-color: var(--text-primary);
+    }
+
+    @media (max-width: 600px) {
+      .order-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">Gosu<span style="color:var(--accent)">Core</span></a>
+    <div class="navbar-menu">
+      <a href="index.html">Cửa Hàng</a>
+      <a href="orders.html" style="color:var(--accent)">Đơn hàng</a>
+    </div>
+    <div class="navbar-actions">
+      <div class="navbar-icon cart-icon" onclick="window.location.href='cart.html'">
+        🛒<span class="cart-count">0</span>
+      </div>
+      <div id="auth-area"></div>
+    </div>
+  </nav>
+
+  <div class="orders-page">
+    <h1>Đơn hàng của tôi</h1>
+    <p>Theo dõi và quản lý tất cả đơn hàng của bạn.</p>
+
+    <!-- FILTER TABS -->
+    <div class="filter-tabs">
+      <div class="filter-tab active" onclick="filterOrders(null, this)">Tất cả</div>
+      <div class="filter-tab" onclick="filterOrders('pending', this)">⏳ Chờ xác nhận</div>
+      <div class="filter-tab" onclick="filterOrders('confirmed', this)">✅ Đã xác nhận</div>
+      <div class="filter-tab" onclick="filterOrders('shipping', this)">🚚 Đang giao</div>
+      <div class="filter-tab" onclick="filterOrders('done', this)">🎉 Hoàn thành</div>
+      <div class="filter-tab" onclick="filterOrders('cancelled', this)">❌ Đã hủy</div>
+    </div>
+
+    <div id="orders-container">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    if (!isLoggedIn()) window.location.href = 'login.html';
+
+    let allOrders     = [];
+    let currentFilter = null;
+
+    const statusMap = {
+      pending:   { label: 'Chờ xác nhận', badge: 'badge-pending' },
+      confirmed: { label: 'Đã xác nhận',  badge: 'badge-confirmed' },
+      shipping:  { label: 'Đang giao',    badge: 'badge-shipping' },
+      done:      { label: 'Hoàn thành',   badge: 'badge-done' },
+      cancelled: { label: 'Đã hủy',       badge: 'badge-cancelled' },
+    };
+
+    const timelineSteps = [
+      { key: 'pending',   icon: '📋', label: 'Chờ xác nhận' },
+      { key: 'confirmed', icon: '✅', label: 'Đã xác nhận' },
+      { key: 'shipping',  icon: '🚚', label: 'Đang giao' },
+      { key: 'done',      icon: '🎉', label: 'Hoàn thành' },
+    ];
+
+    // ✅ Khai báo tất cả hàm trước bằng function declaration
+    async function loadOrders() {
+      try {
+        const data = await api.get('/orders/my');
+        allOrders  = data.data;
+        renderOrders();
+      } catch (e) {
+        document.getElementById('orders-container').innerHTML = `
+          <div class="empty-state">
+            <div class="icon">⚠️</div>
+            <h3>Lỗi tải đơn hàng</h3>
+            <p>${e.message}</p>
+          </div>`;
+      }
+    }
+
+    function filterOrders(status, el) {
+      currentFilter = status;
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      renderOrders();
+    }
+
+    function renderOrders() {
+      const container = document.getElementById('orders-container');
+      const orders    = currentFilter
+        ? allOrders.filter(o => o.status === currentFilter)
+        : allOrders;
+
+      if (orders.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">📦</div>
+            <h3>Chưa có đơn hàng nào</h3>
+            <p>Hãy mua sắm để tạo đơn hàng đầu tiên!</p>
+            <a href="index.html" class="btn btn-primary" style="margin-top:1.5rem">Mua sắm ngay</a>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = orders.map(order => {
+        const status      = statusMap[order.status] || { label: order.status, badge: '' };
+        const isCancelled = order.status === 'cancelled';
+
+        const stepIndex = timelineSteps.findIndex(s => s.key === order.status);
+        const timelineHTML = !isCancelled ? `
+          <div class="status-timeline">
+            ${timelineSteps.map((step, i) => {
+              let cls = '';
+              if (i < stepIndex) cls = 'done';
+              else if (i === stepIndex) cls = 'current';
+              return `
+                <div class="timeline-step ${cls}">
+                  <div class="timeline-dot">${cls === 'done' ? '✓' : step.icon}</div>
+                  <div class="timeline-label">${step.label}</div>
+                </div>`;
+            }).join('')}
+          </div>` : '';
+
+        return `
+          <div class="order-card">
+            <div class="order-card-header" onclick="toggleOrder(${order.id})">
+              <div>
+                <div class="order-id">Đơn hàng #${order.id}</div>
+                <div class="order-date">${formatDate(order.created_at)}</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:1rem">
+                <span class="badge ${status.badge}">${status.label}</span>
+                <span style="font-weight:700">${formatPrice(order.final_price)}</span>
+                <span style="color:var(--text-muted)" id="arrow-${order.id}">▼</span>
+              </div>
+            </div>
+            <div class="order-card-body" id="body-${order.id}">
+              ${timelineHTML}
+
+              ${order.items.map(item => `
+                <div class="order-item-row">
+                  <img src="${item.image_url || 'https://placehold.co/55x55/f5f5f7/999?text=IMG'}"
+                       alt="${item.name}"
+                       onerror="this.src='https://placehold.co/55x55/f5f5f7/999?text=IMG'"
+                       onclick="window.location.href='product.html?id=${item.product_id}'">
+                  <div class="order-item-info">
+                    <div class="order-item-name" onclick="window.location.href='product.html?id=${item.product_id}'">${item.name}</div>
+                    <div class="order-item-meta">${item.brand || ''} · x${item.quantity} · ${formatPrice(item.unit_price)}/cái</div>
+                  </div>
+                  <div class="order-item-price">${formatPrice(item.unit_price * item.quantity)}</div>
+                </div>`).join('')}
+
+              <div class="order-footer">
+                <div>
+                  ${order.voucher_code ? `<div style="font-size:0.78rem;color:var(--success)">🎟️ Mã: ${order.voucher_code} · Giảm ${formatPrice(order.discount_amount)}</div>` : ''}
+                </div>
+                <div class="order-total">Tổng: ${formatPrice(order.final_price)}</div>
+              </div>
+
+              <div class="order-shipping">
+                📦 <strong>${order.shipping_name}</strong> · ${order.shipping_phone}<br>
+                📍 ${order.shipping_address}
+                ${order.note ? `<br>📝 ${order.note}` : ''}
+              </div>
+
+              ${order.status === 'done' ? `
+                <div style="margin-top:1rem">
+                  ${order.items.map(item => `
+                    <button class="btn btn-outline btn-sm" style="margin-right:0.5rem;margin-top:0.5rem"
+                      onclick="window.location.href='product.html?id=${item.product_id}#reviews'">
+                      ⭐ Đánh giá ${item.name}
+                    </button>`).join('')}
+                </div>` : ''}
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function toggleOrder(id) {
+      const body  = document.getElementById(`body-${id}`);
+      const arrow = document.getElementById(`arrow-${id}`);
+      body.classList.toggle('open');
+      arrow.textContent = body.classList.contains('open') ? '▲' : '▼';
+    }
+
+    // ✅ Gọi sau khi tất cả hàm đã được khai báo
+    document.addEventListener('DOMContentLoaded', loadOrders);
+  </script>
+</body>
+</html>

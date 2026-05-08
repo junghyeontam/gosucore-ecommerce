@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Sản phẩm - GosuCore Admin</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div>
+        <div class="sidebar-logo-text">Gosu<span>Core</span></div>
+        <span class="sidebar-logo-sub">Admin Panel</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">Tổng quan</div>
+    <a href="index.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+
+    <div class="sidebar-section">Quản lý</div>
+    <a href="products.html" class="sidebar-item active">
+      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Sản phẩm
+    </a>
+    <a href="orders.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Đơn hàng
+    </a>
+    <a href="users.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Tài khoản
+    </a>
+    <a href="categories.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 17h7M17.5 14v7"/></svg>
+      Danh mục
+    </a>
+    <a href="vouchers.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Voucher
+    </a>
+
+    <div class="sidebar-section">Hệ thống</div>
+    <a href="../client/index.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Xem trang web
+    </a>
+    <div class="sidebar-item" onclick="logout()">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Đăng xuất
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-user-card">
+        <div class="admin-avatar" id="admin-avatar">A</div>
+        <div>
+          <div class="admin-user-name" id="admin-name">Admin</div>
+          <div class="admin-user-role" id="admin-role">Manager</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-left">
+        <h2>Quản lý Sản phẩm</h2>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Thêm sản phẩm</button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div class="toolbar">
+        <div class="toolbar-search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search" placeholder="Tìm tên sản phẩm, hãng..." oninput="debounceSearch()">
+        </div>
+        <select id="filter-category" onchange="loadProducts()">
+          <option value="">Tất cả danh mục</option>
+        </select>
+        <select id="filter-sort" onchange="loadProducts()">
+          <option value="newest">Mới nhất</option>
+          <option value="price_asc">Giá thấp → cao</option>
+          <option value="price_desc">Giá cao → thấp</option>
+        </select>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Ảnh</th>
+              <th>Tên sản phẩm</th>
+              <th>Danh mục</th>
+              <th>Giá</th>
+              <th>Tồn kho</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="products-table">
+            <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-3)">Đang tải...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="pagination" style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap"></div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL THÊM/SỬA SẢN PHẨM -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Thêm sản phẩm mới</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <input type="hidden" id="edit-id">
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tên sản phẩm *</label>
+        <input type="text" id="f-name" placeholder="Logitech G502 X Plus">
+      </div>
+      <div class="form-group">
+        <label>Hãng</label>
+        <input type="text" id="f-brand" placeholder="Logitech">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Giá (VNĐ) *</label>
+        <input type="number" id="f-price" placeholder="2490000">
+      </div>
+      <div class="form-group">
+        <label>Tồn kho *</label>
+        <input type="number" id="f-stock" placeholder="50">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Danh mục *</label>
+      <select id="f-category">
+        <option value="">Chọn danh mục</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Mô tả</label>
+      <textarea id="f-description" rows="3" placeholder="Mô tả sản phẩm..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>URL hình ảnh</label>
+      <input type="text" id="f-image" placeholder="https://...">
+    </div>
+
+    <div class="form-group">
+      <label>Thông số kỹ thuật (JSON)</label>
+      <textarea id="f-specs" rows="3" placeholder='{"sensor":"HERO 25K","dpi_max":25600}'></textarea>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem">
+      <button class="btn btn-light" onclick="closeModal()">Hủy</button>
+      <button class="btn btn-primary" id="save-btn" onclick="saveProduct()">Lưu sản phẩm</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+  if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
+    window.location.href = '../client/login.html';
+  }
+
+  const user = getUser();
+  if (user) {
+    document.getElementById('admin-name').textContent   = user.full_name || user.username;
+    document.getElementById('admin-role').textContent   = user.role === 'manager' ? 'Quản lý' : 'Nhân viên';
+    document.getElementById('admin-avatar').textContent = (user.full_name || user.username)[0].toUpperCase();
+  }
+
+  let currentPage = 1;
+  let searchTimer = null;
+  let categories  = [];
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadCategories();
+    await loadProducts();
+  });
+
+  const loadCategories = async () => {
+    try {
+      const data = await api.get('/products/categories');
+      categories = data.data;
+      const sel1 = document.getElementById('filter-category');
+      const sel2 = document.getElementById('f-category');
+      categories.forEach(c => {
+        sel1.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+        sel2.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+      });
+    } catch(e) {}
+  };
+
+  const loadProducts = async () => {
+    const tbody = document.getElementById('products-table');
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-3)">Đang tải...</td></tr>';
+
+    const search   = document.getElementById('search').value;
+    const category = document.getElementById('filter-category').value;
+    const sort     = document.getElementById('filter-sort').value;
+
+    let url = `/products?page=${currentPage}&limit=15&sort=${sort}`;
+    if (search)   url += `&search=${encodeURIComponent(search)}`;
+    if (category) url += `&category=${category}`;
+
+    try {
+      const data      = await api.get(url);
+      const products  = data.data;
+      const pag       = data.pagination;
+      const isManager = user?.role === 'manager';
+
+      if (products.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-3)">Không tìm thấy sản phẩm nào</td></tr>';
+        renderPagination(null);
+        return;
+      }
+
+      tbody.innerHTML = products.map(p => `
+        <tr>
+          <td>
+            <img class="product-img-thumb"
+                 src="${p.image_url || 'https://placehold.co/48x48/f5f5f7/999?text=IMG'}"
+                 alt="${p.name}"
+                 onerror="this.src='https://placehold.co/48x48/f5f5f7/999?text=IMG'">
+          </td>
+          <td>
+            <div style="font-weight:600;font-size:13px">${p.name}</div>
+            <div style="font-size:11px;color:var(--text-3)">${p.brand || ''}</div>
+          </td>
+          <td style="font-size:13px">${p.category_name}</td>
+          <td style="font-weight:600">${formatPrice(p.price)}</td>
+          <td>
+            <span class="stock-badge ${p.stock <= 5 ? 'stock-low' : 'stock-ok'}">
+              ${p.stock <= 5 ? '⚠️' : '✅'} ${p.stock}
+            </span>
+          </td>
+          <td>
+            <div class="action-btns">
+              <button class="btn btn-outline btn-sm" onclick="openEditModal(${p.id})">✏️ Sửa</button>
+              ${isManager ? `<button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id}, '${p.name.replace(/'/g,"\\'")}')">🗑️</button>` : ''}
+            </div>
+          </td>
+        </tr>`).join('');
+
+      renderPagination(pag);
+
+    } catch(e) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--red)">${e.message}</td></tr>`;
+    }
+  };
+
+  const renderPagination = (pag) => {
+    const el = document.getElementById('pagination');
+    if (!pag || pag.total_pages <= 1) { el.innerHTML = ''; return; }
+    let html = '';
+    if (pag.page > 1)
+      html += `<button class="btn btn-light btn-sm" onclick="changePage(${pag.page - 1})">← Trước</button>`;
+    for (let i = 1; i <= pag.total_pages; i++) {
+      if (Math.abs(i - pag.page) <= 2)
+        html += `<button class="btn btn-sm ${i === pag.page ? 'btn-primary' : 'btn-light'}" onclick="changePage(${i})">${i}</button>`;
+    }
+    if (pag.page < pag.total_pages)
+      html += `<button class="btn btn-light btn-sm" onclick="changePage(${pag.page + 1})">Tiếp →</button>`;
+    el.innerHTML = html;
+  };
+
+  const changePage = (p) => { currentPage = p; loadProducts(); };
+
+  const debounceSearch = () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => { currentPage = 1; loadProducts(); }, 500);
+  };
+
+  const openAddModal = () => {
+    document.getElementById('modal-title').textContent = 'Thêm sản phẩm mới';
+    document.getElementById('save-btn').textContent    = 'Lưu sản phẩm';
+    document.getElementById('edit-id').value = '';
+    ['name','brand','price','stock','description','image','specs'].forEach(f => {
+      document.getElementById(`f-${f}`).value = '';
+    });
+    document.getElementById('f-category').value = '';
+    document.getElementById('product-modal').classList.add('active');
+  };
+
+  const openEditModal = async (id) => {
+    try {
+      const data = await api.get(`/products/${id}`);
+      const p    = data.data;
+      document.getElementById('modal-title').textContent  = 'Chỉnh sửa sản phẩm';
+      document.getElementById('save-btn').textContent     = 'Lưu thay đổi';
+      document.getElementById('edit-id').value            = p.id;
+      document.getElementById('f-name').value             = p.name || '';
+      document.getElementById('f-brand').value            = p.brand || '';
+      document.getElementById('f-price').value            = p.price || '';
+      document.getElementById('f-stock').value            = p.stock || '';
+      document.getElementById('f-category').value         = p.category_id || '';
+      document.getElementById('f-description').value      = p.description || '';
+      document.getElementById('f-image').value            = p.image_url || '';
+      document.getElementById('f-specs').value            = p.specs || '';
+      document.getElementById('product-modal').classList.add('active');
+    } catch(e) {
+      toast.error('Lỗi tải thông tin sản phẩm!');
+    }
+  };
+
+  const closeModal = () => {
+    document.getElementById('product-modal').classList.remove('active');
+  };
+
+  const saveProduct = async () => {
+    const id    = document.getElementById('edit-id').value;
+    const name  = document.getElementById('f-name').value.trim();
+    const price = document.getElementById('f-price').value;
+    const stock = document.getElementById('f-stock').value;
+    const cat   = document.getElementById('f-category').value;
+    const btn   = document.getElementById('save-btn');
+
+    if (!name || !price || !cat) {
+      toast.error('Vui lòng điền đủ tên, giá và danh mục!');
+      return;
+    }
+
+    const body = {
+      name,
+      brand:       document.getElementById('f-brand').value.trim(),
+      price:       parseFloat(price),
+      stock:       parseInt(stock) || 0,
+      category_id: parseInt(cat),
+      description: document.getElementById('f-description').value.trim(),
+      image_url:   document.getElementById('f-image').value.trim(),
+      specs:       document.getElementById('f-specs').value.trim(),
+    };
+
+    btn.textContent = 'Đang lưu...';
+    btn.disabled    = true;
+
+    try {
+      if (id) {
+        await api.put(`/products/${id}`, body);
+        toast.success('Cập nhật sản phẩm thành công!');
+      } else {
+        await api.post('/products', body);
+        toast.success('Thêm sản phẩm thành công!');
+      }
+      closeModal();
+      loadProducts();
+    } catch(e) {
+      toast.error(e.message);
+    } finally {
+      btn.textContent = id ? 'Lưu thay đổi' : 'Lưu sản phẩm';
+      btn.disabled    = false;
+    }
+  };
+
+  const deleteProduct = async (id, name) => {
+    if (!confirm(`Xóa sản phẩm "${name}"?\nSản phẩm sẽ bị ẩn khỏi cửa hàng.`)) return;
+    try {
+      await api.delete(`/products/${id}`);
+      toast.success('Đã xóa sản phẩm!');
+      loadProducts();
+    } catch(e) {
+      toast.error(e.message);
+    }
+  };
+</script>
+</body>
+</html>

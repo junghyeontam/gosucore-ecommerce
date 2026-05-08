@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Danh mục - GosuCore Admin</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div>
+        <div class="sidebar-logo-text">Gosu<span>Core</span></div>
+        <span class="sidebar-logo-sub">Admin Panel</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">Tổng quan</div>
+    <a href="index.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+
+    <div class="sidebar-section">Quản lý</div>
+    <a href="products.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Sản phẩm
+    </a>
+    <a href="orders.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Đơn hàng
+    </a>
+    <a href="users.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Tài khoản
+    </a>
+    <a href="categories.html" class="sidebar-item active">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 17h7M17.5 14v7"/></svg>
+      Danh mục
+    </a>
+    <a href="vouchers.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Voucher
+    </a>
+
+    <div class="sidebar-section">Hệ thống</div>
+    <a href="../client/index.html" class="sidebar-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Xem trang web
+    </a>
+    <div class="sidebar-item" onclick="logout()">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Đăng xuất
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-user-card">
+        <div class="admin-avatar" id="admin-avatar">A</div>
+        <div>
+          <div class="admin-user-name" id="admin-name">Admin</div>
+          <div class="admin-user-role" id="admin-role">Manager</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-left"><h2>Quản lý Danh mục</h2></div>
+      <div class="topbar-right">
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Thêm danh mục</button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div id="stats-row" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:18px"></div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tên danh mục</th>
+              <th>Mô tả</th>
+              <th>Số sản phẩm</th>
+              <th>Ngày tạo</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="categories-table">
+            <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-3)">Đang tải...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL THÊM/SỬA DANH MỤC -->
+<div class="modal-overlay" id="cat-modal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <h3 id="modal-title">Thêm danh mục mới</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <input type="hidden" id="edit-id">
+    <div class="form-group">
+      <label>Tên danh mục *</label>
+      <input type="text" id="f-name" placeholder="VD: Chuột Gaming">
+    </div>
+    <div class="form-group">
+      <label>Mô tả</label>
+      <textarea id="f-desc" rows="3" placeholder="Mô tả ngắn về danh mục này..."></textarea>
+    </div>
+    <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem">
+      <button class="btn btn-light" onclick="closeModal()">Hủy</button>
+      <button class="btn btn-primary" id="save-btn" onclick="saveCategory()">Lưu danh mục</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL XÁC NHẬN XÓA -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <h3>Xác nhận xóa</h3>
+      <button class="modal-close" onclick="closeDeleteModal()">✕</button>
+    </div>
+    <p style="color:var(--text-2);font-size:13px;margin-bottom:1.5rem" id="delete-msg"></p>
+    <div style="display:flex;gap:0.75rem;justify-content:flex-end">
+      <button class="btn btn-light" onclick="closeDeleteModal()">Hủy</button>
+      <button class="btn btn-danger" id="confirm-delete-btn">Xóa danh mục</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+  if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
+    window.location.href = '../client/login.html';
+  }
+
+  const user = getUser();
+  if (user) {
+    document.getElementById('admin-name').textContent   = user.full_name || user.username;
+    document.getElementById('admin-role').textContent   = user.role === 'manager' ? 'Quản lý' : 'Nhân viên';
+    document.getElementById('admin-avatar').textContent = (user.full_name || user.username)[0].toUpperCase();
+  }
+
+  const catIcons = {
+    'Chuột Gaming':    '🖱️',
+    'Bàn phím Gaming': '⌨️',
+    'Tai nghe Gaming': '🎧',
+    'Màn hình Gaming': '🖥️',
+    'Lót chuột':       '🟫',
+    'Ghế Gaming':      '🪑',
+  };
+
+  document.addEventListener('DOMContentLoaded', () => { loadCategories(); });
+
+  const loadCategories = async () => {
+    const tbody = document.getElementById('categories-table');
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-3)">Đang tải...</td></tr>';
+
+    try {
+      const data = await api.get('/categories');
+      const cats = data.data;
+      const isManager = user?.role === 'manager';
+
+      const totalProducts = cats.reduce((s, c) => s + c.product_count, 0);
+      document.getElementById('stats-row').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">🗂️ Tổng danh mục</div>
+          <div class="stat-value">${cats.length}</div>
+          <div class="stat-sub">Đang quản lý</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">📦 Tổng sản phẩm</div>
+          <div class="stat-value">${totalProducts}</div>
+          <div class="stat-sub">Trong tất cả danh mục</div>
+        </div>
+        ${cats.slice(0,3).map(c => `
+          <div class="stat-card">
+            <div class="stat-label">${catIcons[c.name] || '📁'} ${c.name}</div>
+            <div class="stat-value">${c.product_count}</div>
+            <div class="stat-sub">sản phẩm</div>
+          </div>`).join('')}
+      `;
+
+      if (cats.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-3)">Chưa có danh mục nào</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = cats.map(c => `
+        <tr>
+          <td style="font-weight:600;color:var(--text-3)">#${c.id}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:1.4rem">${catIcons[c.name] || '📁'}</span>
+              <div>
+                <div style="font-weight:600">${c.name}</div>
+                <div style="font-size:11px;color:var(--text-3)">${c.slug}</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:13px;color:var(--text-2);max-width:200px">
+            ${c.description || '<span style="color:var(--text-3)">Chưa có mô tả</span>'}
+          </td>
+          <td>
+            <span style="font-weight:600">${c.product_count}</span>
+            <span style="font-size:11px;color:var(--text-3)"> sản phẩm</span>
+          </td>
+          <td style="font-size:12px;color:var(--text-2)">${formatDate(c.created_at)}</td>
+          <td>
+            <div class="action-btns">
+              <button class="btn btn-outline btn-sm" onclick="openEditModal(${c.id}, '${c.name.replace(/'/g,"\\'")}', '${(c.description||'').replace(/'/g,"\\'")}')">✏️ Sửa</button>
+              ${isManager ? `<button class="btn btn-danger btn-sm" onclick="confirmDelete(${c.id}, '${c.name.replace(/'/g,"\\'")}', ${c.product_count})">🗑️ Xóa</button>` : ''}
+              <a href="products.html" class="btn btn-light btn-sm">📦 Xem SP</a>
+            </div>
+          </td>
+        </tr>`).join('');
+
+    } catch(e) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--red)">${e.message}</td></tr>`;
+    }
+  };
+
+  const openAddModal = () => {
+    document.getElementById('modal-title').textContent = 'Thêm danh mục mới';
+    document.getElementById('save-btn').textContent    = 'Thêm danh mục';
+    document.getElementById('edit-id').value = '';
+    document.getElementById('f-name').value  = '';
+    document.getElementById('f-desc').value  = '';
+    document.getElementById('cat-modal').classList.add('active');
+  };
+
+  const openEditModal = (id, name, desc) => {
+    document.getElementById('modal-title').textContent = 'Chỉnh sửa danh mục';
+    document.getElementById('save-btn').textContent    = 'Lưu thay đổi';
+    document.getElementById('edit-id').value = id;
+    document.getElementById('f-name').value  = name;
+    document.getElementById('f-desc').value  = desc;
+    document.getElementById('cat-modal').classList.add('active');
+  };
+
+  const closeModal = () => { document.getElementById('cat-modal').classList.remove('active'); };
+
+  const saveCategory = async () => {
+    const id   = document.getElementById('edit-id').value;
+    const name = document.getElementById('f-name').value.trim();
+    const desc = document.getElementById('f-desc').value.trim();
+    const btn  = document.getElementById('save-btn');
+    if (!name) { toast.error('Vui lòng nhập tên danh mục!'); return; }
+    btn.textContent = 'Đang lưu...'; btn.disabled = true;
+    try {
+      if (id) {
+        await api.put(`/categories/${id}`, { name, description: desc });
+        toast.success('Cập nhật danh mục thành công!');
+      } else {
+        await api.post('/categories', { name, description: desc });
+        toast.success('Thêm danh mục thành công!');
+      }
+      closeModal(); loadCategories();
+    } catch(e) { toast.error(e.message); }
+    finally { btn.textContent = id ? 'Lưu thay đổi' : 'Thêm danh mục'; btn.disabled = false; }
+  };
+
+  const confirmDelete = (id, name, productCount) => {
+    const msg = productCount > 0
+      ? `Danh mục "${name}" còn ${productCount} sản phẩm. Không thể xóa! Hãy chuyển sản phẩm trước.`
+      : `Bạn có chắc muốn xóa danh mục "${name}"? Hành động này không thể hoàn tác.`;
+    document.getElementById('delete-msg').textContent = msg;
+    const btn = document.getElementById('confirm-delete-btn');
+    if (productCount > 0) { btn.style.display = 'none'; }
+    else { btn.style.display = 'block'; btn.onclick = () => deleteCategory(id); }
+    document.getElementById('delete-modal').classList.add('active');
+  };
+
+  const closeDeleteModal = () => { document.getElementById('delete-modal').classList.remove('active'); };
+
+  const deleteCategory = async (id) => {
+    try {
+      await api.delete(`/categories/${id}`);
+      toast.success('Đã xóa danh mục!');
+      closeDeleteModal(); loadCategories();
+    } catch(e) { toast.error(e.message); closeDeleteModal(); }
+  };
+</script>
+</body>
+</html>
