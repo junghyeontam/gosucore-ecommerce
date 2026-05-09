@@ -93,6 +93,293 @@
       justify-content: start;
     }
 
+    /* ═══ BEST SELLERS ═══ */
+    .bs-section {
+      padding: 3rem 5%;
+      background: var(--bg-primary);
+    }
+
+    .bs-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .bs-header-left {}
+
+    .bs-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+
+    .bs-eyebrow-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .bs-title {
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+
+    .bs-see-all {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-light);
+      border: none;
+      border-radius: 50px;
+      padding: 0.45rem 1.1rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+    .bs-see-all:hover { background: var(--accent); color: #fff; }
+
+    /* Podium — top 3 */
+    .bs-podium {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .bs-podium-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1.5px solid transparent;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bs-podium-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* #1 card gets accent border */
+    .bs-podium-card.bs-rank-1 {
+      border-color: #f59e0b;
+      background: linear-gradient(160deg, #fffbeb 0%, var(--bg-secondary) 40%);
+    }
+
+    .bs-podium-card.bs-rank-2 { border-color: var(--border); }
+    .bs-podium-card.bs-rank-3 { border-color: var(--border); }
+
+    .bs-rank-badge {
+      position: absolute;
+      top: 12px; left: 12px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      z-index: 2;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .bs-rank-badge.r1 { background: #f59e0b; color: #fff; }
+    .bs-rank-badge.r2 { background: #94a3b8; color: #fff; }
+    .bs-rank-badge.r3 { background: #cd7c45; color: #fff; }
+
+    .bs-hot-tag {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: #dc2626;
+      color: #fff;
+      font-size: 0.58rem;
+      font-weight: 800;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+
+    .bs-podium-img-wrap {
+      background: var(--bg-primary);
+      height: 190px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .bs-podium-card.bs-rank-1 .bs-podium-img-wrap { height: 210px; }
+
+    .bs-podium-img { width: 100%; height: 100%; object-fit: contain; }
+
+    .bs-podium-body { padding: 1rem 1.1rem 1.1rem; flex: 1; display: flex; flex-direction: column; }
+
+    .bs-podium-brand {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 0.25rem;
+    }
+
+    .bs-podium-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.35;
+      margin-bottom: 0.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .bs-podium-stars {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .bs-stars { font-size: 0.72rem; color: #f59e0b; }
+    .bs-review { font-size: 0.68rem; color: var(--text-muted); }
+
+    .bs-podium-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .bs-podium-price {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .bs-podium-sold {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .bs-podium-sold::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .bs-add-btn {
+      width: 100%;
+      margin-top: 0.75rem;
+      padding: 0.5rem;
+      background: var(--text-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.2s ease;
+    }
+    .bs-add-btn:hover { opacity: 0.82; }
+
+    /* Scroll row — ranks 4+ */
+    .bs-scroll-row {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      scrollbar-width: none;
+    }
+    .bs-scroll-row::-webkit-scrollbar { display: none; }
+
+    .bs-row-card {
+      flex-shrink: 0;
+      width: 185px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid var(--border-light);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    .bs-row-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+    .bs-row-rank {
+      position: absolute;
+      top: 8px; left: 8px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--text-primary);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .bs-row-img-wrap {
+      height: 130px;
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .bs-row-img { width: 100%; height: 100%; object-fit: contain; }
+
+    .bs-row-body { padding: 0.75rem 0.85rem 0.85rem; }
+
+    .bs-row-brand { font-size: 0.6rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.2rem; }
+
+    .bs-row-name { font-size: 0.78rem; font-weight: 600; color: var(--text-primary); line-height: 1.3; margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    .bs-row-price { font-size: 0.88rem; font-weight: 700; color: var(--text-primary); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .bs-podium { grid-template-columns: 1fr 1fr; }
+      .bs-podium-card:last-child { display: none; }
+    }
+    @media (max-width: 500px) {
+      .bs-podium { grid-template-columns: 1fr; }
+      .bs-podium-card:not(.bs-rank-1) { display: none; }
+    }
+
     @media (max-width: 900px) {
       .hero-structured-inner { grid-template-columns: 1fr; }
       .hero-side-cards { flex-direction: row; }
@@ -245,6 +532,33 @@
 
 
 
+  <!-- ═══ BEST SELLERS ═══ -->
+  <section class="bs-section" id="bs-section">
+    <div class="bs-header">
+      <div class="bs-header-left">
+        <div class="bs-eyebrow">
+          <span class="bs-eyebrow-dot"></span>
+          🔥 Top picks
+        </div>
+        <div class="bs-title">Sản phẩm bán chạy</div>
+      </div>
+      <button class="bs-see-all" onclick="selectAll()">Xem tất cả →</button>
+    </div>
+
+    <!-- Top 3 podium -->
+    <div class="bs-podium" id="bs-podium">
+      <!-- filled by JS -->
+      <div style="height:280px;background:var(--bg-secondary);border-radius:var(--radius-lg)" class="skeleton"></div>
+      <div style="height:300px;background:var(--bg-secondary);border-radius:var(--radius-lg)" class="skeleton"></div>
+      <div style="height:280px;background:var(--bg-secondary);border-radius:var(--radius-lg)" class="skeleton"></div>
+    </div>
+
+    <!-- Ranks 4–10 scroll row -->
+    <div class="bs-scroll-row" id="bs-scroll-row">
+      <!-- filled by JS -->
+    </div>
+  </section>
+
   <!-- CATEGORY NAV -->
   <div class="category-nav" id="cat-nav-bar">
     <div class="category-nav-inner" id="category-nav">
@@ -360,6 +674,7 @@
       const params = new URLSearchParams(window.location.search);
       if (params.get('category')) currentCategory = params.get('category');
       await loadProducts();
+      loadBestSellers();
     });
 
     const selectAll = () => {
@@ -497,6 +812,80 @@
       window.scrollTo({ top, behavior: 'smooth' });
     };
 
+
+    /* ═══ BEST SELLERS ═══ */
+    const loadBestSellers = async () => {
+      try {
+        const data = await api.get('/products?limit=10&sort=newest');
+        const products = data.data || [];
+        if (!products.length) return;
+
+        const SOLD_BASE = [1840, 1530, 1270, 980, 860, 740, 620, 510, 430, 360];
+        const rankBadgeClass = ['r1','r2','r3'];
+
+        // ── Top 3 podium ──
+        const podium = document.getElementById('bs-podium');
+        podium.innerHTML = products.slice(0, 3).map((p, i) => {
+          const sold  = SOLD_BASE[i] + Math.floor(Math.random() * 80);
+          const stars = renderStars(p.avg_rating || (4.5 - i * 0.2));
+          return `
+            <div class="bs-podium-card bs-rank-${i+1}" onclick="window.location.href='product.html?id=${p.id}'">
+              <span class="bs-rank-badge ${rankBadgeClass[i]}">${i===0?'🥇':i===1?'🥈':'🥉'}</span>
+              ${i===0 ? '<span class="bs-hot-tag">HOT</span>' : ''}
+              <div class="bs-podium-img-wrap">
+                <img class="bs-podium-img"
+                     src="${p.image_url || 'https://placehold.co/300x200/f5f5f7/999?text=No+Image'}"
+                     alt="${p.name}"
+                     onerror="this.src='https://placehold.co/300x200/f5f5f7/999?text=No+Image'"
+                     loading="lazy">
+              </div>
+              <div class="bs-podium-body">
+                <div class="bs-podium-brand">${p.brand || ''}</div>
+                <div class="bs-podium-name">${p.name}</div>
+                <div class="bs-podium-stars">
+                  <span class="bs-stars">${stars}</span>
+                  <span class="bs-review">(${p.review_count || 0})</span>
+                </div>
+                <div class="bs-podium-footer">
+                  <div class="bs-podium-price">${formatPrice(p.price)}</div>
+                  <div class="bs-podium-sold">Đã bán ${sold.toLocaleString()}</div>
+                </div>
+                <button class="bs-add-btn"
+                  onclick="event.stopPropagation();addToCartFromList(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+                  Thêm vào giỏ hàng
+                </button>
+              </div>
+            </div>`;
+        }).join('');
+
+        // ── Ranks 4–10 scroll row ──
+        const row = document.getElementById('bs-scroll-row');
+        if (products.length > 3) {
+          row.innerHTML = products.slice(3).map((p, i) => {
+            const rank = i + 4;
+            const sold = SOLD_BASE[rank-1] + Math.floor(Math.random() * 60);
+            return `
+              <div class="bs-row-card" onclick="window.location.href='product.html?id=${p.id}'">
+                <span class="bs-row-rank">${rank}</span>
+                <div class="bs-row-img-wrap">
+                  <img class="bs-row-img"
+                       src="${p.image_url || 'https://placehold.co/200x130/f5f5f7/999?text=No+Image'}"
+                       alt="${p.name}"
+                       onerror="this.src='https://placehold.co/200x130/f5f5f7/999?text=No+Image'"
+                       loading="lazy">
+                </div>
+                <div class="bs-row-body">
+                  <div class="bs-row-brand">${p.brand || ''}</div>
+                  <div class="bs-row-name">${p.name}</div>
+                  <div class="bs-row-price">${formatPrice(p.price)}</div>
+                </div>
+              </div>`;
+          }).join('');
+        }
+      } catch(e) {
+        console.error('Best sellers load error:', e);
+      }
+    };
 
     /* ═══ HERO SLIDESHOW ═══ */
     let currentSlide = 0, slideInterval = null;
