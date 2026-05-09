@@ -87,6 +87,9 @@
     .hero-feature-title { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; }
     .hero-feature-sub { font-size: 0.72rem; color: var(--text-secondary); white-space: nowrap; }
 
+    /* Fix empty ghost slots: auto-fit collapses empty tracks, auto-fill doesn't */
+    .products-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important; }
+
     @media (max-width: 900px) {
       .hero-structured-inner { grid-template-columns: 1fr; }
       .hero-side-cards { flex-direction: row; }
@@ -297,7 +300,10 @@
       </div>
       <div class="footer-col">
         <h4>Sản phẩm</h4>
-        <a href="#">Chuột Gaming</a><a href="#">Bàn Phím</a><a href="#">Tai Nghe</a><a href="#">Màn Hình</a>
+        <a href="#" onclick="event.preventDefault();filterCategory(1,'Chuột Gaming',null)">Chuột Gaming</a>
+        <a href="#" onclick="event.preventDefault();filterCategory(2,'Bàn phím Gaming',null)">Bàn Phím</a>
+        <a href="#" onclick="event.preventDefault();filterCategory(3,'Tai nghe Gaming',null)">Tai Nghe</a>
+        <a href="#" onclick="event.preventDefault();filterCategory(4,'Màn hình Gaming',null)">Màn Hình</a>
       </div>
       <div class="footer-col">
         <h4>Hỗ trợ</h4>
@@ -391,7 +397,16 @@
       if (isLoading) return;
       currentCategory = id; currentCatName = name; currentPage = 1;
       window.history.pushState({}, '', `${window.location.pathname}?category=${id}`);
-      setActiveNav(el); document.getElementById('section-title').textContent = name; scrollAndLoad();
+      // highlight matching category nav item (el may be null when called from footer)
+      document.querySelectorAll('.category-nav-item').forEach(item => {
+        if (String(item.dataset.id) === String(id)) { setActiveNav(item); }
+      });
+      document.getElementById('section-title').textContent = name;
+      // always scroll to products section (important when called from footer)
+      const s = document.getElementById('products-section');
+      const top = s.getBoundingClientRect().top + window.scrollY - 120;
+      window.scrollTo({ top, behavior: 'smooth' });
+      setTimeout(loadProducts, 480);
     };
 
     const clickNavCategory = (id, name) => {
@@ -485,7 +500,7 @@
     };
     const nextSlide = () => goToSlide((currentSlide + 1) % totalSlides);
     const prevSlide = () => goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
-    const startSlideshow = () => { slideInterval = setInterval(nextSlide, 3000); };
+    const startSlideshow = () => { slideInterval = setInterval(nextSlide, 4500); };
     const stopSlideshow  = () => clearInterval(slideInterval);
     const heroBanner = document.querySelector('.hero-main-banner');
     if (heroBanner) {
