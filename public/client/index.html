@@ -135,7 +135,7 @@
 
   <!-- ANNOUNCEMENT BAR -->
   <div class="announcement-bar" id="announce-bar">
-    Miễn phí vận chuyển cho đơn hàng từ 500.000₫ &nbsp;|&nbsp; <a href="#">Mua ngay →</a>
+    Miễn phí vận chuyển cho đơn hàng từ 500.000₫ &nbsp;|&nbsp; <a href="#" onclick="event.preventDefault();scrollToProducts()">Mua ngay →</a>
   </div>
 
   <!-- HERO -->
@@ -487,7 +487,12 @@
     };
 
     const changePage = (p) => { currentPage = p; const s = document.getElementById('products-section'); window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - 120, behavior:'smooth' }); setTimeout(loadProducts, 400); };
-    const scrollToProducts = () => { const s = document.getElementById('products-section'); window.scrollTo({ top: s.getBoundingClientRect().top + window.scrollY - 120, behavior:'smooth' }); };
+    const scrollToProducts = () => {
+      const s = document.getElementById('products-section');
+      if (!s) return;
+      const top = s.offsetTop - 120;
+      window.scrollTo({ top, behavior: 'smooth' });
+    };
 
 
     /* ═══ HERO SLIDESHOW ═══ */
@@ -500,7 +505,7 @@
     };
     const nextSlide = () => goToSlide((currentSlide + 1) % totalSlides);
     const prevSlide = () => goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
-    const startSlideshow = () => { slideInterval = setInterval(nextSlide, 4500); };
+    const startSlideshow = () => { slideInterval = setInterval(nextSlide, 3000); };
     const stopSlideshow  = () => clearInterval(slideInterval);
     const heroBanner = document.querySelector('.hero-main-banner');
     if (heroBanner) {
