@@ -6,26 +6,36 @@
 const sql = require('mssql');
 require('dotenv').config();
 
+// Kiểm tra có dùng Windows Authentication không
+const useWindowsAuth = process.env.DB_TRUSTED_CONNECTION === 'true'
+  || (!process.env.DB_USER && !process.env.DB_PASSWORD);
+
 // Cấu hình kết nối lấy từ file .env
 const dbConfig = {
   server: process.env.DB_SERVER || 'localhost',
   port: parseInt(process.env.DB_PORT) || 1433,
-  user: process.env.DB_USER || 'sa',
-  password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME || 'GosuCoreDB',
   options: {
     encrypt: process.env.DB_ENCRYPT === 'true',
-    trustServerCertificate: process.env.DB_TRUST_CERT === 'true',
+    trustServerCertificate: process.env.DB_TRUST_CERT === 'true' || true,
     enableArithAbort: true,
+    // Bật Windows Authentication nếu không có user/password
+    trustedConnection: useWindowsAuth,
   },
   pool: {
-    max: 10,       // Tối đa 10 kết nối đồng thời
+    max: 10,
     min: 0,
     idleTimeoutMillis: 30000,
   },
   connectionTimeout: 15000,
   requestTimeout: 30000,
 };
+
+// Chỉ thêm user/password nếu dùng SQL Server Authentication
+if (!useWindowsAuth) {
+  dbConfig.user     = process.env.DB_USER || 'sa';
+  dbConfig.password = process.env.DB_PASSWORD;
+}
 
 // Biến lưu pool kết nối (dùng chung toàn app)
 let pool = null;
@@ -34,14 +44,15 @@ let pool = null;
 const connectDB = async () => {
   try {
     pool = await sql.connect(dbConfig);
-    console.log(`✅ Kết nối SQL Server thành công!`);
+    const authMode = useWindowsAuth ? 'Windows Authentication' : 'SQL Server Authentication';
+    console.log(`✅ Kết nối SQL Server thành công! (${authMode})`);
     console.log(`   Database: ${process.env.DB_NAME}`);
     console.log(`   Server:   ${process.env.DB_SERVER}:${process.env.DB_PORT}`);
     return pool;
   } catch (error) {
     console.error('❌ Lỗi kết nối SQL Server:', error.message);
     console.error('   Kiểm tra lại thông tin trong file .env');
-    process.exit(1); // Dừng server nếu không kết nối được DB
+    process.exit(1);
   }
 };
 
