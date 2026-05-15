@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chính sách đổi trả - GosuCore</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .support-hero { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); padding: 3.5rem 5%; color: #fff; }
+    .support-hero-eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.65); margin-bottom: 0.5rem; }
+    .support-hero h1 { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.75rem; }
+    .support-hero p { color: rgba(255,255,255,0.75); font-size: 1rem; max-width: 520px; line-height: 1.7; }
+    .support-content { max-width: 820px; margin: 0 auto; padding: 3rem 5%; }
+    .support-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.5rem; border: 1px solid var(--border-light); }
+    .support-card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-light); }
+    .support-card-icon { width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--accent-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .support-card-icon svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .support-card-title { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+    .support-card-sub { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.15rem; }
+    .support-list { list-style: none; padding: 0; margin: 0; }
+    .support-list li { display: flex; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border-light); font-size: 0.88rem; color: var(--text-primary); line-height: 1.5; }
+    .support-list li:last-child { border-bottom: none; padding-bottom: 0; }
+    .support-list li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .support-list li.no::before { content: '✗'; color: var(--danger); }
+    .badge-ok { display: inline-block; background: #f0fdf4; color: #16a34a; font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.6rem; border-radius: 50px; margin-left: 0.4rem; }
+    .badge-no { display: inline-block; background: #fff1f2; color: var(--danger); font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.6rem; border-radius: 50px; margin-left: 0.4rem; }
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 0.5rem; }
+    .step-item { background: var(--bg-primary); border-radius: var(--radius-md); padding: 1.1rem; text-align: center; border: 1px solid var(--border-light); }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.6rem; }
+    .step-title { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+    .step-desc { font-size: 0.73rem; color: var(--text-secondary); line-height: 1.4; }
+    .contact-strip { background: var(--accent); border-radius: var(--radius-lg); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .contact-strip-text { color: #fff; }
+    .contact-strip-text strong { font-size: 1rem; display: block; margin-bottom: 0.2rem; }
+    .contact-strip-text span { font-size: 0.83rem; color: rgba(255,255,255,0.8); }
+    .contact-strip-btn { background: #fff; color: var(--accent); border: none; border-radius: 50px; padding: 0.6rem 1.5rem; font-size: 0.85rem; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; text-decoration: none; display: inline-block; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">Gosu<span style="color:var(--accent)">Core</span></a>
+    <div class="navbar-actions">
+      <div class="navbar-icon cart-icon" onclick="window.location.href='cart.html'">🛒<span class="cart-count">0</span></div>
+    </div>
+  </nav>
+
+  <div class="support-hero">
+    <div class="support-hero-eyebrow">Hỗ trợ khách hàng</div>
+    <h1>Chính sách đổi trả</h1>
+    <p>GosuCore cam kết mang lại trải nghiệm mua sắm tốt nhất. Nếu sản phẩm không đúng như mô tả, chúng tôi sẵn sàng hỗ trợ đổi trả.</p>
+  </div>
+
+  <div class="support-content">
+
+    <!-- Thời gian đổi trả -->
+    <div class="support-card">
+      <div class="support-card-header">
+        <div class="support-card-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="support-card-title">Thời gian đổi trả</div>
+          <div class="support-card-sub">Áp dụng kể từ ngày nhận hàng</div>
+        </div>
+      </div>
+      <div class="steps-grid">
+        <div class="step-item">
+          <div class="step-num" style="background:#16a34a">7</div>
+          <div class="step-title">Đổi hàng</div>
+          <div class="step-desc">Trong 7 ngày nếu hàng lỗi do nhà sản xuất</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:#f59e0b">3</div>
+          <div class="step-title">Trả hàng</div>
+          <div class="step-desc">Trong 3 ngày nếu nhận sai sản phẩm</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--accent)">30</div>
+          <div class="step-title">Bảo hành</div>
+          <div class="step-desc">Lỗi do nhà sản xuất trong 30 ngày đầu</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Điều kiện được đổi trả -->
+    <div class="support-card">
+      <div class="support-card-header">
+        <div class="support-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div>
+          <div class="support-card-title">Điều kiện được đổi trả</div>
+          <div class="support-card-sub">Vui lòng đọc kỹ trước khi gửi yêu cầu</div>
+        </div>
+      </div>
+      <ul class="support-list">
+        <li>Sản phẩm còn nguyên hộp, đầy đủ phụ kiện, tem nhãn chưa bị bóc <span class="badge-ok">Được đổi</span></li>
+        <li>Sản phẩm bị lỗi kỹ thuật, hỏng hóc do lỗi sản xuất <span class="badge-ok">Được đổi</span></li>
+        <li>Giao sai sản phẩm, sai màu sắc, sai cấu hình <span class="badge-ok">Được đổi</span></li>
+        <li class="no">Sản phẩm đã qua sử dụng, có dấu hiệu trầy xước, hư hỏng do người dùng <span class="badge-no">Không đổi</span></li>
+        <li class="no">Sản phẩm đã hết thời hạn đổi trả 7 ngày <span class="badge-no">Không đổi</span></li>
+        <li class="no">Mất hộp, phụ kiện hoặc tem bảo hành bị bóc <span class="badge-no">Không đổi</span></li>
+      </ul>
+    </div>
+
+    <!-- Quy trình đổi trả -->
+    <div class="support-card">
+      <div class="support-card-header">
+        <div class="support-card-icon">
+          <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+        </div>
+        <div>
+          <div class="support-card-title">Quy trình đổi trả</div>
+          <div class="support-card-sub">4 bước đơn giản</div>
+        </div>
+      </div>
+      <div class="steps-grid">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-title">Liên hệ</div>
+          <div class="step-desc">Gọi hotline 1900 1234 hoặc email trong 7 ngày</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-title">Xác nhận</div>
+          <div class="step-desc">Nhân viên xác nhận yêu cầu và hướng dẫn gửi hàng</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-title">Gửi hàng</div>
+          <div class="step-desc">Đóng gói cẩn thận và gửi về địa chỉ GosuCore</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-title">Hoàn tất</div>
+          <div class="step-desc">Nhận hàng mới hoặc hoàn tiền trong 3–5 ngày</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact strip -->
+    <div class="contact-strip">
+      <div class="contact-strip-text">
+        <strong>Cần hỗ trợ đổi trả ngay?</strong>
+        <span>Hotline: 1900 1234 · Email: support@gosucore.vn · Thứ 2 – Thứ 7, 8:00 – 18:00</span>
+      </div>
+      <a href="contact.html" class="contact-strip-btn">Liên hệ ngay</a>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="footer-bottom" style="justify-content:center;gap:2rem">
+      <a href="index.html" style="color:var(--text-muted);font-size:0.82rem">← Về trang chủ</a>
+      <span style="color:var(--text-muted);font-size:0.78rem">© 2026 GosuCore. All rights reserved.</span>
+      <a href="purchase-guide.html" style="color:var(--text-muted);font-size:0.82rem">Hướng dẫn mua hàng</a>
+    </div>
+  </footer>
+  <script src="../js/auth.js"></script>
+</body>
+</html>

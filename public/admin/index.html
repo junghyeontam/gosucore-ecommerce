@@ -9,157 +9,56 @@
   <link rel="stylesheet" href="../css/admin.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
-    /* Override: bỏ toàn bộ emoji, dùng text + SVG thuần */
     .stat-card { position: relative; overflow: hidden; }
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .stat-card:hover::before { opacity: 1; }
-    .stat-card.revenue::before { background: #2563eb; }
-    .stat-card.orders::before  { background: #7c3aed; }
-    .stat-card.customers::before { background: #16a34a; }
-    .stat-card.products::before  { background: #d97706; }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; opacity:0; transition:opacity 0.2s; }
+    .stat-card:hover::before { opacity:1; }
+    .stat-card.revenue::before   { background:#2563eb; }
+    .stat-card.orders::before    { background:#7c3aed; }
+    .stat-card.customers::before { background:#16a34a; }
+    .stat-card.products::before  { background:#d97706; }
 
-    .stat-icon-box {
-      width: 36px; height: 36px;
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 14px;
-    }
-    .stat-icon-box svg {
-      width: 18px; height: 18px;
-      stroke: currentColor; fill: none;
-      stroke-width: 1.8;
-      stroke-linecap: round; stroke-linejoin: round;
-    }
+    .stat-icon-box { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+    .stat-icon-box svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .stat-icon-box.blue   { background:#eff6ff; color:#2563eb; }
+    .stat-icon-box.purple { background:#f5f3ff; color:#7c3aed; }
+    .stat-icon-box.green  { background:#f0fdf4; color:#16a34a; }
+    .stat-icon-box.orange { background:#fffbeb; color:#d97706; }
 
-    .stat-icon-box.blue     { background:#eff6ff; color:#2563eb; }
-    .stat-icon-box.purple   { background:#f5f3ff; color:#7c3aed; }
-    .stat-icon-box.green    { background:#f0fdf4; color:#16a34a; }
-    .stat-icon-box.orange   { background:#fffbeb; color:#d97706; }
+    .stat-card-row { display:flex; align-items:flex-end; justify-content:space-between; margin-top:12px; }
 
-    .stat-card-row {
-      display: flex; align-items: flex-end;
-      justify-content: space-between;
-      margin-top: 12px;
-    }
+    .order-status-card { display:flex; flex-direction:column; gap:6px; text-align:left; }
+    .os-label { font-size:11.5px; font-weight:500; color:var(--text-3); letter-spacing:0.2px; }
+    .os-count { font-size:28px; font-weight:700; letter-spacing:-1.5px; line-height:1; }
+    .os-bar   { height:2px; border-radius:1px; margin-top:2px; opacity:0.3; }
 
-    .order-status-card {
-      display: flex; flex-direction: column;
-      gap: 6px; text-align: left;
-    }
+    /* Consistent number/text styles */
+    .rank-num { font-size:11px; font-weight:700; color:var(--text-3); width:20px; }
+    .product-name-cell .name  { font-size:13px; font-weight:600; color:var(--text-1); }
+    .product-name-cell .brand { font-size:11px; color:var(--text-3); margin-top:1px; }
 
-    .os-label {
-      font-size: 11.5px;
-      font-weight: 500;
-      color: var(--text-3);
-      letter-spacing: 0.2px;
-    }
-
-    .os-count {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -1.5px;
-      font-family: 'JetBrains Mono', monospace;
-      line-height: 1;
-    }
-
-    .os-bar {
-      height: 2px;
-      border-radius: 1px;
-      margin-top: 2px;
-      opacity: 0.3;
-    }
-
-    /* Table typography */
-    .rank-num {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-3);
-      font-family: 'JetBrains Mono', monospace;
-      width: 20px;
-    }
-
-    .product-name-cell .name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-1);
-    }
-
-    .product-name-cell .brand {
-      font-size: 11px;
-      color: var(--text-3);
-      margin-top: 1px;
-    }
-
+    /* mono — dùng cho mọi số: giá, số lượng, mã đơn */
     .mono {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px;
+      font-variant-numeric: tabular-nums;
+      font-size:12.5px;
+      letter-spacing: -0.2px;
     }
+    .mono-bold { font-weight:600; }
 
-    /* Section heading */
-    .section-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      color: var(--text-3);
-      margin-bottom: 10px;
-    }
+    .section-label { font-size:11px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:var(--text-3); margin-bottom:10px; }
 
-    /* Status dot */
-    .status-dot {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12.5px;
-      font-weight: 500;
-    }
+    .status-dot { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:500; }
+    .status-dot::before { content:''; width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .dot-pending::before   { background:#d97706; }
+    .dot-confirmed::before { background:#2563eb; }
+    .dot-shipping::before  { background:#0284c7; }
+    .dot-done::before      { background:#16a34a; }
+    .dot-cancelled::before { background:#dc2626; }
 
-    .status-dot::before {
-      content: '';
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    .topbar-breadcrumb { display:flex; align-items:center; gap:8px; }
+    .topbar-breadcrumb svg { width:14px; height:14px; stroke:var(--text-3); fill:none; stroke-width:2; stroke-linecap:round; }
 
-    .dot-pending::before   { background: #d97706; }
-    .dot-confirmed::before { background: #2563eb; }
-    .dot-shipping::before  { background: #0284c7; }
-    .dot-done::before      { background: #16a34a; }
-    .dot-cancelled::before { background: #dc2626; }
-
-    /* Topbar breadcrumb */
-    .topbar-breadcrumb {
-      display: flex; align-items: center; gap: 8px;
-    }
-
-    .topbar-breadcrumb svg {
-      width: 14px; height: 14px;
-      stroke: var(--text-3); fill: none;
-      stroke-width: 2; stroke-linecap: round;
-    }
-
-    /* Low stock row */
-    .stock-number {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--red);
-    }
-
-    /* Table row hover action */
-    .row-action {
-      opacity: 0;
-      transition: opacity 0.15s;
-    }
-
-    tbody tr:hover .row-action { opacity: 1; }
+    .row-action { opacity:0; transition:opacity 0.15s; }
+    tbody tr:hover .row-action { opacity:1; }
   </style>
 </head>
 <body>
@@ -169,8 +68,7 @@
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-logo-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
         </svg>
       </div>
@@ -231,8 +129,6 @@
 
   <!-- MAIN -->
   <main class="admin-main">
-
-    <!-- TOPBAR -->
     <div class="admin-topbar">
       <div class="topbar-left">
         <div class="topbar-breadcrumb">
@@ -243,13 +139,8 @@
       </div>
       <div class="topbar-right" id="topbar-right">
         <span style="font-size:12px;color:var(--text-3)" id="current-date"></span>
-
-        <!-- Notification bell -->
         <button class="icon-btn" id="notif-btn" onclick="toggleNotif()">
-          <svg viewBox="0 0 24 24">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="notif-dot" id="notif-dot" style="display:none;position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1.5px solid white"></span>
         </button>
       </div>
@@ -257,7 +148,6 @@
 
     <div class="admin-content">
 
-      <!-- PAGE HEADER -->
       <div style="margin-bottom:20px">
         <h1 style="font-size:20px;font-weight:700;letter-spacing:-0.5px;color:var(--text-1)">Dashboard</h1>
         <p style="font-size:13px;color:var(--text-3);margin-top:2px">Tổng quan hoạt động kinh doanh của GosuCore</p>
@@ -265,19 +155,14 @@
 
       <!-- STATS -->
       <div class="stats-grid" style="margin-bottom:16px">
-
         <div class="stat-card revenue">
           <div class="stat-icon-box blue">
             <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           </div>
           <div class="stat-label">Doanh thu</div>
-          <div class="stat-value" id="s-revenue" style="font-size:22px;letter-spacing:-1px">—</div>
-          <div class="stat-card-row">
-            <span style="font-size:11px;color:var(--text-3)">Từ đơn hoàn thành</span>
-          </div>
-          <div class="stat-bar" style="background:var(--border);margin-top:10px">
-            <div class="stat-bar-fill" style="width:70%;background:#2563eb"></div>
-          </div>
+          <div class="stat-value mono mono-bold" id="s-revenue" style="font-size:20px;letter-spacing:-0.5px">—</div>
+          <div class="stat-card-row"><span style="font-size:11px;color:var(--text-3)">Từ đơn hoàn thành</span></div>
+          <div class="stat-bar" style="background:var(--border);margin-top:10px"><div class="stat-bar-fill" style="width:70%;background:#2563eb"></div></div>
         </div>
 
         <div class="stat-card orders">
@@ -285,13 +170,9 @@
             <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           </div>
           <div class="stat-label">Tổng đơn hàng</div>
-          <div class="stat-value" id="s-orders" style="font-size:22px;letter-spacing:-1px">—</div>
-          <div class="stat-card-row">
-            <span style="font-size:11px;color:var(--text-3)">Tất cả trạng thái</span>
-          </div>
-          <div class="stat-bar" style="background:var(--border);margin-top:10px">
-            <div class="stat-bar-fill" style="width:55%;background:#7c3aed"></div>
-          </div>
+          <div class="stat-value mono mono-bold" id="s-orders" style="font-size:22px;letter-spacing:-1px">—</div>
+          <div class="stat-card-row"><span style="font-size:11px;color:var(--text-3)">Tất cả trạng thái</span></div>
+          <div class="stat-bar" style="background:var(--border);margin-top:10px"><div class="stat-bar-fill" style="width:55%;background:#7c3aed"></div></div>
         </div>
 
         <div class="stat-card customers">
@@ -299,13 +180,9 @@
             <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <div class="stat-label">Khách hàng</div>
-          <div class="stat-value" id="s-customers" style="font-size:22px;letter-spacing:-1px">—</div>
-          <div class="stat-card-row">
-            <span style="font-size:11px;color:var(--text-3)">Đã đăng ký</span>
-          </div>
-          <div class="stat-bar" style="background:var(--border);margin-top:10px">
-            <div class="stat-bar-fill" style="width:40%;background:#16a34a"></div>
-          </div>
+          <div class="stat-value mono mono-bold" id="s-customers" style="font-size:22px;letter-spacing:-1px">—</div>
+          <div class="stat-card-row"><span style="font-size:11px;color:var(--text-3)">Đã đăng ký</span></div>
+          <div class="stat-bar" style="background:var(--border);margin-top:10px"><div class="stat-bar-fill" style="width:40%;background:#16a34a"></div></div>
         </div>
 
         <div class="stat-card products">
@@ -313,51 +190,40 @@
             <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
           </div>
           <div class="stat-label">Sản phẩm</div>
-          <div class="stat-value" id="s-products" style="font-size:22px;letter-spacing:-1px">—</div>
-          <div class="stat-card-row">
-            <span style="font-size:11px;color:var(--text-3)">Đang kinh doanh</span>
-          </div>
-          <div class="stat-bar" style="background:var(--border);margin-top:10px">
-            <div class="stat-bar-fill" style="width:85%;background:#d97706"></div>
-          </div>
+          <div class="stat-value mono mono-bold" id="s-products" style="font-size:22px;letter-spacing:-1px">—</div>
+          <div class="stat-card-row"><span style="font-size:11px;color:var(--text-3)">Đang kinh doanh</span></div>
+          <div class="stat-bar" style="background:var(--border);margin-top:10px"><div class="stat-bar-fill" style="width:85%;background:#d97706"></div></div>
         </div>
-
       </div>
 
       <!-- ORDER STATUS -->
       <div class="section-label">Trạng thái đơn hàng</div>
       <div class="order-status-grid" style="margin-bottom:20px">
-
         <div class="order-status-card" onclick="location.href='orders.html?status=pending'">
           <span class="os-label">Chờ xác nhận</span>
-          <span class="os-count" id="os-pending" style="color:#d97706">0</span>
+          <span class="os-count mono" id="os-pending" style="color:#d97706">0</span>
           <div class="os-bar" style="background:#d97706"></div>
         </div>
-
         <div class="order-status-card" onclick="location.href='orders.html?status=confirmed'">
           <span class="os-label">Đã xác nhận</span>
-          <span class="os-count" id="os-confirmed" style="color:#2563eb">0</span>
+          <span class="os-count mono" id="os-confirmed" style="color:#2563eb">0</span>
           <div class="os-bar" style="background:#2563eb"></div>
         </div>
-
         <div class="order-status-card" onclick="location.href='orders.html?status=shipping'">
           <span class="os-label">Đang giao</span>
-          <span class="os-count" id="os-shipping" style="color:#0284c7">0</span>
+          <span class="os-count mono" id="os-shipping" style="color:#0284c7">0</span>
           <div class="os-bar" style="background:#0284c7"></div>
         </div>
-
         <div class="order-status-card" onclick="location.href='orders.html?status=done'">
           <span class="os-label">Hoàn thành</span>
-          <span class="os-count" id="os-done" style="color:#16a34a">0</span>
+          <span class="os-count mono" id="os-done" style="color:#16a34a">0</span>
           <div class="os-bar" style="background:#16a34a"></div>
         </div>
-
         <div class="order-status-card" onclick="location.href='orders.html?status=cancelled'">
           <span class="os-label">Đã hủy</span>
-          <span class="os-count" id="os-cancelled" style="color:#dc2626">0</span>
+          <span class="os-count mono" id="os-cancelled" style="color:#dc2626">0</span>
           <div class="os-bar" style="background:#dc2626"></div>
         </div>
-
       </div>
 
       <!-- CHARTS -->
@@ -387,7 +253,6 @@
       <div class="section-label">Chi tiết</div>
       <div class="tables-grid" style="margin-bottom:16px">
 
-        <!-- TOP PRODUCTS -->
         <div class="table-card">
           <div class="table-card-header">
             <div>
@@ -411,7 +276,6 @@
           </table>
         </div>
 
-        <!-- RECENT ORDERS -->
         <div class="table-card">
           <div class="table-card-header">
             <div>
@@ -494,16 +358,14 @@
   }
 
   document.getElementById('current-date').textContent =
-    new Date().toLocaleDateString('vi-VN', {
-      weekday:'long', year:'numeric', month:'long', day:'numeric'
-    });
+    new Date().toLocaleDateString('vi-VN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
   const STATUS = {
-    pending:   { label: 'Chờ xác nhận', cls: 'dot-pending' },
-    confirmed: { label: 'Đã xác nhận',  cls: 'dot-confirmed' },
-    shipping:  { label: 'Đang giao',    cls: 'dot-shipping' },
-    done:      { label: 'Hoàn thành',   cls: 'dot-done' },
-    cancelled: { label: 'Đã hủy',       cls: 'dot-cancelled' },
+    pending:   { label:'Chờ xác nhận', cls:'dot-pending' },
+    confirmed: { label:'Đã xác nhận',  cls:'dot-confirmed' },
+    shipping:  { label:'Đang giao',    cls:'dot-shipping' },
+    done:      { label:'Hoàn thành',   cls:'dot-done' },
+    cancelled: { label:'Đã hủy',       cls:'dot-cancelled' },
   };
 
   document.addEventListener('DOMContentLoaded', async () => {
@@ -514,22 +376,24 @@
       const { data: d } = await api.get('/admin/dashboard');
       const ov = d.overview;
 
+      // ── Stats — dùng formatPrice cho tiền, formatNumber cho số nguyên
       document.getElementById('s-revenue').textContent   = formatPrice(ov.total_revenue   || 0);
-      document.getElementById('s-orders').textContent    = ov.total_orders    || 0;
-      document.getElementById('s-customers').textContent = ov.total_customers || 0;
-      document.getElementById('s-products').textContent  = ov.total_products  || 0;
+      document.getElementById('s-orders').textContent    = formatNumber(ov.total_orders    || 0);
+      document.getElementById('s-customers').textContent = formatNumber(ov.total_customers || 0);
+      document.getElementById('s-products').textContent  = formatNumber(ov.total_products  || 0);
 
-      document.getElementById('os-pending').textContent   = ov.pending_orders   || 0;
-      document.getElementById('os-confirmed').textContent = ov.confirmed_orders  || 0;
-      document.getElementById('os-shipping').textContent  = ov.shipping_orders   || 0;
-      document.getElementById('os-done').textContent      = ov.done_orders       || 0;
-      document.getElementById('os-cancelled').textContent = ov.cancelled_orders  || 0;
+      // ── Order status — formatNumber
+      document.getElementById('os-pending').textContent   = formatNumber(ov.pending_orders   || 0);
+      document.getElementById('os-confirmed').textContent = formatNumber(ov.confirmed_orders  || 0);
+      document.getElementById('os-shipping').textContent  = formatNumber(ov.shipping_orders   || 0);
+      document.getElementById('os-done').textContent      = formatNumber(ov.done_orders       || 0);
+      document.getElementById('os-cancelled').textContent = formatNumber(ov.cancelled_orders  || 0);
 
       renderRevenueChart(d.revenue_by_month    || []);
       renderCategoryChart(d.revenue_by_category || []);
-      renderTopProducts(d.top_products     || []);
-      renderRecentOrders(d.recent_orders   || []);
-      renderLowStock(d.low_stock_products  || []);
+      renderTopProducts(d.top_products          || []);
+      renderRecentOrders(d.recent_orders        || []);
+      renderLowStock(d.low_stock_products       || []);
 
     } catch(e) { console.error(e); }
   });
@@ -550,14 +414,14 @@
     new Chart(document.getElementById('revenueChart'), {
       type: 'bar',
       data: {
-        labels:   data.map(d => `${months[d.month-1]}/${d.year}`),
+        labels:   data.map(d => `${months[d.month-1]}/${String(d.year).slice(-2)}`),
         datasets: [{
-          data: data.map(d => d.revenue || 0),
+          data:            data.map(d => d.revenue || 0),
           backgroundColor: 'rgba(37,99,235,0.1)',
           borderColor:     '#2563eb',
-          borderWidth: 1.5,
-          borderRadius: 4,
-          borderSkipped: false,
+          borderWidth:     1.5,
+          borderRadius:    4,
+          borderSkipped:   false,
         }],
       },
       options: {
@@ -570,8 +434,7 @@
           y: {
             beginAtZero: true,
             ticks: {
-              color: '#9ca3af',
-              font: { size: 11 },
+              color: '#9ca3af', font: { size: 11 },
               callback: v => {
                 if (v >= 1000000) return (v/1000000).toFixed(0) + 'M';
                 if (v >= 1000)    return (v/1000).toFixed(0) + 'K';
@@ -583,7 +446,7 @@
           },
           x: {
             ticks: { color: '#9ca3af', font: { size: 11 } },
-            grid: { display: false },
+            grid:  { display: false },
             border: { display: false },
           },
         },
@@ -601,17 +464,14 @@
         datasets: [{
           data:            data.map(d => d.total_revenue || 0),
           backgroundColor: colors.slice(0, data.length),
-          borderWidth: 3,
-          borderColor: '#fff',
+          borderWidth:     3,
+          borderColor:     '#fff',
         }],
       },
       options: {
         responsive: true,
         plugins: {
-          legend: {
-            position: 'bottom',
-            labels: { font: { size: 11 }, padding: 12, color: '#6b7280' },
-          },
+          legend: { position:'bottom', labels: { font:{ size:11 }, padding:12, color:'#6b7280' } },
           tooltip: { callbacks: { label: ctx => `  ${ctx.label}: ${formatPrice(ctx.raw)}` } },
         },
         cutout: '65%',
@@ -634,8 +494,8 @@
             <div class="brand">${p.brand || ''}</div>
           </div>
         </td>
-        <td><span class="mono">${p.total_sold || 0}</span></td>
-        <td><span class="mono" style="font-weight:600">${formatPrice(p.total_revenue || 0)}</span></td>
+        <td><span class="mono">${formatNumber(p.total_sold || 0)}</span></td>
+        <td><span class="mono mono-bold">${formatPrice(p.total_revenue || 0)}</span></td>
       </tr>`).join('');
   };
 
@@ -649,7 +509,7 @@
       const s = STATUS[o.status] || { label: o.status, cls: '' };
       return `
         <tr style="cursor:pointer" onclick="location.href='orders.html'">
-          <td><span class="mono" style="font-weight:600">#${o.id}</span></td>
+          <td><span class="mono mono-bold">#${o.id}</span></td>
           <td>
             <div style="font-weight:600;font-size:13px">${o.shipping_name}</div>
             <div style="font-size:11px;color:var(--text-3)">${o.email}</div>
@@ -675,15 +535,17 @@
         <td style="font-size:13px;color:var(--text-2)">${p.category_name}</td>
         <td><span class="mono">${formatPrice(p.price)}</span></td>
         <td>
-          <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--red)">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            ${p.stock} còn lại
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--red)">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            ${formatNumber(p.stock)} còn lại
           </span>
         </td>
       </tr>`).join('');
   };
 
-  // Notifications
+  // ── Notifications ─────────────────────────────────────────
   let notifications = [];
   let readIds = JSON.parse(localStorage.getItem('gosucore_read_notifs') || '[]');
 
@@ -695,25 +557,25 @@
       const pending = d.overview.pending_orders || 0;
       if (pending > 0) notifications.push({
         id: 'pending_orders', type: 'order',
-        title: `${pending} đơn hàng chờ xác nhận`,
-        desc: 'Cần xử lý ngay để đảm bảo trải nghiệm khách hàng',
-        link: 'orders.html?status=pending',
+        title: `${formatNumber(pending)} đơn hàng chờ xác nhận`,
+        desc:  'Cần xử lý ngay để đảm bảo trải nghiệm khách hàng',
+        link:  'orders.html?status=pending',
       });
 
       const shipping = d.overview.shipping_orders || 0;
       if (shipping > 0) notifications.push({
         id: 'shipping_orders', type: 'order',
-        title: `${shipping} đơn đang được giao`,
-        desc: 'Theo dõi và cập nhật trạng thái vận chuyển',
-        link: 'orders.html?status=shipping',
+        title: `${formatNumber(shipping)} đơn đang được giao`,
+        desc:  'Theo dõi và cập nhật trạng thái vận chuyển',
+        link:  'orders.html?status=shipping',
       });
 
       const lowStock = d.low_stock_products || [];
       if (lowStock.length > 0) notifications.push({
         id: 'low_stock', type: 'stock',
-        title: `${lowStock.length} sản phẩm sắp hết hàng`,
-        desc: lowStock.slice(0,2).map(p => `${p.name} — còn ${p.stock}`).join(' · '),
-        link: 'products.html',
+        title: `${formatNumber(lowStock.length)} sản phẩm sắp hết hàng`,
+        desc:  lowStock.slice(0,2).map(p => `${p.name} — còn ${formatNumber(p.stock)}`).join(' · '),
+        link:  'products.html',
       });
 
       renderNotifications();

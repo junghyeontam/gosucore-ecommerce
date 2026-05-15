@@ -1,12 +1,7 @@
-// public/js/api.js
-// Hàm fetch dùng chung cho toàn bộ frontend
-
 const API_BASE = 'http://localhost:3000/api';
 
-// Lấy token từ localStorage
 const getToken = () => localStorage.getItem('gosucore_token');
 
-// Hàm fetch chính
 const apiFetch = async (endpoint, options = {}) => {
   const token = getToken();
 
@@ -29,34 +24,58 @@ const apiFetch = async (endpoint, options = {}) => {
   return data;
 };
 
-// Shortcut methods
 const api = {
-  get:    (url)          => apiFetch(url),
-  post:   (url, body)    => apiFetch(url, { method: 'POST',   body: JSON.stringify(body) }),
-  put:    (url, body)    => apiFetch(url, { method: 'PUT',    body: JSON.stringify(body) }),
-  patch:  (url, body)    => apiFetch(url, { method: 'PATCH',  body: JSON.stringify(body) }),
-  delete: (url)          => apiFetch(url, { method: 'DELETE' }),
+  get:    (url)       => apiFetch(url),
+  post:   (url, body) => apiFetch(url, { method: 'POST',   body: JSON.stringify(body) }),
+  put:    (url, body) => apiFetch(url, { method: 'PUT',    body: JSON.stringify(body) }),
+  patch:  (url, body) => apiFetch(url, { method: 'PATCH',  body: JSON.stringify(body) }),
+  delete: (url)       => apiFetch(url, { method: 'DELETE' }),
 };
 
-// Format tiền VNĐ
-const formatPrice = (price) =>
-  new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+// ============================================================
+// FORMAT HELPERS — dùng đồng nhất toàn bộ project
+// ============================================================
 
-// Format ngày
-const formatDate = (dateStr) =>
-  new Date(dateStr).toLocaleDateString('vi-VN', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit',
+// Số tiền VNĐ: 25.990.000 ₫
+const formatPrice = (price) => {
+  if (price === null || price === undefined || isNaN(price)) return '0 ₫';
+  return new Intl.NumberFormat('vi-VN', {
+    style:                 'currency',
+    currency:              'VND',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(Number(price));
+};
+
+// Số nguyên có dấu chấm ngăn cách: 1.234
+const formatNumber = (num) => {
+  if (num === null || num === undefined || isNaN(num)) return '0';
+  return new Intl.NumberFormat('vi-VN').format(Number(num));
+};
+
+// Ngày giờ: 10/05/26 08:20
+const formatDate = (dateStr) => {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('vi-VN', {
+    year:   '2-digit',
+    month:  '2-digit',
+    day:    '2-digit',
+    hour:   '2-digit',
+    minute: '2-digit',
+    hour12: false,
   });
+};
 
-// Render sao rating
+// ============================================================
+
 const renderStars = (rating) => {
   const full  = Math.floor(rating);
   const empty = 5 - full;
   return '★'.repeat(full) + '☆'.repeat(empty);
 };
 
-// Toast notification
 const toast = {
   container: null,
 
@@ -83,7 +102,6 @@ const toast = {
   info:    (msg) => toast.show(msg, 'info'),
 };
 
-// Giỏ hàng (lưu localStorage)
 const cart = {
   get() {
     return JSON.parse(localStorage.getItem('gosucore_cart') || '[]');
@@ -130,24 +148,9 @@ const cart = {
   },
 };
 
-// Kiểm tra đăng nhập
-const isLoggedIn = () => !!getToken();
-
-const getUser = () => {
-  const u = localStorage.getItem('gosucore_user');
-  return u ? JSON.parse(u) : null;
-};
-
-// Redirect nếu chưa đăng nhập
-const requireLogin = () => {
-  if (!isLoggedIn()) {
-    window.location.href = '/client/login.html';
-    return false;
-  }
-  return true;
-};
-
-// Redirect nếu không phải admin
+const isLoggedIn    = () => !!getToken();
+const getUser       = () => { const u = localStorage.getItem('gosucore_user'); return u ? JSON.parse(u) : null; };
+const requireLogin  = () => { if (!isLoggedIn()) { window.location.href = '/client/login.html'; return false; } return true; };
 const requireAdminRole = () => {
   const user = getUser();
   if (!user || !['manager', 'staff'].includes(user.role)) {

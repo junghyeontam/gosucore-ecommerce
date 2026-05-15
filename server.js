@@ -10,49 +10,46 @@ const path = require('path');
 const { connectDB } = require('./src/config/db');
 
 // --- Import Routes ---
-const authRoutes = require('./src/routes/authRoutes');
-const productRoutes = require('./src/routes/productRoutes');
-const orderRoutes = require('./src/routes/orderRoutes');
-const adminRoutes = require('./src/routes/adminRoutes');
-const voucherRoutes = require('./src/routes/voucherRoutes');  // thêm
-const reviewRoutes  = require('./src/routes/reviewRoutes');
+const authRoutes     = require('./src/routes/authRoutes');
+const productRoutes  = require('./src/routes/productRoutes');
+const orderRoutes    = require('./src/routes/orderRoutes');
+const adminRoutes    = require('./src/routes/adminRoutes');
+const voucherRoutes  = require('./src/routes/voucherRoutes');
+const reviewRoutes   = require('./src/routes/reviewRoutes');
 const categoryRoutes = require('./src/routes/categoryRoutes');
 
-const app = express();
+const app  = express();
 const PORT = process.env.PORT || 3000;
 
 // ============================================================
 // MIDDLEWARE TOÀN CỤC
 // ============================================================
 
-// Cho phép frontend gọi API (Cross-Origin Resource Sharing)
 app.use(cors({
   origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'http://localhost:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// Parse JSON request body
 app.use(express.json());
-
-// Parse URL-encoded form data
 app.use(express.urlencoded({ extended: true }));
 
-// Phục vụ file tĩnh (HTML, CSS, JS frontend)
+// Phục vụ file tĩnh (HTML, CSS, JS, ảnh frontend)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ============================================================
 // ROUTES API
 // ============================================================
 
-app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/vouchers', voucherRoutes);  // thêm
-app.use('/api/reviews',  reviewRoutes);
+app.use('/api/auth',       authRoutes);
+app.use('/api/products',   productRoutes);
+app.use('/api/orders',     orderRoutes);
+app.use('/api/admin',      adminRoutes);
+app.use('/api/vouchers',   voucherRoutes);
+app.use('/api/reviews',    reviewRoutes);
 app.use('/api/categories', categoryRoutes);
-// Route kiểm tra server còn sống không
+
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
@@ -67,8 +64,34 @@ app.get('/api/health', (req, res) => {
 // XỬ LÝ LỖI
 // ============================================================
 
-// 404 - Route không tồn tại
+// 404 — Nếu là trang HTML thì serve file, không trả JSON
 app.use((req, res) => {
+  const ext = path.extname(req.path);
+
+  // Request đến file HTML hoặc path không có extension (URL thân thiện)
+  if (ext === '.html' || ext === '') {
+    const filePath = path.join(
+      __dirname,
+      'public',
+      req.path.endsWith('.html') ? req.path : req.path + '.html'
+    );
+
+    return res.sendFile(filePath, (err) => {
+      if (err) {
+        // File không tồn tại → trả về trang index
+        res.sendFile(path.join(__dirname, 'public', 'client', 'index.html'), (err2) => {
+          if (err2) {
+            res.status(404).json({
+              success: false,
+              message: `Không tìm thấy trang: ${req.originalUrl}`,
+            });
+          }
+        });
+      }
+    });
+  }
+
+  // Route API không tồn tại → trả JSON
   res.status(404).json({
     success: false,
     message: `Route không tồn tại: ${req.method} ${req.originalUrl}`,
@@ -90,20 +113,18 @@ app.use((err, req, res, next) => {
 // ============================================================
 
 const startServer = async () => {
-  // 1. Kết nối Database trước
   await connectDB();
 
-  // 2. Sau đó mới lắng nghe request
   app.listen(PORT, () => {
     console.log('');
     console.log('🎮 ================================');
     console.log('🎮  GOSUCORE BACKEND STARTED!');
     console.log('🎮 ================================');
-    console.log(`🚀 Server:  http://localhost:${PORT}`);
-    console.log(`📋 Health:  http://localhost:${PORT}/api/health`);
-    console.log(`🔐 Auth:    http://localhost:${PORT}/api/auth/ping`);
-    console.log(`📦 Products:http://localhost:${PORT}/api/products/ping`);
-    console.log(`🛒 Orders:  http://localhost:${PORT}/api/orders/ping`);
+    console.log(`🚀 Server:   http://localhost:${PORT}`);
+    console.log(`📋 Health:   http://localhost:${PORT}/api/health`);
+    console.log(`🔐 Auth:     http://localhost:${PORT}/api/auth/ping`);
+    console.log(`📦 Products: http://localhost:${PORT}/api/products/ping`);
+    console.log(`🛒 Orders:   http://localhost:${PORT}/api/orders/ping`);
     console.log('🎮 ================================');
     console.log('');
   });

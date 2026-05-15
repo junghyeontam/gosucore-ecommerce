@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liên hệ - GosuCore</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .support-hero { background: linear-gradient(135deg, #1f1f3a 0%, #4f46e5 100%); padding: 3.5rem 5%; color: #fff; }
+    .support-hero-eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.65); margin-bottom: 0.5rem; }
+    .support-hero h1 { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.75rem; }
+    .support-hero p { color: rgba(255,255,255,0.75); font-size: 1rem; max-width: 520px; line-height: 1.7; }
+    .contact-layout { max-width: 900px; margin: 0 auto; padding: 3rem 5%; display: grid; grid-template-columns: 1fr 1.4fr; gap: 2rem; align-items: start; }
+    .contact-info-cards { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-info-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: 1.4rem 1.5rem; border: 1px solid var(--border-light); display: flex; gap: 1rem; align-items: flex-start; transition: box-shadow 0.2s ease; }
+    .contact-info-card:hover { box-shadow: var(--shadow-md); }
+    .contact-info-icon { width: 42px; height: 42px; border-radius: var(--radius-sm); background: var(--accent-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .contact-info-icon svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .contact-info-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 0.25rem; }
+    .contact-info-value { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+    .contact-info-desc { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.15rem; }
+    .contact-form-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: 2rem; border: 1px solid var(--border-light); }
+    .contact-form-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .contact-form-card p { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--bg-primary); border: 1.5px solid var(--border); color: var(--text-primary); padding: 0.65rem 0.9rem; border-radius: var(--radius-sm); font-size: 0.875rem; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease; font-family: inherit; box-sizing: border-box; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .form-group textarea { resize: vertical; min-height: 110px; }
+    .submit-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); padding: 0.75rem; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s ease, transform 0.1s ease; }
+    .submit-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .success-msg { display: none; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-sm); padding: 1rem; text-align: center; color: #16a34a; font-size: 0.88rem; font-weight: 600; margin-top: 0.75rem; }
+    @media (max-width: 700px) { .contact-layout { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">Gosu<span style="color:var(--accent)">Core</span></a>
+    <div class="navbar-actions">
+      <div class="navbar-icon cart-icon" onclick="window.location.href='cart.html'">🛒<span class="cart-count">0</span></div>
+    </div>
+  </nav>
+
+  <div class="support-hero">
+    <div class="support-hero-eyebrow">Hỗ trợ khách hàng</div>
+    <h1>Liên hệ với chúng tôi</h1>
+    <p>Đội ngũ hỗ trợ GosuCore luôn sẵn sàng giải đáp mọi thắc mắc của bạn từ thứ 2 đến thứ 7.</p>
+  </div>
+
+  <div class="contact-layout">
+    <!-- Info cards -->
+    <div class="contact-info-cards">
+      <div class="contact-info-card">
+        <div class="contact-info-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92v2z"/></svg>
+        </div>
+        <div>
+          <div class="contact-info-label">Hotline</div>
+          <div class="contact-info-value">1900 1234</div>
+          <div class="contact-info-desc">Thứ 2 – Thứ 7 · 8:00 – 18:00</div>
+        </div>
+      </div>
+      <div class="contact-info-card">
+        <div class="contact-info-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div>
+          <div class="contact-info-label">Email hỗ trợ</div>
+          <div class="contact-info-value">support@gosucore.vn</div>
+          <div class="contact-info-desc">Phản hồi trong vòng 24 giờ</div>
+        </div>
+      </div>
+      <div class="contact-info-card">
+        <div class="contact-info-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>
+          <div class="contact-info-label">Địa chỉ</div>
+          <div class="contact-info-value">Hà Nội, Việt Nam</div>
+          <div class="contact-info-desc">Showroom: 123 Đường Gaming, Q.Cầu Giấy</div>
+        </div>
+      </div>
+      <div class="contact-info-card">
+        <div class="contact-info-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="contact-info-label">Giờ làm việc</div>
+          <div class="contact-info-value">8:00 – 18:00</div>
+          <div class="contact-info-desc">Thứ 2 – Thứ 7 (nghỉ Chủ nhật & lễ)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact form -->
+    <div class="contact-form-card">
+      <h3>Gửi yêu cầu hỗ trợ</h3>
+      <p>Điền thông tin bên dưới, chúng tôi sẽ liên hệ lại sớm nhất có thể.</p>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Họ và tên *</label>
+          <input type="text" id="ct-name" placeholder="Nguyễn Văn A">
+        </div>
+        <div class="form-group">
+          <label>Số điện thoại *</label>
+          <input type="tel" id="ct-phone" placeholder="0912 345 678">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="ct-email" placeholder="email@example.com">
+      </div>
+      <div class="form-group">
+        <label>Chủ đề</label>
+        <select id="ct-topic">
+          <option value="">-- Chọn chủ đề --</option>
+          <option>Tư vấn sản phẩm</option>
+          <option>Đổi trả hàng</option>
+          <option>Bảo hành</option>
+          <option>Thanh toán / Đơn hàng</option>
+          <option>Khác</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nội dung *</label>
+        <textarea id="ct-msg" placeholder="Mô tả chi tiết vấn đề của bạn..."></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitContact()">Gửi yêu cầu →</button>
+      <div class="success-msg" id="ct-success">✅ Yêu cầu đã được gửi! Chúng tôi sẽ liên hệ lại trong vòng 24 giờ.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-bottom" style="justify-content:center;gap:2rem">
+      <a href="index.html" style="color:var(--text-muted);font-size:0.82rem">← Về trang chủ</a>
+      <span style="color:var(--text-muted);font-size:0.78rem">© 2026 GosuCore. All rights reserved.</span>
+      <a href="purchase-guide.html" style="color:var(--text-muted);font-size:0.82rem">Hướng dẫn mua hàng</a>
+    </div>
+  </footer>
+
+  <script src="../js/auth.js"></script>
+  <script>
+    function submitContact() {
+      const name = document.getElementById('ct-name').value.trim();
+      const phone = document.getElementById('ct-phone').value.trim();
+      const msg = document.getElementById('ct-msg').value.trim();
+      if (!name || !phone || !msg) { alert('Vui lòng điền đầy đủ các trường bắt buộc (*)'); return; }
+      document.getElementById('ct-success').style.display = 'block';
+      setTimeout(() => { document.getElementById('ct-name').value = ''; document.getElementById('ct-phone').value = ''; document.getElementById('ct-email').value = ''; document.getElementById('ct-msg').value = ''; }, 300);
+    }
+  </script>
+</body>
+</html>

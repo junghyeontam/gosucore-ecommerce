@@ -5,242 +5,176 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đơn hàng của tôi - GosuCore</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    .orders-page {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2rem 5%;
-    }
+    .orders-page { max-width: 900px; margin: 0 auto; padding: 2rem 5%; }
+    .orders-page h1 { font-size: 2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 0.5rem; }
+    .orders-page > p { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 2rem; }
 
-    .orders-page h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -1px;
-      margin-bottom: 0.5rem;
-    }
+    .order-card { background: var(--bg-primary); border: 1px solid var(--border-light); border-radius: var(--radius-lg); margin-bottom: 1rem; overflow: hidden; transition: var(--transition); }
+    .order-card:hover { box-shadow: var(--shadow-md); }
 
-    .orders-page > p {
-      color: var(--text-secondary);
-      font-size: 0.875rem;
-      margin-bottom: 2rem;
-    }
+    .order-card-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; background: var(--bg-secondary); cursor: pointer; border-bottom: 1px solid var(--border-light); }
+    .order-card-header:hover { background: var(--bg-hover); }
 
-    .order-card {
-      background: var(--bg-primary);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-lg);
-      margin-bottom: 1rem;
-      overflow: hidden;
-      transition: var(--transition);
-    }
+    .order-id   { font-size: 0.83rem; font-weight: 700; color: var(--text-primary); }
+    .order-date { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.2rem; }
 
-    .order-card:hover {
-      box-shadow: var(--shadow-md);
-    }
+    .order-card-body { padding: 1.25rem 1.5rem; display: none; }
+    .order-card-body.open { display: block; }
 
-    .order-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 1.5rem;
-      background: var(--bg-secondary);
-      cursor: pointer;
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .order-card-header:hover {
-      background: var(--bg-hover);
-    }
-
-    .order-id {
-      font-size: 0.83rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .order-date {
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-      margin-top: 0.2rem;
-    }
-
-    .order-card-body {
-      padding: 1.25rem 1.5rem;
-      display: none;
-    }
-
-    .order-card-body.open {
-      display: block;
-    }
-
-    .order-item-row {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid var(--border-light);
-    }
-
+    .order-item-row { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); }
     .order-item-row:last-child { border-bottom: none; }
-
-    .order-item-row img {
-      width: 55px; height: 55px;
-      object-fit: contain;
-      background: var(--bg-secondary);
-      border-radius: var(--radius-sm);
-      padding: 0.25rem;
-      cursor: pointer;
-    }
-
+    .order-item-row img { width: 55px; height: 55px; object-fit: contain; background: var(--bg-secondary); border-radius: var(--radius-sm); padding: 0.25rem; cursor: pointer; }
     .order-item-info { flex: 1; }
+    .order-item-name { font-size: 0.875rem; font-weight: 600; cursor: pointer; margin-bottom: 0.2rem; }
+    .order-item-name:hover { color: var(--accent); }
+    .order-item-meta { font-size: 0.75rem; color: var(--text-muted); }
+    .order-item-price { font-size: 0.875rem; font-weight: 700; }
 
-    .order-item-name {
-      font-size: 0.875rem;
+    .order-footer { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
+    .order-total { font-size: 1rem; font-weight: 800; }
+
+    .order-shipping { font-size: 0.8rem; color: var(--text-secondary); margin-top: 1rem; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-sm); line-height: 1.7; }
+
+    /* Timeline */
+    .status-timeline { display: flex; align-items: center; margin: 1rem 0; overflow-x: auto; padding-bottom: 0.5rem; }
+    .timeline-step { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 80px; position: relative; }
+    .timeline-step::before { content: ''; position: absolute; top: 14px; left: -50%; width: 100%; height: 2px; background: var(--border); z-index: 0; }
+    .timeline-step:first-child::before { display: none; }
+    .timeline-step.done::before { background: var(--success); }
+    .timeline-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: var(--bg-primary); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; z-index: 1; position: relative; }
+    .timeline-step.done .timeline-dot    { background: var(--success); border-color: var(--success); color: white; }
+    .timeline-step.current .timeline-dot { background: var(--accent);  border-color: var(--accent);  color: white; }
+    .timeline-label { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.4rem; text-align: center; font-weight: 500; }
+    .timeline-step.done .timeline-label, .timeline-step.current .timeline-label { color: var(--text-primary); font-weight: 600; }
+
+    /* Filter tabs */
+    .filter-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .filter-tab { padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-secondary); transition: var(--transition); }
+    .filter-tab.active { background: var(--text-primary); color: white; border-color: var(--text-primary); }
+
+    /* Cancel button */
+    .btn-cancel-order {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1.1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
-      margin-bottom: 0.2rem;
+      border: 1.5px solid #fca5a5;
+      background: #fff1f2;
+      color: #dc2626;
+      transition: all 0.2s ease;
+      font-family: inherit;
     }
+    .btn-cancel-order:hover { background: #dc2626; color: white; border-color: #dc2626; }
 
-    .order-item-name:hover { color: var(--accent); }
-
-    .order-item-meta {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .order-item-price {
-      font-size: 0.875rem;
-      font-weight: 700;
-    }
-
-    .order-footer {
-      margin-top: 1rem;
+    /* Cancel row */
+    .cancel-row {
+      margin-top: 1.25rem;
       padding-top: 1rem;
       border-top: 1px solid var(--border-light);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
 
-    .order-total {
-      font-size: 1rem;
-      font-weight: 800;
-    }
+    .cancel-row-hint { font-size: 0.78rem; color: var(--text-muted); }
 
-    .order-shipping {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-top: 1rem;
-      padding: 0.75rem;
-      background: var(--bg-secondary);
+    /* Cancelled banner */
+    .cancelled-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1rem;
+      background: #fff1f2;
+      border: 1px solid #fca5a5;
       border-radius: var(--radius-sm);
+      margin: 0.5rem 0 1rem;
+      font-size: 0.82rem;
+      color: #dc2626;
+      font-weight: 600;
     }
 
-    .status-timeline {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      margin: 1rem 0;
-      overflow-x: auto;
-      padding-bottom: 0.5rem;
-    }
-
-    .timeline-step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1;
-      min-width: 80px;
-      position: relative;
-    }
-
-    .timeline-step::before {
-      content: '';
-      position: absolute;
-      top: 14px;
-      left: -50%;
-      width: 100%;
-      height: 2px;
-      background: var(--border);
-      z-index: 0;
-    }
-
-    .timeline-step:first-child::before { display: none; }
-
-    .timeline-step.done::before { background: var(--success); }
-
-    .timeline-dot {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      background: var(--bg-primary);
+    /* Cancel confirm modal */
+    .cancel-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(17,24,39,0.45);
+      backdrop-filter: blur(8px);
+      z-index: 3000;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
-      z-index: 1;
-      position: relative;
+      padding: 1rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
     }
 
-    .timeline-step.done .timeline-dot {
-      background: var(--success);
-      border-color: var(--success);
-      color: white;
-    }
+    .cancel-overlay.active { opacity: 1; visibility: visible; }
 
-    .timeline-step.current .timeline-dot {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: white;
-    }
-
-    .timeline-label {
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      margin-top: 0.4rem;
+    .cancel-modal {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2rem 2rem 1.75rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      transform: translateY(16px) scale(0.97);
+      transition: all 0.25s ease;
       text-align: center;
-      font-weight: 500;
+      border: 1px solid #e5e7eb;
     }
 
-    .timeline-step.done .timeline-label,
-    .timeline-step.current .timeline-label {
-      color: var(--text-primary);
-      font-weight: 600;
-    }
+    .cancel-overlay.active .cancel-modal { transform: translateY(0) scale(1); }
 
-    .filter-tabs {
+    .cancel-modal-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: #fff1f2;
+      border: 1px solid #fca5a5;
       display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-size: 1.5rem;
     }
 
-    .filter-tab {
-      padding: 0.4rem 1rem;
-      border-radius: 50px;
-      font-size: 0.8rem;
+    .cancel-modal h3 { font-size: 1.1rem; font-weight: 800; color: #111827; margin-bottom: 0.6rem; letter-spacing: -0.3px; }
+    .cancel-modal p  { font-size: 0.875rem; color: #6b7280; line-height: 1.6; margin-bottom: 1.5rem; }
+    .cancel-modal p strong { color: #111827; }
+
+    .cancel-modal-actions { display: flex; gap: 0.75rem; }
+
+    .cancel-modal-actions button {
+      flex: 1;
+      height: 42px;
+      border-radius: 10px;
+      font-size: 0.875rem;
       font-weight: 600;
       cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--bg-primary);
-      color: var(--text-secondary);
-      transition: var(--transition);
+      font-family: inherit;
+      transition: all 0.18s ease;
+      border: 1.5px solid transparent;
     }
 
-    .filter-tab.active {
-      background: var(--text-primary);
-      color: white;
-      border-color: var(--text-primary);
-    }
+    .btn-keep    { background: #f9fafb; color: #374151; border-color: #e5e7eb; }
+    .btn-keep:hover { background: #f3f4f6; }
+
+    .btn-do-cancel    { background: #dc2626; color: white; border-color: #dc2626; }
+    .btn-do-cancel:hover    { background: #b91c1c; }
+    .btn-do-cancel:disabled { opacity: 0.6; cursor: not-allowed; }
 
     @media (max-width: 600px) {
-      .order-card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-      }
+      .order-card-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      .cancel-row { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
@@ -261,17 +195,29 @@
     </div>
   </nav>
 
+  <!-- CANCEL CONFIRM MODAL -->
+  <div class="cancel-overlay" id="cancel-overlay">
+    <div class="cancel-modal">
+      <div class="cancel-modal-icon">🗑️</div>
+      <h3>Hủy đơn hàng?</h3>
+      <p id="cancel-modal-desc">Bạn có chắc muốn hủy đơn hàng này không?</p>
+      <div class="cancel-modal-actions">
+        <button class="btn-keep" onclick="closeCancelModal()">Giữ đơn</button>
+        <button class="btn-do-cancel" id="cancel-confirm-btn" onclick="doCancel()">Hủy đơn hàng</button>
+      </div>
+    </div>
+  </div>
+
   <div class="orders-page">
     <h1>Đơn hàng của tôi</h1>
     <p>Theo dõi và quản lý tất cả đơn hàng của bạn.</p>
 
-    <!-- FILTER TABS -->
     <div class="filter-tabs">
       <div class="filter-tab active" onclick="filterOrders(null, this)">Tất cả</div>
-      <div class="filter-tab" onclick="filterOrders('pending', this)">⏳ Chờ xác nhận</div>
+      <div class="filter-tab" onclick="filterOrders('pending',   this)">⏳ Chờ xác nhận</div>
       <div class="filter-tab" onclick="filterOrders('confirmed', this)">✅ Đã xác nhận</div>
-      <div class="filter-tab" onclick="filterOrders('shipping', this)">🚚 Đang giao</div>
-      <div class="filter-tab" onclick="filterOrders('done', this)">🎉 Hoàn thành</div>
+      <div class="filter-tab" onclick="filterOrders('shipping',  this)">🚚 Đang giao</div>
+      <div class="filter-tab" onclick="filterOrders('done',      this)">🎉 Hoàn thành</div>
       <div class="filter-tab" onclick="filterOrders('cancelled', this)">❌ Đã hủy</div>
     </div>
 
@@ -287,6 +233,7 @@
 
     let allOrders     = [];
     let currentFilter = null;
+    let cancelOrderId = null;
 
     const statusMap = {
       pending:   { label: 'Chờ xác nhận', badge: 'badge-pending' },
@@ -303,13 +250,12 @@
       { key: 'done',      icon: '🎉', label: 'Hoàn thành' },
     ];
 
-    // ✅ Khai báo tất cả hàm trước bằng function declaration
     async function loadOrders() {
       try {
         const data = await api.get('/orders/my');
         allOrders  = data.data;
         renderOrders();
-      } catch (e) {
+      } catch(e) {
         document.getElementById('orders-container').innerHTML = `
           <div class="empty-state">
             <div class="icon">⚠️</div>
@@ -332,7 +278,7 @@
         ? allOrders.filter(o => o.status === currentFilter)
         : allOrders;
 
-      if (orders.length === 0) {
+      if (!orders.length) {
         container.innerHTML = `
           <div class="empty-state">
             <div class="icon">📦</div>
@@ -346,14 +292,13 @@
       container.innerHTML = orders.map(order => {
         const status      = statusMap[order.status] || { label: order.status, badge: '' };
         const isCancelled = order.status === 'cancelled';
+        const isPending   = order.status === 'pending';
 
-        const stepIndex = timelineSteps.findIndex(s => s.key === order.status);
+        const stepIndex    = timelineSteps.findIndex(s => s.key === order.status);
         const timelineHTML = !isCancelled ? `
           <div class="status-timeline">
             ${timelineSteps.map((step, i) => {
-              let cls = '';
-              if (i < stepIndex) cls = 'done';
-              else if (i === stepIndex) cls = 'current';
+              const cls = i < stepIndex ? 'done' : i === stepIndex ? 'current' : '';
               return `
                 <div class="timeline-step ${cls}">
                   <div class="timeline-dot">${cls === 'done' ? '✓' : step.icon}</div>
@@ -363,19 +308,26 @@
           </div>` : '';
 
         return `
-          <div class="order-card">
+          <div class="order-card" id="order-card-${order.id}">
             <div class="order-card-header" onclick="toggleOrder(${order.id})">
               <div>
                 <div class="order-id">Đơn hàng #${order.id}</div>
                 <div class="order-date">${formatDate(order.created_at)}</div>
               </div>
-              <div style="display:flex;align-items:center;gap:1rem">
+              <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
                 <span class="badge ${status.badge}">${status.label}</span>
                 <span style="font-weight:700">${formatPrice(order.final_price)}</span>
                 <span style="color:var(--text-muted)" id="arrow-${order.id}">▼</span>
               </div>
             </div>
+
             <div class="order-card-body" id="body-${order.id}">
+
+              ${isCancelled ? `
+                <div class="cancelled-banner">
+                  ❌ Đơn hàng này đã bị hủy
+                </div>` : ''}
+
               ${timelineHTML}
 
               ${order.items.map(item => `
@@ -385,15 +337,24 @@
                        onerror="this.src='https://placehold.co/55x55/f5f5f7/999?text=IMG'"
                        onclick="window.location.href='product.html?id=${item.product_id}'">
                   <div class="order-item-info">
-                    <div class="order-item-name" onclick="window.location.href='product.html?id=${item.product_id}'">${item.name}</div>
-                    <div class="order-item-meta">${item.brand || ''} · x${item.quantity} · ${formatPrice(item.unit_price)}/cái</div>
+                    <div class="order-item-name"
+                         onclick="window.location.href='product.html?id=${item.product_id}'">
+                      ${item.name}
+                    </div>
+                    <div class="order-item-meta">
+                      ${item.brand || ''} · x${item.quantity} · ${formatPrice(item.unit_price)}/cái
+                    </div>
                   </div>
                   <div class="order-item-price">${formatPrice(item.unit_price * item.quantity)}</div>
                 </div>`).join('')}
 
               <div class="order-footer">
                 <div>
-                  ${order.voucher_code ? `<div style="font-size:0.78rem;color:var(--success)">🎟️ Mã: ${order.voucher_code} · Giảm ${formatPrice(order.discount_amount)}</div>` : ''}
+                  ${order.voucher_code
+                    ? `<div style="font-size:0.78rem;color:var(--success)">
+                        🎟️ Mã: ${order.voucher_code} · Giảm ${formatPrice(order.discount_amount)}
+                       </div>`
+                    : ''}
                 </div>
                 <div class="order-total">Tổng: ${formatPrice(order.final_price)}</div>
               </div>
@@ -407,11 +368,26 @@
               ${order.status === 'done' ? `
                 <div style="margin-top:1rem">
                   ${order.items.map(item => `
-                    <button class="btn btn-outline btn-sm" style="margin-right:0.5rem;margin-top:0.5rem"
-                      onclick="window.location.href='product.html?id=${item.product_id}#reviews'">
+                    <button class="btn btn-outline btn-sm"
+                            style="margin-right:0.5rem;margin-top:0.5rem"
+                            onclick="window.location.href='product.html?id=${item.product_id}#reviews'">
                       ⭐ Đánh giá ${item.name}
                     </button>`).join('')}
                 </div>` : ''}
+
+              ${isPending ? `
+                <div class="cancel-row">
+                  <span class="cancel-row-hint">Chỉ có thể hủy khi đơn chưa được xác nhận</span>
+                  <button class="btn-cancel-order" onclick="openCancelModal(${order.id})">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18"/>
+                      <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    Hủy đơn hàng
+                  </button>
+                </div>` : ''}
+
             </div>
           </div>`;
       }).join('');
@@ -424,7 +400,59 @@
       arrow.textContent = body.classList.contains('open') ? '▲' : '▼';
     }
 
-    // ✅ Gọi sau khi tất cả hàm đã được khai báo
+    // ── Cancel modal ──────────────────────────────────────
+    function openCancelModal(orderId) {
+      cancelOrderId = orderId;
+      document.getElementById('cancel-modal-desc').innerHTML =
+        `Bạn có chắc muốn hủy <strong>Đơn hàng #${orderId}</strong>?<br>
+         Hành động này không thể hoàn tác.`;
+      document.getElementById('cancel-overlay').classList.add('active');
+    }
+
+    function closeCancelModal() {
+      document.getElementById('cancel-overlay').classList.remove('active');
+      cancelOrderId = null;
+    }
+
+    document.getElementById('cancel-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeCancelModal();
+    });
+
+    async function doCancel() {
+      if (!cancelOrderId) return;
+      const btn = document.getElementById('cancel-confirm-btn');
+      btn.textContent = 'Đang hủy...';
+      btn.disabled    = true;
+
+      try {
+        await api.patch(`/orders/${cancelOrderId}/status`, { status: 'cancelled' });
+        toast.success(`Đã hủy Đơn hàng #${cancelOrderId}!`);
+
+        // Cập nhật state local — không reload trang
+        const order = allOrders.find(o => o.id === cancelOrderId);
+        if (order) order.status = 'cancelled';
+
+        closeCancelModal();
+        renderOrders();
+
+        // Tự mở lại đơn vừa hủy
+        setTimeout(() => {
+          const body  = document.getElementById(`body-${cancelOrderId}`);
+          const arrow = document.getElementById(`arrow-${cancelOrderId}`);
+          if (body && !body.classList.contains('open')) {
+            body.classList.add('open');
+            if (arrow) arrow.textContent = '▲';
+          }
+        }, 100);
+
+      } catch(e) {
+        toast.error(e.message || 'Không thể hủy đơn hàng. Vui lòng thử lại!');
+      } finally {
+        btn.textContent = 'Hủy đơn hàng';
+        btn.disabled    = false;
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', loadOrders);
   </script>
 </body>

@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý Voucher - GosuCore Admin</title>
+  <title>Quản lý Voucher — GosuCore Admin</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/admin.css">
 </head>
@@ -16,23 +15,21 @@
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-logo-mark">
-        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       </div>
       <div>
         <div class="sidebar-logo-text">Gosu<span>Core</span></div>
         <span class="sidebar-logo-sub">Admin Panel</span>
       </div>
     </div>
-
     <div class="sidebar-section">Tổng quan</div>
     <a href="index.html" class="sidebar-item">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Dashboard
     </a>
-
     <div class="sidebar-section">Quản lý</div>
     <a href="products.html" class="sidebar-item">
-      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
       Sản phẩm
     </a>
     <a href="orders.html" class="sidebar-item">
@@ -44,14 +41,13 @@
       Tài khoản
     </a>
     <a href="categories.html" class="sidebar-item">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 17h7M17.5 14v7"/></svg>
+      <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
       Danh mục
     </a>
     <a href="vouchers.html" class="sidebar-item active">
       <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
       Voucher
     </a>
-
     <div class="sidebar-section">Hệ thống</div>
     <a href="../client/index.html" class="sidebar-item">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -61,7 +57,6 @@
       <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       Đăng xuất
     </div>
-
     <div class="sidebar-footer">
       <div class="admin-user-card">
         <div class="admin-avatar" id="admin-avatar">A</div>
@@ -76,11 +71,12 @@
   <!-- MAIN -->
   <main class="admin-main">
     <div class="admin-topbar">
-      <div class="topbar-left">
-        <h2>Quản lý Voucher</h2>
-      </div>
+      <div class="topbar-left"><h2>Quản lý Voucher</h2></div>
       <div class="topbar-right">
-        <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Tạo voucher</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tạo voucher
+        </button>
       </div>
     </div>
 
@@ -94,7 +90,7 @@
               <th>Lượt dùng</th>
               <th>Hết hạn</th>
               <th>Trạng thái</th>
-              <th>Thao tác</th>
+              <th style="width:110px">Thao tác</th>
             </tr>
           </thead>
           <tbody id="vouchers-table">
@@ -116,7 +112,7 @@
     <input type="hidden" id="edit-id">
     <div class="form-group">
       <label>Mã voucher *</label>
-      <input type="text" id="v-code" placeholder="GOSU10" style="text-transform:uppercase">
+      <input type="text" id="v-code" placeholder="GOSU10" style="text-transform:uppercase;font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:1px">
     </div>
     <div class="form-row">
       <div class="form-group">
@@ -132,9 +128,24 @@
       <label>Ngày hết hạn</label>
       <input type="date" id="v-expires">
     </div>
-    <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem">
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
       <button class="btn btn-light" onclick="closeModal()">Hủy</button>
       <button class="btn btn-primary" id="save-btn" onclick="saveVoucher()">Tạo voucher</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE MODAL -->
+<div class="confirm-modal-overlay" id="confirm-modal">
+  <div class="confirm-modal">
+    <div class="confirm-modal-icon">
+      <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    </div>
+    <div class="confirm-modal-title">Xóa voucher?</div>
+    <div class="confirm-modal-desc" id="confirm-desc"></div>
+    <div class="confirm-modal-actions">
+      <button class="btn btn-light" onclick="closeConfirm()">Hủy</button>
+      <button class="btn btn-danger" id="confirm-ok-btn">Xóa</button>
     </div>
   </div>
 </div>
@@ -153,7 +164,8 @@
     document.getElementById('admin-avatar').textContent = (user.full_name || user.username)[0].toUpperCase();
   }
 
-  // ✅ Khai báo hàm TRƯỚC
+  document.addEventListener('DOMContentLoaded', () => { loadVouchers(); });
+
   const loadVouchers = async () => {
     const tbody = document.getElementById('vouchers-table');
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-3)">Đang tải...</td></tr>';
@@ -162,7 +174,7 @@
       const data     = await api.get('/vouchers');
       const vouchers = data.data;
 
-      if (vouchers.length === 0) {
+      if (!vouchers.length) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-3)">Chưa có voucher nào</td></tr>';
         return;
       }
@@ -176,10 +188,14 @@
           <tr>
             <td><span class="voucher-code">${v.code}</span></td>
             <td>
-              <span style="font-size:15px;font-weight:700;color:var(--accent)">${v.discount_percent}%</span>
+              <span style="font-size:16px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace">
+                ${v.discount_percent}%
+              </span>
             </td>
             <td>
-              <div style="font-size:13px;margin-bottom:4px">${v.used_count} / ${v.max_uses}</div>
+              <div style="font-size:13px;margin-bottom:5px;font-family:'JetBrains Mono',monospace">
+                ${v.used_count} <span style="color:var(--text-3);font-family:inherit">/ ${v.max_uses}</span>
+              </div>
               <div class="progress-bar">
                 <div class="progress-fill" style="width:${pct}%"></div>
               </div>
@@ -187,21 +203,30 @@
             <td style="font-size:12px;color:var(--text-2)">
               ${v.expires_at
                 ? (isExpired
-                    ? `<span style="color:var(--red)">Hết hạn ${formatDate(v.expires_at)}</span>`
+                    ? `<span style="color:var(--red);font-weight:600">Hết hạn</span><br><span style="font-size:11px">${formatDate(v.expires_at)}</span>`
                     : formatDate(v.expires_at))
-                : '∞ Không giới hạn'}
+                : '<span style="color:var(--text-3)">Không giới hạn</span>'}
             </td>
             <td>
               <span class="badge ${isActive ? 'badge-done' : 'badge-cancelled'}">
-                ${isActive ? '✅ Đang dùng' : '❌ Tắt'}
+                ${isActive ? 'Đang dùng' : 'Tắt'}
               </span>
             </td>
             <td>
               <div class="action-btns">
-                <button class="btn btn-outline btn-sm" onclick="toggleVoucher(${v.id}, ${v.is_active ? 1 : 0})">
-                  ${v.is_active ? 'Tắt' : 'Bật'}
+                <button class="action-btn ${v.is_active ? 'action-btn-toggle-off' : 'action-btn-toggle-on'}"
+                        data-tooltip="${v.is_active ? 'Tắt voucher' : 'Bật voucher'}"
+                        onclick="toggleVoucher(${v.id}, ${v.is_active ? 1 : 0})">
+                  ${v.is_active
+                    ? `<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`
+                    : `<svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`
+                  }
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteVoucher(${v.id}, '${v.code}')">🗑️</button>
+                <button class="action-btn action-btn-delete"
+                        data-tooltip="Xóa voucher"
+                        onclick="confirmDelete(${v.id},'${v.code}')">
+                  <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                </button>
               </div>
             </td>
           </tr>`;
@@ -211,9 +236,6 @@
       tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--red)">${e.message}</td></tr>`;
     }
   };
-
-  // ✅ addEventListener SAU khi đã khai báo hàm
-  document.addEventListener('DOMContentLoaded', loadVouchers);
 
   const openAddModal = () => {
     document.getElementById('modal-title').textContent = 'Tạo voucher mới';
@@ -226,9 +248,7 @@
     document.getElementById('voucher-modal').classList.add('active');
   };
 
-  const closeModal = () => {
-    document.getElementById('voucher-modal').classList.remove('active');
-  };
+  const closeModal = () => document.getElementById('voucher-modal').classList.remove('active');
 
   const saveVoucher = async () => {
     const code     = document.getElementById('v-code').value.trim().toUpperCase();
@@ -237,14 +257,9 @@
     const expires  = document.getElementById('v-expires').value;
     const btn      = document.getElementById('save-btn');
 
-    if (!code || !discount) {
-      toast.error('Vui lòng nhập mã và % giảm giá!');
-      return;
-    }
+    if (!code || !discount) { toast.error('Vui lòng nhập mã và % giảm giá!'); return; }
 
-    btn.textContent = 'Đang lưu...';
-    btn.disabled    = true;
-
+    btn.textContent = 'Đang lưu...'; btn.disabled = true;
     try {
       await api.post('/vouchers', {
         code,
@@ -253,14 +268,9 @@
         expires_at:       expires || undefined,
       });
       toast.success('Tạo voucher thành công!');
-      closeModal();
-      loadVouchers();
-    } catch(e) {
-      toast.error(e.message);
-    } finally {
-      btn.textContent = 'Tạo voucher';
-      btn.disabled    = false;
-    }
+      closeModal(); loadVouchers();
+    } catch(e) { toast.error(e.message); }
+    finally { btn.textContent = 'Tạo voucher'; btn.disabled = false; }
   };
 
   const toggleVoucher = async (id, isActive) => {
@@ -268,20 +278,32 @@
       await api.put(`/vouchers/${id}`, { is_active: !isActive });
       toast.success(isActive ? 'Đã tắt voucher!' : 'Đã bật voucher!');
       loadVouchers();
-    } catch(e) {
-      toast.error(e.message);
-    }
+    } catch(e) { toast.error(e.message); }
   };
 
-  const deleteVoucher = async (id, code) => {
-    if (!confirm(`Xóa voucher "${code}"?`)) return;
+  // ── Confirm delete ────────────────────────────────────────
+  let _deleteId = null;
+
+  const confirmDelete = (id, code) => {
+    _deleteId = id;
+    document.getElementById('confirm-desc').innerHTML =
+      `Voucher <strong>${code}</strong> sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.`;
+    document.getElementById('confirm-ok-btn').onclick = doDelete;
+    document.getElementById('confirm-modal').classList.add('active');
+  };
+
+  const closeConfirm = () => {
+    document.getElementById('confirm-modal').classList.remove('active');
+    _deleteId = null;
+  };
+
+  const doDelete = async () => {
+    if (!_deleteId) return;
     try {
-      await api.delete(`/vouchers/${id}`);
+      await api.delete(`/vouchers/${_deleteId}`);
       toast.success('Đã xóa voucher!');
-      loadVouchers();
-    } catch(e) {
-      toast.error(e.message);
-    }
+      closeConfirm(); loadVouchers();
+    } catch(e) { toast.error(e.message); closeConfirm(); }
   };
 </script>
 </body>

@@ -117,103 +117,22 @@
       font-weight: 700;
     }
 
-    /* ── PAYMENT MODAL ── */
-    .pay-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(6px);
-      z-index: 3000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.2s ease;
-    }
-
-    .pay-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .pay-modal {
-      background: #fff;
-      border-radius: 20px;
-      padding: 2rem;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-      transform: translateY(16px) scale(0.97);
-      transition: all 0.25s ease;
-    }
-
-    .pay-overlay.active .pay-modal {
-      transform: translateY(0) scale(1);
-    }
-
-    .pay-modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-    }
-
-    .pay-modal-header h3 {
-      font-size: 1.1rem;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-    }
-
-    .pay-modal-close {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      border: 1px solid #e5e7eb;
-      background: #f9fafb;
-      cursor: pointer;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s;
-    }
-
-    .pay-modal-close:hover { background: #f3f4f6; }
-
-    /* Payment method cards */
-    .pay-methods {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .pay-method-card {
+    /* Payment method box */
+    .payment-method-box {
       display: flex;
       align-items: center;
       gap: 1rem;
       padding: 1rem 1.25rem;
       border: 2px solid #e5e7eb;
       border-radius: 14px;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      user-select: none;
-    }
-
-    .pay-method-card:hover {
-      border-color: #9ca3af;
       background: #f9fafb;
+      margin-bottom: 1rem;
     }
 
-    .pay-method-card.selected {
-      border-color: #111827;
-      background: #f9fafb;
-    }
-
-    .pay-method-icon {
+    .payment-method-icon {
       width: 44px; height: 44px;
       border-radius: 12px;
+      background: #fef3c7;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -221,188 +140,16 @@
       flex-shrink: 0;
     }
 
-    .pay-method-icon.cod  { background: #fef3c7; }
-    .pay-method-icon.bank { background: #dbeafe; }
-
-    .pay-method-info { flex: 1; }
-
-    .pay-method-title {
+    .payment-method-info .title {
       font-size: 0.9rem;
       font-weight: 700;
       color: #111827;
       margin-bottom: 0.15rem;
     }
 
-    .pay-method-desc {
+    .payment-method-info .desc {
       font-size: 0.75rem;
       color: #6b7280;
-    }
-
-    .pay-method-radio {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      border: 2px solid #d1d5db;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.15s;
-    }
-
-    .pay-method-card.selected .pay-method-radio {
-      border-color: #111827;
-      background: #111827;
-    }
-
-    .pay-method-card.selected .pay-method-radio::after {
-      content: '';
-      width: 8px; height: 8px;
-      background: white;
-      border-radius: 50%;
-    }
-
-    /* Order summary mini inside modal */
-    .pay-summary {
-      background: #f9fafb;
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      border: 1px solid #f3f4f6;
-    }
-
-    .pay-summary-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #9ca3af;
-      margin-bottom: 0.6rem;
-    }
-
-    .pay-summary-total {
-      font-size: 1.4rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: #111827;
-    }
-
-    .pay-summary-sub {
-      font-size: 0.78rem;
-      color: #6b7280;
-      margin-top: 0.2rem;
-    }
-
-    /* ── QR SCREEN ── */
-    .qr-screen { display: none; }
-    .qr-screen.active { display: block; }
-
-    .pay-modal.qr-mode { max-width: 560px; }
-
-    .qr-layout {
-      display: grid;
-      grid-template-columns: 152px 1fr;
-      gap: 1rem;
-      align-items: start;
-      margin-bottom: 1rem;
-    }
-
-    .qr-left { text-align: center; }
-
-    .qr-left img {
-      width: 152px; height: 152px;
-      border-radius: 12px;
-      border: 2px solid #e5e7eb;
-      padding: 5px;
-      background: white;
-      display: block;
-    }
-
-    .qr-left-label {
-      font-size: 0.68rem;
-      color: #9ca3af;
-      margin-top: 4px;
-    }
-
-    .qr-bank-row {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.55rem 0.75rem;
-      background: #eff6ff;
-      border-radius: 10px;
-      margin-bottom: 0.6rem;
-    }
-
-    .qr-bank-logo {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      background: #2563eb;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 0.6rem;
-      flex-shrink: 0;
-    }
-
-    .qr-bank-name { font-size: 0.78rem; font-weight: 700; line-height: 1.2; }
-    .qr-bank-acc  { font-size: 0.68rem; color: #6b7280; }
-
-    .qr-amount-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.5rem 0.75rem;
-      background: #f0fdf4;
-      border-radius: 10px;
-      border: 1px solid #bbf7d0;
-      margin-bottom: 0.6rem;
-    }
-
-    .qr-amount-label { font-size: 0.68rem; color: #16a34a; font-weight: 600; }
-    .qr-amount-value { font-size: 1rem; font-weight: 800; color: #15803d; }
-
-    .qr-ref-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.5rem 0.75rem;
-      background: #fffbeb;
-      border-radius: 10px;
-      border: 1px solid #fef08a;
-      margin-bottom: 0.6rem;
-    }
-
-    .qr-ref-label { font-size: 0.68rem; color: #92400e; font-weight: 500; }
-    .qr-ref-value { font-size: 0.78rem; font-weight: 800; color: #92400e; letter-spacing: 0.5px; }
-
-    .qr-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    .qr-step {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-size: 0.7rem;
-      color: #4b5563;
-      line-height: 1.4;
-    }
-
-    .qr-step-num {
-      width: 17px; height: 17px;
-      border-radius: 50%;
-      background: #111827;
-      color: white;
-      font-size: 0.6rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
     }
 
     /* Success overlay */
@@ -415,6 +162,8 @@
       align-items: center;
       justify-content: center;
       z-index: 9999;
+      text-align: center;
+      padding: 2rem;
     }
 
     .success-overlay .icon { font-size: 5rem; margin-bottom: 1.5rem; }
@@ -426,7 +175,10 @@
       letter-spacing: -0.5px;
     }
 
-    .success-overlay p { color: var(--text-secondary); margin-bottom: 2rem; }
+    .success-overlay p {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
 
     @media (max-width: 768px) {
       .checkout-page { grid-template-columns: 1fr; }
@@ -448,109 +200,10 @@
   <div class="success-overlay" id="success-overlay">
     <div class="icon">🎉</div>
     <h2>Đặt hàng thành công!</h2>
-    <p id="success-msg">Cảm ơn bạn đã mua sắm tại GosuCore. Chúng tôi sẽ liên hệ sớm nhất!</p>
-    <div style="display:flex;gap:1rem">
+    <p>Cảm ơn bạn đã mua sắm tại GosuCore. Chúng tôi sẽ liên hệ sớm nhất!</p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center">
       <a href="orders.html" class="btn btn-dark btn-lg">Xem đơn hàng</a>
       <a href="index.html"  class="btn btn-outline btn-lg">Tiếp tục mua sắm</a>
-    </div>
-  </div>
-
-  <!-- ── PAYMENT MODAL ── -->
-  <div class="pay-overlay" id="pay-overlay">
-    <div class="pay-modal">
-
-      <!-- STEP 1: Chọn hình thức -->
-      <div id="step-choose">
-        <div class="pay-modal-header">
-          <h3>Chọn hình thức thanh toán</h3>
-          <button class="pay-modal-close" onclick="closePayModal()">✕</button>
-        </div>
-
-        <!-- Tóm tắt giá -->
-        <div class="pay-summary">
-          <div class="pay-summary-title">Tổng thanh toán</div>
-          <div class="pay-summary-total" id="modal-total">0₫</div>
-          <div class="pay-summary-sub" id="modal-items-count"></div>
-        </div>
-
-        <!-- Các lựa chọn -->
-        <div class="pay-methods">
-          <div class="pay-method-card selected" id="card-cod" onclick="selectMethod('cod')">
-            <div class="pay-method-icon cod"></div>
-            <div class="pay-method-info">
-              <div class="pay-method-title">Thanh toán khi nhận hàng</div>
-              <div class="pay-method-desc">Trả tiền mặt khi nhận được hàng (COD)</div>
-            </div>
-            <div class="pay-method-radio"></div>
-          </div>
-
-          <div class="pay-method-card" id="card-bank" onclick="selectMethod('bank')">
-            <div class="pay-method-icon bank"></div>
-            <div class="pay-method-info">
-              <div class="pay-method-title">Chuyển khoản ngân hàng</div>
-              <div class="pay-method-desc">Quét mã QR — xác nhận tự động</div>
-            </div>
-            <div class="pay-method-radio"></div>
-          </div>
-        </div>
-
-        <button class="btn btn-dark btn-full btn-lg" onclick="confirmMethod()">
-          Xác nhận →
-        </button>
-      </div>
-
-      <!-- STEP 2: QR chuyển khoản -->
-      <div id="step-qr" class="qr-screen">
-        <div class="pay-modal-header">
-          <div style="display:flex;align-items:center;gap:0.6rem">
-            <button onclick="backToChoose()" style="background:none;border:none;cursor:pointer;font-size:1.1rem;padding:0;color:#6b7280">←</button>
-            <h3>Quét mã QR thanh toán</h3>
-          </div>
-          <button class="pay-modal-close" onclick="closePayModal()">✕</button>
-        </div>
-
-        <!-- Thông tin ngân hàng -->
-        <div class="qr-layout">
-          <!-- Trái: QR -->
-          <div class="qr-left">
-            <img id="qr-img" src="" alt="QR Code thanh toán">
-            <div class="qr-left-label">Quét để thanh toán</div>
-          </div>
-
-          <!-- Phải: Thông tin -->
-          <div class="qr-right">
-            <div class="qr-bank-row">
-              <div class="qr-bank-logo">TCB</div>
-              <div>
-                <div class="qr-bank-name">Techcombank</div>
-                <div class="qr-bank-acc">STK: <strong>3375572569</strong> — NGUYEN TRUNG TAM</div>
-              </div>
-            </div>
-
-            <div class="qr-amount-row">
-              <span class="qr-amount-label">Số tiền</span>
-              <span class="qr-amount-value" id="qr-amount">0₫</span>
-            </div>
-
-            <div class="qr-ref-row">
-              <span class="qr-ref-label">Nội dung CK</span>
-              <span class="qr-ref-value" id="qr-content"></span>
-            </div>
-
-            <div class="qr-steps">
-              <div class="qr-step"><div class="qr-step-num">1</div><span>Mở app ngân hàng → <strong>Quét QR</strong></span></div>
-              <div class="qr-step"><div class="qr-step-num">2</div><span>Quét mã — số tiền tự điền</span></div>
-              <div class="qr-step"><div class="qr-step-num">3</div><span>Kiểm tra nội dung & xác nhận</span></div>
-              <div class="qr-step"><div class="qr-step-num">4</div><span>Nhấn <strong>"Đã chuyển khoản"</strong> bên dưới</span></div>
-            </div>
-          </div>
-        </div>
-
-        <button class="btn btn-dark btn-full btn-lg" id="qr-confirm-btn" onclick="submitOrder('bank')">
-        Đã chuyển khoản — Đặt hàng
-        </button>
-      </div>
-
     </div>
   </div>
 
@@ -561,6 +214,7 @@
 
   <div class="checkout-page">
     <div>
+
       <!-- THÔNG TIN NHẬN HÀNG -->
       <div class="checkout-section">
         <h2>📦 Thông tin nhận hàng</h2>
@@ -591,13 +245,26 @@
       <!-- SẢN PHẨM -->
       <div class="checkout-section">
         <h2>🛒 Sản phẩm (<span id="item-count">0</span>)</h2>
-        <div class="order-items-mini" id="order-items"></div>
+        <div id="order-items"></div>
       </div>
+
+      <!-- HÌNH THỨC THANH TOÁN -->
+      <div class="checkout-section">
+        <h2>💳 Hình thức thanh toán</h2>
+        <div class="payment-method-box">
+          <div class="payment-method-icon">💵</div>
+          <div class="payment-method-info">
+            <div class="title">Thanh toán khi nhận hàng (COD)</div>
+            <div class="desc">Trả tiền mặt khi nhận được hàng</div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- SUMMARY -->
     <div class="summary-box">
-      <h2>Tóm tắt</h2>
+      <h2>Tóm tắt đơn hàng</h2>
 
       <div class="summary-row">
         <span class="label">Tạm tính</span>
@@ -618,12 +285,14 @@
 
       <div id="voucher-info" style="margin:1rem 0;font-size:0.8rem;color:var(--success);display:none"></div>
 
-      <button class="btn btn-dark btn-full btn-lg" style="margin-top:1rem" onclick="placeOrder()" id="place-btn">
+      <button class="btn btn-dark btn-full btn-lg" style="margin-top:1rem"
+              onclick="placeOrder()" id="place-btn">
         Đặt hàng ngay
       </button>
 
       <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-top:1rem;line-height:1.6">
-        Bằng cách đặt hàng, bạn đồng ý với <a href="#" style="color:var(--accent)">Điều khoản dịch vụ</a> của GosuCore.
+        Bằng cách đặt hàng, bạn đồng ý với
+        <a href="#" style="color:var(--accent)">Điều khoản dịch vụ</a> của GosuCore.
       </p>
     </div>
   </div>
@@ -638,13 +307,6 @@
     const voucherCode    = sessionStorage.getItem('voucher_code') || null;
 
     if (items.length === 0) window.location.href = 'cart.html';
-
-    // ── Tính tổng ─────────────────────────────────────────
-    const getTotal = () => {
-      const subtotal = cart.total();
-      const discount = appliedVoucher ? subtotal * appliedVoucher.discount_percent / 100 : 0;
-      return subtotal - discount;
-    };
 
     // ── DOM Ready ─────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', () => {
@@ -678,11 +340,11 @@
       let discount   = 0;
 
       if (appliedVoucher) {
-        discount = subtotal * appliedVoucher.discount_percent / 100;
+        discount = Math.round(subtotal * appliedVoucher.discount_percent / 100);
         document.getElementById('s-discount-row').style.display = 'flex';
-        document.getElementById('s-discount').textContent = `-${formatPrice(discount)}`;
-        document.getElementById('voucher-info').style.display = 'block';
-        document.getElementById('voucher-info').textContent =
+        document.getElementById('s-discount').textContent       = `-${formatPrice(discount)}`;
+        document.getElementById('voucher-info').style.display   = 'block';
+        document.getElementById('voucher-info').textContent     =
           `🎟️ Mã "${voucherCode}" giảm ${appliedVoucher.discount_percent}%`;
       }
 
@@ -690,103 +352,19 @@
       document.getElementById('s-total').textContent    = formatPrice(subtotal - discount);
     };
 
-    // ── Validate form trước khi mở modal ─────────────────
-    const placeOrder = () => {
+    // ── Đặt hàng ─────────────────────────────────────────
+    const placeOrder = async () => {
       const shipping_name    = document.getElementById('shipping_name').value.trim();
       const shipping_phone   = document.getElementById('shipping_phone').value.trim();
       const shipping_address = document.getElementById('shipping_address').value.trim();
+      const note             = document.getElementById('note').value.trim();
+      const btn              = document.getElementById('place-btn');
 
       if (!shipping_name || !shipping_phone || !shipping_address) {
         toast.error('Vui lòng điền đầy đủ thông tin nhận hàng!');
         return;
       }
 
-      openPayModal();
-    };
-
-    // ── Payment Modal ─────────────────────────────────────
-    let selectedMethod = 'cod';
-
-    const openPayModal = () => {
-      const total = getTotal();
-      document.getElementById('modal-total').textContent      = formatPrice(total);
-      document.getElementById('modal-items-count').textContent =
-        `${cart.count()} sản phẩm · Miễn phí vận chuyển`;
-
-      // Reset về step 1
-      showStep('choose');
-      document.getElementById('pay-overlay').classList.add('active');
-    };
-
-    const closePayModal = () => {
-      document.getElementById('pay-overlay').classList.remove('active');
-    };
-
-    // Đóng khi click overlay
-    document.getElementById('pay-overlay').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('pay-overlay')) closePayModal();
-    });
-
-    const showStep = (step) => {
-      document.getElementById('step-choose').style.display = step === 'choose' ? 'block' : 'none';
-      document.getElementById('step-qr').classList.toggle('active', step === 'qr');
-      document.querySelector('.pay-modal').classList.toggle('qr-mode', step === 'qr');
-    };
-
-    const selectMethod = (method) => {
-      selectedMethod = method;
-      document.getElementById('card-cod').classList.toggle('selected',  method === 'cod');
-      document.getElementById('card-bank').classList.toggle('selected', method === 'bank');
-    };
-
-    const confirmMethod = () => {
-      if (selectedMethod === 'cod') {
-        submitOrder('cod');
-      } else {
-        showQR();
-      }
-    };
-
-    const backToChoose = () => showStep('choose');
-
-    // ── QR Code ───────────────────────────────────────────
-    const showQR = () => {
-      const total       = getTotal();
-      const name        = document.getElementById('shipping_name').value.trim();
-      const orderRef    = `GOSU${Date.now().toString().slice(-6)}`;
-
-      // Nội dung chuyển khoản
-      document.getElementById('qr-amount').textContent  = formatPrice(total);
-      document.getElementById('qr-content').textContent = orderRef;
-
-      // ── Tạo QR bằng VietQR (thay STK & ngân hàng của bạn) ──
-      // Format: https://img.vietqr.io/image/{BANK_ID}-{ACCOUNT_NO}-{TEMPLATE}.png
-      // ?amount={amount}&addInfo={content}&accountName={name}
-      const BANK_ID    = 'TCB';          // ← Đổi thành mã ngân hàng của bạn
-      const ACCOUNT_NO = '3375572569';   // ← Đổi thành số tài khoản của bạn
-      const TEMPLATE   = 'compact2';
-
-      const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${TEMPLATE}.png`
-        + `?amount=${total}`
-        + `&addInfo=${encodeURIComponent(orderRef)}`
-        + `&accountName=${encodeURIComponent('GOSUCORE')}`;
-
-      document.getElementById('qr-img').src = qrUrl;
-
-      showStep('qr');
-    };
-
-    // ── Submit đơn hàng ───────────────────────────────────
-    const submitOrder = async (paymentMethod) => {
-      const shipping_name    = document.getElementById('shipping_name').value.trim();
-      const shipping_phone   = document.getElementById('shipping_phone').value.trim();
-      const shipping_address = document.getElementById('shipping_address').value.trim();
-      const note             = document.getElementById('note').value.trim();
-      const btn              = paymentMethod === 'cod'
-        ? document.querySelector('#step-choose .btn.btn-dark')
-        : document.getElementById('qr-confirm-btn');
-
-      const originalText = btn.textContent;
       btn.textContent = 'Đang xử lý...';
       btn.disabled    = true;
 
@@ -801,7 +379,7 @@
           shipping_phone,
           shipping_address,
           note:             note || undefined,
-          payment_method:   paymentMethod,   // 'cod' hoặc 'bank'
+          payment_method:   'cod',
         });
 
         // Xóa giỏ hàng & voucher
@@ -809,19 +387,12 @@
         sessionStorage.removeItem('applied_voucher');
         sessionStorage.removeItem('voucher_code');
 
-        // Đóng modal, hiện thành công
-        closePayModal();
-
-        const msg = paymentMethod === 'bank'
-          ? 'Đơn hàng đã ghi nhận. Chúng tôi sẽ xác nhận sau khi nhận được thanh toán!'
-          : 'Cảm ơn bạn đã mua sắm tại GosuCore. Chúng tôi sẽ liên hệ sớm nhất!';
-
-        document.getElementById('success-msg').textContent = msg;
+        // Hiện thành công
         document.getElementById('success-overlay').style.display = 'flex';
 
-      } catch (e) {
+      } catch(e) {
         toast.error(e.message || 'Đặt hàng thất bại. Vui lòng thử lại!');
-        btn.textContent = originalText;
+        btn.textContent = 'Đặt hàng ngay';
         btn.disabled    = false;
       }
     };

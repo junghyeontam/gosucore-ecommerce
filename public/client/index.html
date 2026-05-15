@@ -8,6 +8,28 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
   <link rel="stylesheet" href="../css/style.css">
   <style>
+    /* ── Navbar auth buttons equal size ── */
+    #auth-area { display: flex; align-items: center; gap: 0.5rem; }
+    #auth-area a,
+    #auth-area button,
+    #auth-area span[onclick] {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-width: 88px !important;
+      height: 34px !important;
+      padding: 0 1rem !important;
+      border-radius: 50px !important;
+      font-size: 0.82rem !important;
+      font-weight: 600 !important;
+      font-family: inherit !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+      transition: all 0.2s ease !important;
+      white-space: nowrap !important;
+      box-sizing: border-box !important;
+    }
+
     /* ── Category nav sticky ── */
     .category-nav { position: sticky; top: 52px; z-index: 90; background: var(--bg-primary); box-shadow: 0 1px 0 var(--border-light); }
     .category-nav-item { padding: 0.55rem 0.9rem !important; min-width: 72px !important; transition: background 0.2s ease, color 0.2s ease; border-radius: 8px 8px 0 0; border-bottom: 2px solid transparent !important; }
@@ -69,11 +91,11 @@
     .hero-main-banner .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.3s ease; border: none; }
     .hero-main-banner .hero-dot.active { background: white; width: 20px; border-radius: 3px; }
     .hero-side-cards { display: flex; flex-direction: column; gap: 1rem; }
-    .hero-side-card { flex: 1; border-radius: var(--radius-md); background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); padding: 1.25rem 1.25rem 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; overflow: hidden; position: relative; }
-    .hero-side-card::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.06); }
-    .hero-side-card-2 { background: linear-gradient(135deg, #1a3a2a 0%, #16a34a 100%); }
+    .hero-side-card { flex: 1; border-radius: var(--radius-md); background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); padding: 1.25rem 1.25rem 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; overflow: hidden; position: relative; background-size: cover; background-position: center; }
+    .hero-side-card::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.45); border-radius: var(--radius-md); z-index: 0; }
+    .hero-side-card-2 { /* background gradient removed — dùng background-image từ inline style */ }
     .hero-side-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-    .hero-side-card-info { z-index: 1; }
+    .hero-side-card-info { z-index: 1; position: relative; }
     .hero-side-card-tag { display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 50px; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
     .hero-side-card-name { font-size: 0.88rem; font-weight: 700; color: #fff; line-height: 1.35; margin-bottom: 0.85rem; }
     .hero-side-card-btn { display: inline-flex; align-items: center; padding: 0.35rem 1rem; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); color: #fff; border-radius: 50px; font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s ease; }
@@ -87,10 +109,14 @@
     .hero-feature-title { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; }
     .hero-feature-sub { font-size: 0.72rem; color: var(--text-secondary); white-space: nowrap; }
 
-    /* Keep original card size; limit max columns so last row doesn't stretch */
+    /* Footer 5-column override */
+    .footer-grid { grid-template-columns: 1.6fr 1fr 1fr 1fr 1.2fr !important; gap: 2rem !important; }
+    .footer-col a { display: flex; align-items: center; gap: 0.35rem; }
+
+    /* Product grid — centered, consistent card sizes */
     .products-grid {
-      grid-template-columns: repeat(auto-fill, minmax(220px, 240px)) !important;
-      justify-content: start;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+      justify-content: center;
     }
 
     /* ═══ BEST SELLERS ═══ */
@@ -384,13 +410,17 @@
       .hero-structured-inner { grid-template-columns: 1fr; }
       .hero-side-cards { flex-direction: row; }
       .hero-feature-strip { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr !important; }
+      .bs-podium { grid-template-columns: 1fr 1fr; }
+      .bs-podium-card:last-child { display: none; }
     }
     @media (max-width: 600px) {
       .hero-main-banner { height: 260px; }
       .hero-side-cards { flex-direction: column; }
       .hero-feature-strip { grid-template-columns: 1fr 1fr; }
-      .flash-sale-header { flex-wrap: wrap; gap: 0.75rem; }
-      .brand-strip-inner { flex-wrap: wrap; }
+      .footer-grid { grid-template-columns: 1fr !important; }
+      .bs-podium { grid-template-columns: 1fr; }
+      .bs-podium-card:not(.bs-rank-1) { display: none; }
     }
   </style>
 </head>
@@ -488,21 +518,21 @@
         </button>
       </div>
       <div class="hero-side-cards">
-        <div class="hero-side-card" onclick="clickNavCategory(1,'Chuột Gaming')">
+        <div class="hero-side-card" onclick="clickNavCategory(1,'Chuột Gaming')"
+             style="background-image:url('../assets/images/hero_slai/banner1.png')">
           <div class="hero-side-card-info">
             <div class="hero-side-card-tag">Giảm 20%</div>
-            <div class="hero-side-card-name">Chuột Gaming<br>Razer DeathAdder</div>
+            <div class="hero-side-card-name">Chuột Gaming<br></div>
             <button class="hero-side-card-btn">Mua ngay</button>
           </div>
-          <div class="hero-side-card-icon">🖱️</div>
         </div>
-        <div class="hero-side-card hero-side-card-2" onclick="clickNavCategory(2,'Bàn phím Gaming')">
+        <div class="hero-side-card hero-side-card-2" onclick="clickNavCategory(2,'Bàn phím Gaming')"
+             style="background-image:url('../assets/images/hero_slai/banner2.png')">
           <div class="hero-side-card-info">
             <div class="hero-side-card-tag">Giảm 15%</div>
-            <div class="hero-side-card-name">Bàn Phím Cơ<br>Logitech G Pro X</div>
+            <div class="hero-side-card-name">Bàn Phím Cơ<br></div>
             <button class="hero-side-card-btn">Mua ngay</button>
           </div>
-          <div class="hero-side-card-icon">⌨️</div>
         </div>
       </div>
     </div>
@@ -612,9 +642,15 @@
   <footer>
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="footer-brand-name">GosuCore</div>
+        <div class="footer-brand-name">Gosu<span style="color:var(--accent)">Core</span></div>
         <p>Nền tảng mua sắm thiết bị gaming chính hãng hàng đầu Việt Nam.</p>
+        <div style="margin-top:1rem;display:flex;gap:0.6rem;">
+          <a href="#" style="width:32px;height:32px;border-radius:50%;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:0.8rem;transition:all 0.2s" onmouseover="this.style.background='var(--accent)';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-hover)';this.style.color='var(--text-secondary)'">f</a>
+          <a href="#" style="width:32px;height:32px;border-radius:50%;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:0.8rem;transition:all 0.2s" onmouseover="this.style.background='var(--accent)';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-hover)';this.style.color='var(--text-secondary)'">in</a>
+          <a href="#" style="width:32px;height:32px;border-radius:50%;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:0.75rem;transition:all 0.2s" onmouseover="this.style.background='var(--accent)';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-hover)';this.style.color='var(--text-secondary)'">yt</a>
+        </div>
       </div>
+
       <div class="footer-col">
         <h4>Sản phẩm</h4>
         <a href="#" onclick="event.preventDefault();filterCategory(1,'Chuột Gaming',null)">Chuột Gaming</a>
@@ -622,17 +658,45 @@
         <a href="#" onclick="event.preventDefault();filterCategory(3,'Tai nghe Gaming',null)">Tai Nghe</a>
         <a href="#" onclick="event.preventDefault();filterCategory(4,'Màn hình Gaming',null)">Màn Hình</a>
       </div>
+
       <div class="footer-col">
         <h4>Hỗ trợ</h4>
-        <a href="#">Chính sách đổi trả</a><a href="#">Bảo hành</a><a href="#">Liên hệ</a>
+        <a href="/client/return-policy.html">Chính sách đổi trả</a>
+        <a href="/client/warranty.html">Bảo hành</a>
+        <a href="/client/contact.html">Liên hệ</a>
+        <a href="/client/purchase-guide.html">Hướng dẫn mua hàng</a>
       </div>
+
       <div class="footer-col">
         <h4>Tài khoản</h4>
-        <a href="login.html">Đăng nhập</a><a href="register.html">Đăng ký</a><a href="orders.html">Đơn hàng</a>
+        <a href="login.html">Đăng nhập</a>
+        <a href="register.html">Đăng ký</a>
+        <a href="orders.html">Đơn hàng</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Liên hệ</h4>
+        <a href="tel:19001234" style="display:flex;align-items:center;gap:0.4rem">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92v2z"/></svg>
+          1900 1234
+        </a>
+        <a href="mailto:support@gosucore.vn" style="display:flex;align-items:center;gap:0.4rem">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          support@gosucore.vn
+        </a>
+        <a href="#" style="display:flex;align-items:center;gap:0.4rem">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Hà Nội, Việt Nam
+        </a>
       </div>
     </div>
+
     <div class="footer-bottom">
       <span>© 2026 GosuCore. All rights reserved.</span>
+      <div style="display:flex;gap:1.5rem">
+        <a href="#" style="color:var(--text-muted);font-size:0.78rem">Điều khoản sử dụng</a>
+        <a href="#" style="color:var(--text-muted);font-size:0.78rem">Chính sách bảo mật</a>
+      </div>
       <span>Gaming Gear Chính Hãng</span>
     </div>
   </footer>
@@ -815,77 +879,80 @@
 
     /* ═══ BEST SELLERS ═══ */
     const loadBestSellers = async () => {
-      try {
-        const data = await api.get('/products?limit=10&sort=newest');
-        const products = data.data || [];
-        if (!products.length) return;
+  try {
+    const data     = await api.get('/products?limit=10&sort=best_selling');
+    const products = data.data || [];
+    if (!products.length) return;
 
-        const SOLD_BASE = [1840, 1530, 1270, 980, 860, 740, 620, 510, 430, 360];
-        const rankBadgeClass = ['r1','r2','r3'];
+    const rankBadgeClass = ['r1','r2','r3'];
 
-        // ── Top 3 podium ──
-        const podium = document.getElementById('bs-podium');
-        podium.innerHTML = products.slice(0, 3).map((p, i) => {
-          const sold  = SOLD_BASE[i] + Math.floor(Math.random() * 80);
-          const stars = renderStars(p.avg_rating || (4.5 - i * 0.2));
-          return `
-            <div class="bs-podium-card bs-rank-${i+1}" onclick="window.location.href='product.html?id=${p.id}'">
-              <span class="bs-rank-badge ${rankBadgeClass[i]}">${i===0?'🥇':i===1?'🥈':'🥉'}</span>
-              ${i===0 ? '<span class="bs-hot-tag">HOT</span>' : ''}
-              <div class="bs-podium-img-wrap">
-                <img class="bs-podium-img"
-                     src="${p.image_url || 'https://placehold.co/300x200/f5f5f7/999?text=No+Image'}"
-                     alt="${p.name}"
-                     onerror="this.src='https://placehold.co/300x200/f5f5f7/999?text=No+Image'"
-                     loading="lazy">
+    // ── Top 3 podium ──
+    const podium = document.getElementById('bs-podium');
+    podium.innerHTML = products.slice(0, 3).map((p, i) => {
+      const sold  = p.total_sold || 0;
+      const stars = renderStars(p.avg_rating || 0);
+      return `
+        <div class="bs-podium-card bs-rank-${i+1}" onclick="window.location.href='product.html?id=${p.id}'">
+          <span class="bs-rank-badge ${rankBadgeClass[i]}">${i===0?'🥇':i===1?'🥈':'🥉'}</span>
+          ${i===0 ? '<span class="bs-hot-tag">HOT</span>' : ''}
+          <div class="bs-podium-img-wrap">
+            <img class="bs-podium-img"
+                 src="${p.image_url || 'https://placehold.co/300x200/f5f5f7/999?text=No+Image'}"
+                 alt="${p.name}"
+                 onerror="this.src='https://placehold.co/300x200/f5f5f7/999?text=No+Image'"
+                 loading="lazy">
+          </div>
+          <div class="bs-podium-body">
+            <div class="bs-podium-brand">${p.brand || ''}</div>
+            <div class="bs-podium-name">${p.name}</div>
+            <div class="bs-podium-stars">
+              <span class="bs-stars">${stars}</span>
+              <span class="bs-review">(${p.review_count || 0})</span>
+            </div>
+            <div class="bs-podium-footer">
+              <div class="bs-podium-price">${formatPrice(p.price)}</div>
+              <div class="bs-podium-sold">
+                ${sold > 0 ? `Đã bán ${sold.toLocaleString()}` : 'Chưa có lượt bán'}
               </div>
-              <div class="bs-podium-body">
-                <div class="bs-podium-brand">${p.brand || ''}</div>
-                <div class="bs-podium-name">${p.name}</div>
-                <div class="bs-podium-stars">
-                  <span class="bs-stars">${stars}</span>
-                  <span class="bs-review">(${p.review_count || 0})</span>
-                </div>
-                <div class="bs-podium-footer">
-                  <div class="bs-podium-price">${formatPrice(p.price)}</div>
-                  <div class="bs-podium-sold">Đã bán ${sold.toLocaleString()}</div>
-                </div>
-                <button class="bs-add-btn"
-                  onclick="event.stopPropagation();addToCartFromList(${JSON.stringify(p).replace(/"/g,'&quot;')})">
-                  Thêm vào giỏ hàng
-                </button>
-              </div>
-            </div>`;
-        }).join('');
+            </div>
+            <button class="bs-add-btn"
+              onclick="event.stopPropagation();addToCartFromList(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+              Thêm vào giỏ hàng
+            </button>
+          </div>
+        </div>`;
+    }).join('');
 
-        // ── Ranks 4–10 scroll row ──
-        const row = document.getElementById('bs-scroll-row');
-        if (products.length > 3) {
-          row.innerHTML = products.slice(3).map((p, i) => {
-            const rank = i + 4;
-            const sold = SOLD_BASE[rank-1] + Math.floor(Math.random() * 60);
-            return `
-              <div class="bs-row-card" onclick="window.location.href='product.html?id=${p.id}'">
-                <span class="bs-row-rank">${rank}</span>
-                <div class="bs-row-img-wrap">
-                  <img class="bs-row-img"
-                       src="${p.image_url || 'https://placehold.co/200x130/f5f5f7/999?text=No+Image'}"
-                       alt="${p.name}"
-                       onerror="this.src='https://placehold.co/200x130/f5f5f7/999?text=No+Image'"
-                       loading="lazy">
-                </div>
-                <div class="bs-row-body">
-                  <div class="bs-row-brand">${p.brand || ''}</div>
-                  <div class="bs-row-name">${p.name}</div>
-                  <div class="bs-row-price">${formatPrice(p.price)}</div>
-                </div>
-              </div>`;
-          }).join('');
-        }
-      } catch(e) {
-        console.error('Best sellers load error:', e);
-      }
-    };
+    // ── Ranks 4–10 scroll row ──
+    const row = document.getElementById('bs-scroll-row');
+    if (products.length > 3) {
+      row.innerHTML = products.slice(3).map((p, i) => {
+        const rank = i + 4;
+        const sold = p.total_sold || 0;
+        return `
+          <div class="bs-row-card" onclick="window.location.href='product.html?id=${p.id}'">
+            <span class="bs-row-rank">${rank}</span>
+            <div class="bs-row-img-wrap">
+              <img class="bs-row-img"
+                   src="${p.image_url || 'https://placehold.co/200x130/f5f5f7/999?text=No+Image'}"
+                   alt="${p.name}"
+                   onerror="this.src='https://placehold.co/200x130/f5f5f7/999?text=No+Image'"
+                   loading="lazy">
+            </div>
+            <div class="bs-row-body">
+              <div class="bs-row-brand">${p.brand || ''}</div>
+              <div class="bs-row-name">${p.name}</div>
+              <div class="bs-row-price">${formatPrice(p.price)}</div>
+              ${sold > 0 ? `<div style="font-size:0.65rem;color:var(--text-muted);margin-top:3px">Đã bán ${sold.toLocaleString()}</div>` : ''}
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+  } catch(e) {
+    console.error('Best sellers load error:', e);
+  }
+};
 
     /* ═══ HERO SLIDESHOW ═══ */
     let currentSlide = 0, slideInterval = null;

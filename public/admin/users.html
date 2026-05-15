@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý Tài khoản - GosuCore Admin</title>
+  <title>Quản lý Tài khoản — GosuCore Admin</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/admin.css">
 </head>
@@ -16,23 +15,21 @@
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-logo-mark">
-        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       </div>
       <div>
         <div class="sidebar-logo-text">Gosu<span>Core</span></div>
         <span class="sidebar-logo-sub">Admin Panel</span>
       </div>
     </div>
-
     <div class="sidebar-section">Tổng quan</div>
     <a href="index.html" class="sidebar-item">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Dashboard
     </a>
-
     <div class="sidebar-section">Quản lý</div>
     <a href="products.html" class="sidebar-item">
-      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
       Sản phẩm
     </a>
     <a href="orders.html" class="sidebar-item">
@@ -44,14 +41,13 @@
       Tài khoản
     </a>
     <a href="categories.html" class="sidebar-item">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 17h7M17.5 14v7"/></svg>
+      <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
       Danh mục
     </a>
     <a href="vouchers.html" class="sidebar-item">
       <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
       Voucher
     </a>
-
     <div class="sidebar-section">Hệ thống</div>
     <a href="../client/index.html" class="sidebar-item">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -61,7 +57,6 @@
       <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       Đăng xuất
     </div>
-
     <div class="sidebar-footer">
       <div class="admin-user-card">
         <div class="admin-avatar" id="admin-avatar">A</div>
@@ -76,11 +71,12 @@
   <!-- MAIN -->
   <main class="admin-main">
     <div class="admin-topbar">
-      <div class="topbar-left">
-        <h2>Quản lý Tài khoản</h2>
-      </div>
+      <div class="topbar-left"><h2>Quản lý Tài khoản</h2></div>
       <div class="topbar-right">
-        <button class="btn btn-primary btn-sm" onclick="openAddUserModal()">+ Thêm tài khoản</button>
+        <button class="btn btn-primary btn-sm" id="btn-add-user" onclick="openAddUserModal()" style="display:none">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Thêm tài khoản
+        </button>
       </div>
     </div>
 
@@ -108,7 +104,7 @@
               <th>Vai trò</th>
               <th>Trạng thái</th>
               <th>Ngày tạo</th>
-              <th>Thao tác</th>
+              <th style="width:90px">Thao tác</th>
             </tr>
           </thead>
           <tbody id="users-table">
@@ -159,7 +155,7 @@
         </select>
       </div>
     </div>
-    <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem">
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
       <button class="btn btn-light" onclick="closeAddUserModal()">Hủy</button>
       <button class="btn btn-primary" id="add-user-btn" onclick="addNewUser()">Tạo tài khoản</button>
     </div>
@@ -193,13 +189,28 @@
     <div class="form-group">
       <label>Trạng thái</label>
       <select id="u-active">
-        <option value="1">✅ Hoạt động</option>
-        <option value="0">❌ Đã khóa</option>
+        <option value="1">Hoạt động</option>
+        <option value="0">Đã khóa</option>
       </select>
     </div>
-    <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem">
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
       <button class="btn btn-light" onclick="closeModal()">Hủy</button>
       <button class="btn btn-primary" onclick="saveUser()">Lưu thay đổi</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM LOCK MODAL -->
+<div class="confirm-modal-overlay" id="confirm-modal">
+  <div class="confirm-modal">
+    <div class="confirm-modal-icon">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <div class="confirm-modal-title">Khóa tài khoản?</div>
+    <div class="confirm-modal-desc" id="confirm-desc">Tài khoản sẽ bị vô hiệu hóa.</div>
+    <div class="confirm-modal-actions">
+      <button class="btn btn-light" onclick="closeConfirm()">Hủy</button>
+      <button class="btn btn-danger" id="confirm-ok-btn">Khóa</button>
     </div>
   </div>
 </div>
@@ -211,15 +222,17 @@
     window.location.href = '../client/login.html';
   }
 
-  const user = getUser();
+  const user      = getUser();
+  const isManager = user?.role === 'manager';
+
   if (user) {
     document.getElementById('admin-name').textContent   = user.full_name || user.username;
     document.getElementById('admin-role').textContent   = user.role === 'manager' ? 'Quản lý' : 'Nhân viên';
     document.getElementById('admin-avatar').textContent = (user.full_name || user.username)[0].toUpperCase();
+    if (isManager) document.getElementById('btn-add-user').style.display = 'inline-flex';
   }
 
   let searchTimer = null;
-
   document.addEventListener('DOMContentLoaded', () => { loadUsers(); });
 
   const loadUsers = async () => {
@@ -228,20 +241,21 @@
 
     const search = document.getElementById('search').value;
     const role   = document.getElementById('filter-role').value;
-
     let url = '/admin/users?limit=50';
     if (search) url += `&search=${encodeURIComponent(search)}`;
     if (role)   url += `&role=${role}`;
 
     try {
-      const data      = await api.get(url);
-      const users     = data.data;
-      const isManager = user?.role === 'manager';
+      const data  = await api.get(url);
+      const users = data.data;
 
-      if (users.length === 0) {
+      if (!users?.length) {
         tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-3)">Không tìm thấy tài khoản</td></tr>';
         return;
       }
+
+      const roleLabel = { manager: 'Quản lý', staff: 'Nhân viên', customer: 'Khách hàng' };
+      const roleCls   = { manager: 'role-manager', staff: 'role-staff', customer: 'role-customer' };
 
       tbody.innerHTML = users.map(u => `
         <tr>
@@ -255,12 +269,8 @@
             </div>
           </td>
           <td style="font-size:13px">${u.email}</td>
-          <td style="font-size:13px">${u.phone || '—'}</td>
-          <td>
-            <span class="role-badge role-${u.role}">
-              ${u.role === 'manager' ? '👑 Quản lý' : u.role === 'staff' ? '👤 Nhân viên' : '🛒 Khách hàng'}
-            </span>
-          </td>
+          <td style="font-size:13px;color:var(--text-2)">${u.phone || '—'}</td>
+          <td><span class="role-badge ${roleCls[u.role] || 'role-customer'}">${roleLabel[u.role] || u.role}</span></td>
           <td>
             <span class="badge ${u.is_active ? 'badge-done' : 'badge-cancelled'}">
               ${u.is_active ? 'Hoạt động' : 'Đã khóa'}
@@ -269,12 +279,18 @@
           <td style="font-size:12px;color:var(--text-2)">${formatDate(u.created_at)}</td>
           <td>
             <div class="action-btns">
-              <button class="btn btn-outline btn-sm" onclick="openEditModal(${u.id}, '${(u.full_name||'').replace(/'/g,"\\'")}', '${(u.phone||'').replace(/'/g,"\\'")}', '${u.role}', ${u.is_active ? 1 : 0})">
-                ✏️ Sửa
-              </button>
-              ${isManager && u.id !== user.id
-                ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id}, '${u.username}')">🗑️</button>`
-                : ''}
+              ${isManager ? `
+              <button class="action-btn action-btn-edit"
+                      data-tooltip="Chỉnh sửa"
+                      onclick="openEditModal(${u.id},'${(u.full_name||'').replace(/'/g,"\\'")}','${(u.phone||'').replace(/'/g,"\\'")}','${u.role}',${u.is_active?1:0})">
+                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>` : ''}
+              ${isManager && u.id !== user.id ? `
+              <button class="action-btn action-btn-delete"
+                      data-tooltip="Khóa tài khoản"
+                      onclick="confirmLock(${u.id},'${u.username}')">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </button>` : ''}
             </div>
           </td>
         </tr>`).join('');
@@ -284,22 +300,15 @@
     }
   };
 
-  const debounceSearch = () => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(loadUsers, 500);
-  };
+  const debounceSearch = () => { clearTimeout(searchTimer); searchTimer = setTimeout(loadUsers, 500); };
 
   const openAddUserModal = () => {
-    ['nu-username','nu-fullname','nu-email','nu-phone','nu-password'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
+    ['nu-username','nu-fullname','nu-email','nu-phone','nu-password'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('nu-role').value = 'customer';
     document.getElementById('add-user-modal').classList.add('active');
   };
 
-  const closeAddUserModal = () => {
-    document.getElementById('add-user-modal').classList.remove('active');
-  };
+  const closeAddUserModal = () => document.getElementById('add-user-modal').classList.remove('active');
 
   const addNewUser = async () => {
     const username  = document.getElementById('nu-username').value.trim();
@@ -310,34 +319,16 @@
     const role      = document.getElementById('nu-role').value;
     const btn       = document.getElementById('add-user-btn');
 
-    if (!username || !email || !password) {
-      toast.error('Vui lòng điền username, email và mật khẩu!');
-      return;
-    }
-    if (password.length < 6) {
-      toast.error('Mật khẩu phải có ít nhất 6 ký tự!');
-      return;
-    }
+    if (!username || !email || !password) { toast.error('Vui lòng điền username, email và mật khẩu!'); return; }
+    if (password.length < 6) { toast.error('Mật khẩu phải có ít nhất 6 ký tự!'); return; }
 
-    btn.textContent = 'Đang tạo...';
-    btn.disabled    = true;
-
+    btn.textContent = 'Đang tạo...'; btn.disabled = true;
     try {
-      await api.post('/auth/register', { username, full_name, email, phone, password });
-      if (role !== 'customer') {
-        const res     = await api.get(`/admin/users?search=${encodeURIComponent(email)}`);
-        const newUser = res.data.find(u => u.email === email);
-        if (newUser) await api.put(`/admin/users/${newUser.id}`, { role });
-      }
+      await api.post('/admin/users', { username, full_name, email, phone, password, role });
       toast.success('Tạo tài khoản thành công!');
-      closeAddUserModal();
-      loadUsers();
-    } catch(e) {
-      toast.error(e.message);
-    } finally {
-      btn.textContent = 'Tạo tài khoản';
-      btn.disabled    = false;
-    }
+      closeAddUserModal(); loadUsers();
+    } catch(e) { toast.error(e.message); }
+    finally { btn.textContent = 'Tạo tài khoản'; btn.disabled = false; }
   };
 
   const openEditModal = (id, fullname, phone, role, isActive) => {
@@ -349,9 +340,7 @@
     document.getElementById('user-modal').classList.add('active');
   };
 
-  const closeModal = () => {
-    document.getElementById('user-modal').classList.remove('active');
-  };
+  const closeModal = () => document.getElementById('user-modal').classList.remove('active');
 
   const saveUser = async () => {
     const id = document.getElementById('edit-user-id').value;
@@ -363,22 +352,33 @@
         is_active: document.getElementById('u-active').value === '1',
       });
       toast.success('Cập nhật tài khoản thành công!');
-      closeModal();
-      loadUsers();
-    } catch(e) {
-      toast.error(e.message);
-    }
+      closeModal(); loadUsers();
+    } catch(e) { toast.error(e.message); }
   };
 
-  const deleteUser = async (id, username) => {
-    if (!confirm(`Khóa tài khoản "${username}"?`)) return;
+  // ── Confirm lock ──────────────────────────────────────────
+  let _lockId = null;
+
+  const confirmLock = (id, username) => {
+    _lockId = id;
+    document.getElementById('confirm-desc').innerHTML =
+      `Tài khoản <strong>@${username}</strong> sẽ bị vô hiệu hóa và không thể đăng nhập.`;
+    document.getElementById('confirm-ok-btn').onclick = doLock;
+    document.getElementById('confirm-modal').classList.add('active');
+  };
+
+  const closeConfirm = () => {
+    document.getElementById('confirm-modal').classList.remove('active');
+    _lockId = null;
+  };
+
+  const doLock = async () => {
+    if (!_lockId) return;
     try {
-      await api.delete(`/admin/users/${id}`);
+      await api.delete(`/admin/users/${_lockId}`);
       toast.success('Đã khóa tài khoản!');
-      loadUsers();
-    } catch(e) {
-      toast.error(e.message);
-    }
+      closeConfirm(); loadUsers();
+    } catch(e) { toast.error(e.message); closeConfirm(); }
   };
 </script>
 </body>

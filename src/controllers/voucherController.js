@@ -48,8 +48,11 @@ const applyVoucher = async (req, res) => {
       });
     }
 
-    const discount_amount = (total_price * voucher.discount_percent) / 100;
+    const discount_amount = Math.round((total_price * voucher.discount_percent) / 100);
     const final_price     = total_price - discount_amount;
+
+    // KHÔNG tăng used_count ở đây — chỉ kiểm tra
+    // used_count sẽ được tăng khi tạo đơn hàng thành công trong orderController
 
     res.json({
       success: true,
@@ -117,7 +120,6 @@ const createVoucher = async (req, res) => {
 
     const pool = getPool();
 
-    // Kiểm tra code trùng
     const existing = await pool.request()
       .input('code', sql.NVarChar, code.toUpperCase())
       .query('SELECT id FROM Vouchers WHERE code = @code');
@@ -215,7 +217,26 @@ const deleteVoucher = async (req, res) => {
   }
 };
 
+// ============================================================
+// POST /api/vouchers/use — Tăng used_count sau khi đặt hàng
+// (Được gọi nội bộ từ orderController)
+// ============================================================
+const incrementUsedCount = async (voucher_id, pool) => {
+  try {
+    await pool.request()
+      .input('voucher_id', sql.Int, voucher_id)
+      .query(`
+        UPDATE Vouchers
+        SET used_count = used_count + 1
+        WHERE id = @voucher_id
+          AND used_count < max_uses
+      `);
+  } catch (error) {
+    console.error('Lỗi incrementUsedCount:', error);
+  }
+};
+
 module.exports = {
   applyVoucher, getAllVouchers, createVoucher,
-  updateVoucher, deleteVoucher,
+  updateVoucher, deleteVoucher, incrementUsedCount,
 };
