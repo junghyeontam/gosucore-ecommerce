@@ -2,30 +2,20 @@
 const { getPool, sql } = require('../config/db');
 
 // ============================================================
-// POST /api/orders — Tạo đơn hàng mới (checkout)
+// POST /api/orders — Tạo đơn hàng mới
 // ============================================================
 const createOrder = async (req, res) => {
   try {
     const {
-      items,
-      voucher_code,
-      shipping_name,
-      shipping_phone,
-      shipping_address,
-      note,
+      items, voucher_code,
+      shipping_name, shipping_phone, shipping_address, note,
     } = req.body;
 
     if (!items || items.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Giỏ hàng trống. Vui lòng thêm sản phẩm.',
-      });
+      return res.status(400).json({ success: false, message: 'Giỏ hàng trống.' });
     }
     if (!shipping_name || !shipping_phone || !shipping_address) {
-      return res.status(400).json({
-        success: false,
-        message: 'Vui lòng điền đầy đủ thông tin nhận hàng.',
-      });
+      return res.status(400).json({ success: false, message: 'Vui lòng điền đầy đủ thông tin nhận hàng.' });
     }
 
     const pool = getPool();
@@ -35,73 +25,43 @@ const createOrder = async (req, res) => {
     for (const item of items) {
       const result = await pool.request()
         .input('id', sql.Int, parseInt(item.product_id))
-        .query(`
-          SELECT id, name, price, stock 
-          FROM Products 
-          WHERE id = @id AND is_active = 1
-        `);
+        .query('SELECT id, name, price, stock FROM Products WHERE id = @id AND is_active = 1');
 
-      if (result.recordset.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: `Sản phẩm ID ${item.product_id} không tồn tại.`,
-        });
+      if (!result.recordset.length) {
+        return res.status(404).json({ success: false, message: `Sản phẩm ID ${item.product_id} không tồn tại.` });
       }
 
       const product = result.recordset[0];
-
       if (product.stock < item.quantity) {
-        return res.status(400).json({
-          success: false,
-          message: `Sản phẩm "${product.name}" chỉ còn ${product.stock} trong kho.`,
-        });
+        return res.status(400).json({ success: false, message: `"${product.name}" chỉ còn ${product.stock} trong kho.` });
       }
 
       total_price += product.price * item.quantity;
-      orderItems.push({
-        product_id: product.id,
-        quantity:   item.quantity,
-        unit_price: product.price,
-      });
+      orderItems.push({ product_id: product.id, quantity: item.quantity, unit_price: product.price });
     }
 
     let discount_amount = 0;
     let voucher_id = null;
 
     if (voucher_code) {
-      const voucherResult = await pool.request()
+      const vr = await pool.request()
         .input('code', sql.NVarChar, voucher_code)
-        .query(`
-          SELECT id, discount_percent, max_uses, used_count, expires_at
-          FROM Vouchers
-          WHERE code = @code AND is_active = 1
-        `);
+        .query('SELECT id, discount_percent, max_uses, used_count, expires_at FROM Vouchers WHERE code = @code AND is_active = 1');
 
-      if (voucherResult.recordset.length === 0) {
-        return res.status(400).json({
-          success: false,
-          message: 'Mã giảm giá không hợp lệ hoặc đã hết hạn.',
-        });
+      if (!vr.recordset.length) {
+        return res.status(400).json({ success: false, message: 'Mã giảm giá không hợp lệ.' });
       }
 
-      const voucher = voucherResult.recordset[0];
-
-      if (voucher.used_count >= voucher.max_uses) {
-        return res.status(400).json({
-          success: false,
-          message: 'Mã giảm giá đã hết lượt sử dụng.',
-        });
+      const v = vr.recordset[0];
+      if (v.used_count >= v.max_uses) {
+        return res.status(400).json({ success: false, message: 'Mã giảm giá đã hết lượt.' });
+      }
+      if (v.expires_at && new Date(v.expires_at) < new Date()) {
+        return res.status(400).json({ success: false, message: 'Mã giảm giá đã hết hạn.' });
       }
 
-      if (voucher.expires_at && new Date(voucher.expires_at) < new Date()) {
-        return res.status(400).json({
-          success: false,
-          message: 'Mã giảm giá đã hết hạn.',
-        });
-      }
-
-      discount_amount = (total_price * voucher.discount_percent) / 100;
-      voucher_id = voucher.id;
+      discount_amount = (total_price * v.discount_percent) / 100;
+      voucher_id = v.id;
     }
 
     const final_price = total_price - discount_amount;
@@ -136,42 +96,24 @@ const createOrder = async (req, res) => {
         .input('product_id', sql.Int,     item.product_id)
         .input('quantity',   sql.Int,     item.quantity)
         .input('unit_price', sql.Decimal, item.unit_price)
-        .query(`
-          INSERT INTO OrderItems (order_id, product_id, quantity, unit_price)
-          VALUES (@order_id, @product_id, @quantity, @unit_price)
-        `);
+        .query('INSERT INTO OrderItems (order_id, product_id, quantity, unit_price) VALUES (@order_id, @product_id, @quantity, @unit_price)');
 
       await pool.request()
         .input('product_id', sql.Int, item.product_id)
         .input('quantity',   sql.Int, item.quantity)
-        .query(`
-          UPDATE Products 
-          SET stock = stock - @quantity 
-          WHERE id = @product_id
-        `);
+        .query('UPDATE Products SET stock = stock - @quantity WHERE id = @product_id');
     }
 
     if (voucher_id) {
       await pool.request()
         .input('voucher_id', sql.Int, voucher_id)
-        .query(`
-          UPDATE Vouchers 
-          SET used_count = used_count + 1 
-          WHERE id = @voucher_id
-        `);
+        .query('UPDATE Vouchers SET used_count = used_count + 1 WHERE id = @voucher_id');
     }
 
     res.status(201).json({
       success: true,
-      message: '🎉 Đặt hàng thành công!',
-      data: {
-        order_id:        newOrder.id,
-        status:          newOrder.status,
-        total_price,
-        discount_amount,
-        final_price,
-        created_at:      newOrder.created_at,
-      },
+      message: 'Đặt hàng thành công!',
+      data: { order_id: newOrder.id, status: newOrder.status, total_price, discount_amount, final_price, created_at: newOrder.created_at },
     });
 
   } catch (error) {
@@ -181,16 +123,17 @@ const createOrder = async (req, res) => {
 };
 
 // ============================================================
-// GET /api/orders/my — Lịch sử đơn hàng của user
+// GET /api/orders/my — Lịch sử đơn hàng của user hiện tại
 // ============================================================
 const getMyOrders = async (req, res) => {
   try {
     const pool = getPool();
 
+    // Lọc đúng user_id từ token — không cho xem đơn của người khác
     const result = await pool.request()
       .input('user_id', sql.Int, req.user.id)
       .query(`
-        SELECT 
+        SELECT
           o.id, o.status, o.total_price, o.discount_amount,
           o.final_price, o.shipping_name, o.shipping_phone,
           o.shipping_address, o.note, o.created_at,
@@ -206,7 +149,7 @@ const getMyOrders = async (req, res) => {
       const items = await pool.request()
         .input('order_id', sql.Int, order.id)
         .query(`
-          SELECT 
+          SELECT
             oi.quantity, oi.unit_price,
             p.id AS product_id, p.name, p.image_url, p.brand
           FROM OrderItems oi
@@ -225,7 +168,7 @@ const getMyOrders = async (req, res) => {
 };
 
 // ============================================================
-// GET /api/orders/:id — Chi tiết đơn hàng (đã sửa)
+// GET /api/orders/:id — Chi tiết đơn hàng
 // ============================================================
 const getOrderById = async (req, res) => {
   try {
@@ -235,39 +178,30 @@ const getOrderById = async (req, res) => {
     const result = await pool.request()
       .input('id', sql.Int, parseInt(id))
       .query(`
-        SELECT 
-          o.*,
-          v.code AS voucher_code,
-          u.username, u.email
+        SELECT o.*, v.code AS voucher_code, u.username, u.email
         FROM Orders o
         LEFT JOIN Vouchers v ON v.id = o.voucher_id
-        LEFT JOIN Users u ON u.id = o.user_id
+        LEFT JOIN Users u    ON u.id = o.user_id
         WHERE o.id = @id
       `);
 
-    if (result.recordset.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Không tìm thấy đơn hàng.',
-      });
+    if (!result.recordset.length) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng.' });
     }
 
     const order = result.recordset[0];
 
-    // Kiểm tra quyền: chủ đơn hoặc admin
+    // Kiểm tra quyền: chỉ chủ đơn hoặc admin/staff mới được xem
     if (order.user_id !== req.user.id &&
         req.user.role !== 'manager' &&
         req.user.role !== 'staff') {
-      return res.status(403).json({
-        success: false,
-        message: 'Bạn không có quyền xem đơn hàng này.',
-      });
+      return res.status(403).json({ success: false, message: 'Bạn không có quyền xem đơn hàng này.' });
     }
 
     const items = await pool.request()
       .input('order_id', sql.Int, parseInt(id))
       .query(`
-        SELECT 
+        SELECT
           oi.quantity, oi.unit_price,
           p.id AS product_id, p.name, p.image_url, p.brand
         FROM OrderItems oi
@@ -275,10 +209,7 @@ const getOrderById = async (req, res) => {
         WHERE oi.order_id = @order_id
       `);
 
-    res.json({
-      success: true,
-      data: { ...order, items: items.recordset },
-    });
+    res.json({ success: true, data: { ...order, items: items.recordset } });
 
   } catch (error) {
     console.error('Lỗi getOrderById:', error);
@@ -287,7 +218,56 @@ const getOrderById = async (req, res) => {
 };
 
 // ============================================================
-// PATCH /api/orders/:id/status — Cập nhật trạng thái (Admin)
+// PATCH /api/orders/:id/cancel — Customer tự hủy đơn của mình
+// Chỉ cho phép hủy khi status = 'pending'
+// ============================================================
+const cancelMyOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const pool   = getPool();
+
+    const result = await pool.request()
+      .input('id',      sql.Int, parseInt(id))
+      .input('user_id', sql.Int, req.user.id)
+      .query('SELECT id, status, user_id FROM Orders WHERE id = @id');
+
+    if (!result.recordset.length) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng.' });
+    }
+
+    const order = result.recordset[0];
+
+    // Chỉ chủ đơn mới được hủy
+    if (order.user_id !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Bạn không có quyền hủy đơn hàng này.' });
+    }
+
+    // Chỉ hủy được khi đang pending
+    if (order.status !== 'pending') {
+      return res.status(400).json({
+        success: false,
+        message: `Không thể hủy đơn hàng đang ở trạng thái "${order.status}". Chỉ có thể hủy khi đơn chưa được xác nhận.`,
+      });
+    }
+
+    await pool.request()
+      .input('id', sql.Int, parseInt(id))
+      .query(`
+        UPDATE Orders
+        SET status = 'cancelled', updated_at = GETDATE()
+        WHERE id = @id
+      `);
+
+    res.json({ success: true, message: 'Đã hủy đơn hàng thành công!' });
+
+  } catch (error) {
+    console.error('Lỗi cancelMyOrder:', error);
+    res.status(500).json({ success: false, message: 'Lỗi server.' });
+  }
+};
+
+// ============================================================
+// PATCH /api/orders/:id/status — Admin cập nhật trạng thái
 // ============================================================
 const updateOrderStatus = async (req, res) => {
   try {
@@ -296,38 +276,25 @@ const updateOrderStatus = async (req, res) => {
 
     const validStatuses = ['pending', 'confirmed', 'shipping', 'done', 'cancelled'];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: `Trạng thái không hợp lệ. Chọn một trong: ${validStatuses.join(', ')}`,
-      });
+      return res.status(400).json({ success: false, message: `Trạng thái không hợp lệ. Chọn: ${validStatuses.join(', ')}` });
     }
 
     const pool = getPool();
 
     const existing = await pool.request()
       .input('id', sql.Int, parseInt(id))
-      .query('SELECT id, status FROM Orders WHERE id = @id');
+      .query('SELECT id FROM Orders WHERE id = @id');
 
-    if (existing.recordset.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Không tìm thấy đơn hàng.',
-      });
+    if (!existing.recordset.length) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng.' });
     }
 
     await pool.request()
       .input('id',     sql.Int,      parseInt(id))
       .input('status', sql.NVarChar, status)
-      .query(`
-        UPDATE Orders 
-        SET status = @status, updated_at = GETDATE()
-        WHERE id = @id
-      `);
+      .query('UPDATE Orders SET status = @status, updated_at = GETDATE() WHERE id = @id');
 
-    res.json({
-      success: true,
-      message: `Cập nhật trạng thái thành "${status}" thành công!`,
-    });
+    res.json({ success: true, message: `Cập nhật trạng thái thành "${status}" thành công!` });
 
   } catch (error) {
     console.error('Lỗi updateOrderStatus:', error);
@@ -336,7 +303,7 @@ const updateOrderStatus = async (req, res) => {
 };
 
 // ============================================================
-// GET /api/admin/orders — Tất cả đơn hàng (Admin)
+// GET /api/admin/orders — Admin xem tất cả đơn hàng
 // ============================================================
 const getAllOrders = async (req, res) => {
   try {
@@ -359,7 +326,7 @@ const getAllOrders = async (req, res) => {
     request.input('limit',  sql.Int, limitNum);
 
     const result = await request.query(`
-      SELECT 
+      SELECT
         o.id, o.status, o.final_price, o.created_at,
         o.shipping_name, o.shipping_phone,
         u.username, u.email
@@ -380,5 +347,5 @@ const getAllOrders = async (req, res) => {
 
 module.exports = {
   createOrder, getMyOrders, getOrderById,
-  updateOrderStatus, getAllOrders,
+  cancelMyOrder, updateOrderStatus, getAllOrders,
 };
