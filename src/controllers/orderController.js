@@ -113,7 +113,14 @@ const createOrder = async (req, res) => {
     res.status(201).json({
       success: true,
       message: 'Đặt hàng thành công!',
-      data: { order_id: newOrder.id, status: newOrder.status, total_price, discount_amount, final_price, created_at: newOrder.created_at },
+      data: {
+        order_id:       newOrder.id,
+        status:         newOrder.status,
+        total_price,
+        discount_amount,
+        final_price,
+        created_at:     newOrder.created_at,
+      },
     });
 
   } catch (error) {
@@ -124,19 +131,30 @@ const createOrder = async (req, res) => {
 
 // ============================================================
 // GET /api/orders/my — Lịch sử đơn hàng của user hiện tại
+// Dùng ROW_NUMBER để đánh số thứ tự riêng cho từng user
 // ============================================================
 const getMyOrders = async (req, res) => {
   try {
     const pool = getPool();
 
-    // Lọc đúng user_id từ token — không cho xem đơn của người khác
     const result = await pool.request()
       .input('user_id', sql.Int, req.user.id)
       .query(`
         SELECT
-          o.id, o.status, o.total_price, o.discount_amount,
-          o.final_price, o.shipping_name, o.shipping_phone,
-          o.shipping_address, o.note, o.created_at,
+          o.id,
+          ROW_NUMBER() OVER (
+            PARTITION BY o.user_id
+            ORDER BY o.created_at ASC
+          ) AS order_number,
+          o.status,
+          o.total_price,
+          o.discount_amount,
+          o.final_price,
+          o.shipping_name,
+          o.shipping_phone,
+          o.shipping_address,
+          o.note,
+          o.created_at,
           v.code AS voucher_code
         FROM Orders o
         LEFT JOIN Vouchers v ON v.id = o.voucher_id
@@ -173,7 +191,7 @@ const getMyOrders = async (req, res) => {
 const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
-    const pool = getPool();
+    const pool   = getPool();
 
     const result = await pool.request()
       .input('id', sql.Int, parseInt(id))
@@ -227,8 +245,7 @@ const cancelMyOrder = async (req, res) => {
     const pool   = getPool();
 
     const result = await pool.request()
-      .input('id',      sql.Int, parseInt(id))
-      .input('user_id', sql.Int, req.user.id)
+      .input('id', sql.Int, parseInt(id))
       .query('SELECT id, status, user_id FROM Orders WHERE id = @id');
 
     if (!result.recordset.length) {
@@ -252,11 +269,7 @@ const cancelMyOrder = async (req, res) => {
 
     await pool.request()
       .input('id', sql.Int, parseInt(id))
-      .query(`
-        UPDATE Orders
-        SET status = 'cancelled', updated_at = GETDATE()
-        WHERE id = @id
-      `);
+      .query(`UPDATE Orders SET status = 'cancelled', updated_at = GETDATE() WHERE id = @id`);
 
     res.json({ success: true, message: 'Đã hủy đơn hàng thành công!' });
 
@@ -271,12 +284,12 @@ const cancelMyOrder = async (req, res) => {
 // ============================================================
 const updateOrderStatus = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id }     = req.params;
     const { status } = req.body;
 
     const validStatuses = ['pending', 'confirmed', 'shipping', 'done', 'cancelled'];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({ success: false, message: `Trạng thái không hợp lệ. Chọn: ${validStatuses.join(', ')}` });
+      return res.status(400).json({ success: false, message: `Trạng thái không hợp lệ.` });
     }
 
     const pool = getPool();

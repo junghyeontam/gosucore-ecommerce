@@ -48,7 +48,8 @@
     .timeline-step.done .timeline-dot    { background: var(--success); border-color: var(--success); color: white; }
     .timeline-step.current .timeline-dot { background: var(--accent);  border-color: var(--accent);  color: white; }
     .timeline-label { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.4rem; text-align: center; font-weight: 500; }
-    .timeline-step.done .timeline-label, .timeline-step.current .timeline-label { color: var(--text-primary); font-weight: 600; }
+    .timeline-step.done .timeline-label,
+    .timeline-step.current .timeline-label { color: var(--text-primary); font-weight: 600; }
 
     /* Filter tabs */
     .filter-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
@@ -73,7 +74,6 @@
     }
     .btn-cancel-order:hover { background: #dc2626; color: white; border-color: #dc2626; }
 
-    /* Cancel row */
     .cancel-row {
       margin-top: 1.25rem;
       padding-top: 1rem;
@@ -84,7 +84,6 @@
       flex-wrap: wrap;
       gap: 0.75rem;
     }
-
     .cancel-row-hint { font-size: 0.78rem; color: var(--text-muted); }
 
     /* Cancelled banner */
@@ -117,7 +116,6 @@
       visibility: hidden;
       transition: all 0.2s ease;
     }
-
     .cancel-overlay.active { opacity: 1; visibility: visible; }
 
     .cancel-modal {
@@ -132,7 +130,6 @@
       text-align: center;
       border: 1px solid #e5e7eb;
     }
-
     .cancel-overlay.active .cancel-modal { transform: translateY(0) scale(1); }
 
     .cancel-modal-icon {
@@ -152,25 +149,16 @@
     .cancel-modal p strong { color: #111827; }
 
     .cancel-modal-actions { display: flex; gap: 0.75rem; }
-
     .cancel-modal-actions button {
-      flex: 1;
-      height: 42px;
-      border-radius: 10px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all 0.18s ease;
-      border: 1.5px solid transparent;
+      flex: 1; height: 42px; border-radius: 10px;
+      font-size: 0.875rem; font-weight: 600; cursor: pointer;
+      font-family: inherit; transition: all 0.18s ease; border: 1.5px solid transparent;
     }
-
-    .btn-keep    { background: #f9fafb; color: #374151; border-color: #e5e7eb; }
-    .btn-keep:hover { background: #f3f4f6; }
-
-    .btn-do-cancel    { background: #dc2626; color: white; border-color: #dc2626; }
-    .btn-do-cancel:hover    { background: #b91c1c; }
-    .btn-do-cancel:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-keep          { background: #f9fafb; color: #374151; border-color: #e5e7eb; }
+    .btn-keep:hover    { background: #f3f4f6; }
+    .btn-do-cancel     { background: #dc2626; color: white; border-color: #dc2626; }
+    .btn-do-cancel:hover     { background: #b91c1c; }
+    .btn-do-cancel:disabled  { opacity: 0.6; cursor: not-allowed; }
 
     @media (max-width: 600px) {
       .order-card-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
@@ -294,6 +282,9 @@
         const isCancelled = order.status === 'cancelled';
         const isPending   = order.status === 'pending';
 
+        // Dùng order_number (số thứ tự riêng của user), fallback về id
+        const displayNum = order.order_number || order.id;
+
         const stepIndex    = timelineSteps.findIndex(s => s.key === order.status);
         const timelineHTML = !isCancelled ? `
           <div class="status-timeline">
@@ -311,7 +302,7 @@
           <div class="order-card" id="order-card-${order.id}">
             <div class="order-card-header" onclick="toggleOrder(${order.id})">
               <div>
-                <div class="order-id">Đơn hàng #${order.id}</div>
+                <div class="order-id">Đơn hàng #${displayNum}</div>
                 <div class="order-date">${formatDate(order.created_at)}</div>
               </div>
               <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
@@ -378,7 +369,7 @@
               ${isPending ? `
                 <div class="cancel-row">
                   <span class="cancel-row-hint">Chỉ có thể hủy khi đơn chưa được xác nhận</span>
-                  <button class="btn-cancel-order" onclick="openCancelModal(${order.id})">
+                  <button class="btn-cancel-order" onclick="openCancelModal(${order.id}, ${displayNum})">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                       <line x1="18" y1="6" x2="6" y2="18"/>
@@ -401,10 +392,10 @@
     }
 
     // ── Cancel modal ──────────────────────────────────────
-    function openCancelModal(orderId) {
+    function openCancelModal(orderId, displayNum) {
       cancelOrderId = orderId;
       document.getElementById('cancel-modal-desc').innerHTML =
-        `Bạn có chắc muốn hủy <strong>Đơn hàng #${orderId}</strong>?<br>
+        `Bạn có chắc muốn hủy <strong>Đơn hàng #${displayNum}</strong>?<br>
          Hành động này không thể hoàn tác.`;
       document.getElementById('cancel-overlay').classList.add('active');
     }
@@ -425,8 +416,8 @@
       btn.disabled    = true;
 
       try {
-        await api.patch(`/orders/${cancelOrderId}/status`, { status: 'cancelled' });
-        toast.success(`Đã hủy Đơn hàng #${cancelOrderId}!`);
+        // Gọi đúng endpoint /cancel thay vì /status
+        await api.patch(`/orders/${cancelOrderId}/cancel`, {});
 
         // Cập nhật state local — không reload trang
         const order = allOrders.find(o => o.id === cancelOrderId);
@@ -444,6 +435,8 @@
             if (arrow) arrow.textContent = '▲';
           }
         }, 100);
+
+        toast.success('Đã hủy đơn hàng thành công!');
 
       } catch(e) {
         toast.error(e.message || 'Không thể hủy đơn hàng. Vui lòng thử lại!');
