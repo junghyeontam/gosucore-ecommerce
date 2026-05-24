@@ -253,7 +253,7 @@
     </div>
     <div class="navbar-actions">
       <div class="navbar-icon cart-icon" onclick="window.location.href='cart.html'">
-        🛒<span class="cart-count">0</span>
+        <svg viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h8.76a2 2 0 0 0 1.95-1.57L21 8H5.12"/></svg><span class="cart-count">0</span>
       </div>
       <div id="auth-area"></div>
     </div>
@@ -328,7 +328,7 @@
       if (items.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
-            <div class="icon">🛒</div>
+            <div class="icon"><svg viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h8.76a2 2 0 0 0 1.95-1.57L21 8H5.12"/></svg></div>
             <h3>Giỏ hàng trống</h3>
             <p>Hãy thêm sản phẩm vào giỏ hàng để tiếp tục.</p>
             <a href="index.html" class="btn btn-primary" style="margin-top:1.5rem">Mua sắm ngay</a>
@@ -438,13 +438,13 @@
 
         appliedVoucher = data.data;
         resultEl.className = 'voucher-result success';
-        resultEl.textContent = `✅ ${data.message} — Tiết kiệm ${formatPrice(data.data.discount_amount)}`;
+        resultEl.textContent = `${data.message} — Tiết kiệm ${formatPrice(data.data.discount_amount)}`;
         updateSummary();
 
       } catch (e) {
         appliedVoucher = null;
         resultEl.className = 'voucher-result error';
-        resultEl.textContent = `❌ ${e.message}`;
+        resultEl.textContent = e.message;
         updateSummary();
       }
     };

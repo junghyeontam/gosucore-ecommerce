@@ -70,9 +70,10 @@
     .hero-structured-inner { display: grid; grid-template-columns: 1fr 280px; gap: 1rem; align-items: stretch; }
     .hero-main-banner { position: relative; border-radius: var(--radius-lg); overflow: hidden; height: 360px; }
     .hero-main-banner .hero-slides { position: absolute; inset: 0; }
-    .hero-main-banner .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s ease; }
+    .hero-main-banner .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s ease; background: radial-gradient(circle at 76% 46%, rgba(37,99,235,0.22), transparent 34%), linear-gradient(120deg, #111827 0%, #1f2937 46%, #eef2ff 100%); }
     .hero-main-banner .hero-slide.active { opacity: 1; }
-    .hero-slide-overlay { position: absolute; inset: 0; background: linear-gradient(120deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.05) 100%); }
+    .hero-slide-overlay { position: absolute; inset: 0; background: linear-gradient(105deg, rgba(0,0,0,0.74) 0%, rgba(0,0,0,0.48) 42%, rgba(255,255,255,0.12) 100%); }
+    .hero-product-image { position: absolute; right: 7%; top: 50%; width: min(48%, 520px); height: 78%; object-fit: contain; transform: translateY(-50%); z-index: 1; filter: drop-shadow(0 22px 34px rgba(0,0,0,0.28)); }
     .hero-banner-content { position: absolute; bottom: 0; left: 0; padding: 2rem 2rem 2.25rem; z-index: 2; }
     .hero-banner-tag { display: inline-block; background: var(--accent); color: #fff; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px; padding: 0.2rem 0.65rem; border-radius: 50px; margin-bottom: 0.6rem; text-transform: uppercase; }
     .hero-banner-title { font-size: clamp(1.5rem, 2.5vw, 2.1rem); font-weight: 800; color: #fff; letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 0.4rem; }
@@ -416,6 +417,8 @@
     }
     @media (max-width: 600px) {
       .hero-main-banner { height: 260px; }
+      .hero-product-image { right: -8%; width: 68%; height: 58%; opacity: 0.85; }
+      .hero-banner-content { padding: 1.4rem 1.25rem 1.65rem; max-width: 72%; }
       .hero-side-cards { flex-direction: column; }
       .hero-feature-strip { grid-template-columns: 1fr 1fr; }
       .footer-grid { grid-template-columns: 1fr !important; }
@@ -448,7 +451,7 @@
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         Tìm kiếm <span class="kbd">/</span>
       </button>
-      <div class="navbar-icon cart-icon" onclick="window.location.href='cart.html'">🛒<span class="cart-count">0</span></div>
+      <div class="navbar-icon cart-icon" onclick="window.location.href='cart.html'"><svg viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h8.76a2 2 0 0 0 1.95-1.57L21 8H5.12"/></svg><span class="cart-count">0</span></div>
       <div id="auth-area"></div>
     </div>
   </nav>
@@ -463,44 +466,48 @@
     <div class="hero-structured-inner">
       <div class="hero-main-banner">
         <div class="hero-slides">
-          <div class="hero-slide active" style="background-image:url('../assets/images/hero_slai/banner_msi.1.jpg');background-size:cover;background-position:center">
+          <div class="hero-slide active">
+            <img class="hero-product-image" src="../assets/images/Asus_ROG_Strix-XG27ACS.png" alt="Asus ROG Strix XG27ACS">
             <div class="hero-slide-overlay"></div>
             <div class="hero-banner-content">
               <div class="hero-banner-tag">Mới ra mắt</div>
-              <h2 class="hero-banner-title">MSI Gaming Series</h2>
-              <p class="hero-banner-sub">Hiệu suất đỉnh cao, thiết kế chiến binh</p>
-              <div class="hero-banner-price">Từ <strong>25.990.000₫</strong></div>
-              <button class="hero-banner-btn" onclick="scrollToProducts()">Mua ngay</button>
+              <h2 class="hero-banner-title">Asus ROG Strix XG27ACS</h2>
+              <p class="hero-banner-sub">Màn hình ROG Strix trắng, hiệu năng cao cho game thủ</p>
+              <div class="hero-banner-price">Từ <strong>24.500.000₫</strong></div>
+              <button class="hero-banner-btn" onclick="goToProduct(43)">Mua ngay</button>
             </div>
           </div>
-          <div class="hero-slide" style="background-image:url('../assets/images/hero_slai/gearvn-pc-gvn-t11-slider.jpg');background-size:cover;background-position:center">
+          <div class="hero-slide">
+            <img class="hero-product-image" src="../assets/images/ASUS_TUF_VG279QM.png" alt="ASUS TUF VG279QM 27">
             <div class="hero-slide-overlay"></div>
             <div class="hero-banner-content">
-              <div class="hero-banner-tag">Bán chạy</div>
-              <h2 class="hero-banner-title">GearVN PC Custom</h2>
-              <p class="hero-banner-sub">PC gaming tối ưu cho từng tựa game</p>
-              <div class="hero-banner-price">Từ <strong>18.500.000₫</strong></div>
-              <button class="hero-banner-btn" onclick="scrollToProducts()">Mua ngay</button>
+              <div class="hero-banner-tag">Tần số quét cao</div>
+              <h2 class="hero-banner-title">ASUS TUF VG279QM 27</h2>
+              <p class="hero-banner-sub">Màn hình ASUS TUF 280Hz, phản hồi nhanh cho esport</p>
+              <div class="hero-banner-price">Từ <strong>25.000.000₫</strong></div>
+              <button class="hero-banner-btn" onclick="goToProduct(42)">Mua ngay</button>
             </div>
           </div>
-          <div class="hero-slide" style="background-image:url('../assets/images/hero_slai/gigabyte_4f904ee7aecc4e56a0d3daaf355b4a13.jpg');background-size:cover;background-position:center">
+          <div class="hero-slide">
+            <img class="hero-product-image" src="../assets/images/LG_UltraGear_34GS95QE.png" alt="LG UltraGear 34GS95QE">
             <div class="hero-slide-overlay"></div>
             <div class="hero-banner-content">
-              <div class="hero-banner-tag">Hot deal</div>
-              <h2 class="hero-banner-title">Gigabyte AORUS</h2>
-              <p class="hero-banner-sub">RGB không giới hạn, sức mạnh vô hạn</p>
-              <div class="hero-banner-price">Từ <strong>3.290.000₫</strong></div>
-              <button class="hero-banner-btn" onclick="scrollToProducts()">Mua ngay</button>
+              <div class="hero-banner-tag">OLED cong</div>
+              <h2 class="hero-banner-title">LG UltraGear 34GS95QE</h2>
+              <p class="hero-banner-sub">Màn hình OLED cong 34 inch, trải nghiệm gaming cao cấp</p>
+              <div class="hero-banner-price">Từ <strong>39.500.000₫</strong></div>
+              <button class="hero-banner-btn" onclick="goToProduct(41)">Mua ngay</button>
             </div>
           </div>
-          <div class="hero-slide" style="background-image:url('../assets/images/hero_slai/nitro_propanel-kv.png');background-size:cover;background-position:center">
+          <div class="hero-slide">
+            <img class="hero-product-image" src="../assets/images/Der_ASUS_AIO_ExpertCenter.png" alt="ASUS AIO ExpertCenter P4">
             <div class="hero-slide-overlay"></div>
             <div class="hero-banner-content">
-              <div class="hero-banner-tag">Mới nhất</div>
-              <h2 class="hero-banner-title">Acer Nitro ProPanel</h2>
-              <p class="hero-banner-sub">Màn hình 180Hz · 100% sRGB · RTX™ 50</p>
-              <div class="hero-banner-price">Từ <strong>7.990.000₫</strong></div>
-              <button class="hero-banner-btn" onclick="clickNavCategory(4,'Màn hình Gaming')">Mua ngay</button>
+              <div class="hero-banner-tag">AIO văn phòng</div>
+              <h2 class="hero-banner-title">ASUS AIO ExpertCenter P4</h2>
+              <p class="hero-banner-sub">Máy tính all-in-one gọn gàng, đầy đủ phụ kiện</p>
+              <div class="hero-banner-price">Từ <strong>2.500.000₫</strong></div>
+              <button class="hero-banner-btn" onclick="goToProduct(21)">Mua ngay</button>
             </div>
           </div>
         </div>
@@ -568,7 +575,8 @@
       <div class="bs-header-left">
         <div class="bs-eyebrow">
           <span class="bs-eyebrow-dot"></span>
-          🔥 Top picks
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M8 14a4 4 0 1 0 8 0c0-4-4-6-4-10-2 2-4 4-4 10z"/></svg>
+          Top picks
         </div>
         <div class="bs-title">Sản phẩm bán chạy</div>
       </div>
@@ -609,7 +617,7 @@
     </div>
     <div class="filter-bar">
       <div class="filter-group">
-        <label>🔍</label>
+        <label><svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></label>
         <input type="text" id="search" placeholder="Tìm sản phẩm..." oninput="debounceSearch()">
       </div>
       <div class="filter-group">
@@ -832,11 +840,11 @@
         const { data: products, pagination } = data;
         document.getElementById('section-title').textContent = currentCatName;
         document.getElementById('product-count').textContent = `${pagination.total} sản phẩm`;
-        if (!products.length) { container.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><h3>Không tìm thấy sản phẩm</h3><p>Thử thay đổi bộ lọc hoặc từ khóa khác.</p><button class="btn btn-primary" style="margin-top:1rem" onclick="selectAll()">Xem tất cả</button></div>`; document.getElementById('pagination').innerHTML = ''; return; }
+        if (!products.length) { container.innerHTML = `<div class="empty-state"><div class="icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div><h3>Không tìm thấy sản phẩm</h3><p>Thử thay đổi bộ lọc hoặc từ khóa khác.</p><button class="btn btn-primary" style="margin-top:1rem" onclick="selectAll()">Xem tất cả</button></div>`; document.getElementById('pagination').innerHTML = ''; return; }
         await new Promise(r => setTimeout(r, 120));
         container.innerHTML = `<div class="products-grid">${products.map(renderProductCard).join('')}</div>`;
         renderPagination(pagination);
-      } catch(e) { container.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><h3>Lỗi tải sản phẩm</h3><p>${e.message}</p></div>`; }
+      } catch(e) { container.innerHTML = `<div class="empty-state"><div class="icon"><svg viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 2.7 18a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div><h3>Lỗi tải sản phẩm</h3><p>${e.message}</p></div>`; }
       finally { isLoading = false; }
     };
 
@@ -875,6 +883,9 @@
       const top = s.offsetTop - 120;
       window.scrollTo({ top, behavior: 'smooth' });
     };
+    const goToProduct = (id) => {
+      window.location.href = `product.html?id=${id}`;
+    };
 
 
     /* ═══ BEST SELLERS ═══ */
@@ -893,7 +904,7 @@
       const stars = renderStars(p.avg_rating || 0);
       return `
         <div class="bs-podium-card bs-rank-${i+1}" onclick="window.location.href='product.html?id=${p.id}'">
-          <span class="bs-rank-badge ${rankBadgeClass[i]}">${i===0?'🥇':i===1?'🥈':'🥉'}</span>
+          <span class="bs-rank-badge ${rankBadgeClass[i]}">${i + 1}</span>
           ${i===0 ? '<span class="bs-hot-tag">HOT</span>' : ''}
           <div class="bs-podium-img-wrap">
             <img class="bs-podium-img"

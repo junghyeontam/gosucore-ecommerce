@@ -352,7 +352,7 @@
     </div>
     <div class="navbar-actions">
       <div class="navbar-icon cart-icon" onclick="window.location.href='cart.html'">
-        🛒<span class="cart-count">0</span>
+        <svg viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h8.76a2 2 0 0 0 1.95-1.57L21 8H5.12"/></svg><span class="cart-count">0</span>
       </div>
       <div id="auth-area"></div>
     </div>
@@ -383,6 +383,13 @@
     const productId = params.get('id');
     let quantity    = 1;
     let product     = null;
+    const uiIcon = {
+      alert: '<svg viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 2.7 18a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>',
+      check: '<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
+      x: '<svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+      gift: '<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13"/><path d="M3 12h18"/><path d="M7.5 8A2.5 2.5 0 1 1 12 5.5V8"/><path d="M16.5 8A2.5 2.5 0 1 0 12 5.5V8"/></svg>',
+    };
+    const smallIcon = (name) => `<span class="inline-svg-icon">${uiIcon[name]}</span>`;
 
     if (!productId) window.location.href = 'index.html';
 
@@ -403,7 +410,7 @@
       } catch (e) {
         document.getElementById('product-detail').innerHTML = `
           <div class="empty-state">
-            <div class="icon">⚠️</div>
+            <div class="icon">${uiIcon.alert}</div>
             <h3>Không tìm thấy sản phẩm</h3>
             <a href="index.html" class="btn btn-primary" style="margin-top:1rem">Về trang chủ</a>
           </div>`;
@@ -427,12 +434,12 @@
       const specsHTML = Object.entries(specs).map(([k, v]) => `
         <div class="spec-item">
           <div class="spec-key">${specLabels[k] || k}</div>
-          <div class="spec-value">${v === true ? '✅ Có' : v === false ? '❌ Không' : v}</div>
+          <div class="spec-value">${v === true ? `${smallIcon('check')}Có` : v === false ? `${smallIcon('x')}Không` : v}</div>
         </div>`).join('');
 
       const combosHTML = p.combos && p.combos.length > 0 ? `
         <div class="combo-section">
-          <h3>🎁 Mua kèm được giảm giá</h3>
+          <h3>${smallIcon('gift')}Mua kèm được giảm giá</h3>
           ${p.combos.map(c => `
             <div class="combo-item" onclick="window.location.href='product.html?id=${c.id}'">
               <img src="${c.image_url}" alt="${c.name}"
@@ -462,7 +469,7 @@
           <div class="product-price-section">
             <div class="product-price-big">${formatPrice(p.price)}</div>
             <div class="product-stock-info ${p.stock <= 5 ? 'low' : ''}">
-              ${p.stock <= 0 ? '❌ Hết hàng' : p.stock <= 5 ? `⚠️ Chỉ còn ${p.stock} sản phẩm` : `✅ Còn hàng (${p.stock} sản phẩm)`}
+              ${p.stock <= 0 ? `${smallIcon('x')}Hết hàng` : p.stock <= 5 ? `${smallIcon('alert')}Chỉ còn ${p.stock} sản phẩm` : `${smallIcon('check')}Còn hàng (${p.stock} sản phẩm)`}
             </div>
           </div>
 
@@ -477,7 +484,7 @@
 
           <div class="product-actions">
             <button class="btn btn-dark btn-full btn-lg" onclick="addToCart()" ${p.stock <= 0 ? 'disabled' : ''}>
-              ${p.stock <= 0 ? 'Hết hàng' : '🛒 Thêm vào giỏ hàng'}
+              ${p.stock <= 0 ? 'Hết hàng' : '<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;margin-right:6px"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h8.76a2 2 0 0 0 1.95-1.57L21 8H5.12"/></svg>Thêm vào giỏ hàng'}
             </button>
             <button class="btn btn-primary btn-full btn-lg" onclick="buyNow()" ${p.stock <= 0 ? 'disabled' : ''}>
               Mua ngay

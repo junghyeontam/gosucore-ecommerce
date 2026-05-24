@@ -115,9 +115,38 @@ ul { list-style: none; }
   font-size: 1.1rem;
   transition: var(--transition);
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .navbar-icon:hover { color: var(--text-primary); }
+.navbar-icon svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.inline-svg-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: -3px;
+  margin-right: 6px;
+  color: currentColor;
+}
+.inline-svg-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 /* === CATEGORY NAV (như Apple) === */
 .category-nav {
@@ -538,6 +567,30 @@ ul { list-style: none; }
   animation: slideIn 0.3s ease;
 }
 
+.toast-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toast-icon svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.toast.success .toast-icon { color: var(--success); background: #f0fdf4; }
+.toast.error .toast-icon { color: var(--danger); background: #fff1f2; }
+.toast.info .toast-icon { color: var(--accent); background: var(--accent-light); }
+
 .toast.success { border-left: 3px solid var(--success); }
 .toast.error   { border-left: 3px solid var(--danger); }
 .toast.info    { border-left: 3px solid var(--accent); }
@@ -634,6 +687,15 @@ ul { list-style: none; }
 }
 
 .empty-state .icon { font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.4; }
+.empty-state .icon svg {
+  width: 54px;
+  height: 54px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .empty-state h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); }
 
 /* === LOADING === */

@@ -90,9 +90,13 @@ const toast = {
   show(message, type = 'info', duration = 3000) {
     this.init();
     const el = document.createElement('div');
-    const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+    const icons = {
+      success: '<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
+      error: '<svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+      info: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>',
+    };
     el.className = `toast ${type}`;
-    el.innerHTML = `<span>${icons[type]}</span><span>${message}</span>`;
+    el.innerHTML = `<span class="toast-icon">${icons[type]}</span><span>${message}</span>`;
     this.container.appendChild(el);
     setTimeout(() => el.remove(), duration);
   },
