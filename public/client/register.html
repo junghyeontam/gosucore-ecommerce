@@ -7,47 +7,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
   <link rel="stylesheet" href="../css/style.css">
-  <style>
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      background: var(--bg-secondary);
-      padding: 2rem 1rem;
-    }
-    .auth-container { width: 100%; max-width: 440px; }
-    .auth-logo { text-align: center; margin-bottom: 2rem; }
-    .auth-logo h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; }
-    .auth-logo h1 span { color: var(--accent); }
-    .auth-box {
-      background: var(--bg-primary);
-      border-radius: var(--radius-lg);
-      padding: 2.5rem;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border-light);
-    }
-    .auth-box h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.4rem; letter-spacing: -0.5px; }
-    .auth-box p { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 2rem; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .auth-footer { text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-secondary); }
-    .auth-footer a { color: var(--accent); font-weight: 500; }
-    .auth-footer a:hover { text-decoration: underline; }
-    .error-msg {
-      background: #fff1f2; border: 1px solid #fecdd3;
-      color: var(--danger); padding: 0.75rem 1rem;
-      border-radius: var(--radius-sm); font-size: 0.85rem;
-      margin-bottom: 1rem; display: none;
-    }
-    .error-msg.show { display: block; }
-    .success-msg {
-      background: #f0fdf4; border: 1px solid #bbf7d0;
-      color: var(--success); padding: 0.75rem 1rem;
-      border-radius: var(--radius-sm); font-size: 0.85rem;
-      margin-bottom: 1rem; display: none;
-    }
-    .success-msg.show { display: block; }
-  </style>
+  <link rel="stylesheet" href="../css/client/register.css">
 </head>
 <body>
   <div class="auth-container">
@@ -104,70 +64,6 @@
   </div>
 
   <script src="../js/api.js"></script>
-  <script>
-    if (isLoggedIn()) window.location.href = 'index.html';
-
-    const handleRegister = async () => {
-      const username         = document.getElementById('username').value.trim();
-      const full_name        = document.getElementById('full_name').value.trim();
-      const email            = document.getElementById('email').value.trim();
-      const phone            = document.getElementById('phone').value.trim();
-      const password         = document.getElementById('password').value;
-      const confirm_password = document.getElementById('confirm_password').value;
-      const btn              = document.getElementById('register-btn');
-
-      if (!username || !email || !password) {
-        showError('Vui lòng điền đủ username, email và mật khẩu.');
-        return;
-      }
-      if (password.length < 6) {
-        showError('Mật khẩu phải có ít nhất 6 ký tự.');
-        return;
-      }
-      if (password !== confirm_password) {
-        showError('Mật khẩu xác nhận không khớp.');
-        return;
-      }
-
-      btn.textContent = 'Đang tạo tài khoản...';
-      btn.disabled    = true;
-
-      try {
-        const data = await api.post('/auth/register', {
-          username, full_name, email, phone, password,
-        });
-
-        localStorage.setItem('gosucore_token', data.token);
-        localStorage.setItem('gosucore_user',  JSON.stringify(data.user));
-
-        showSuccess('Đăng ký thành công! Đang chuyển hướng...');
-        setTimeout(() => window.location.href = 'index.html', 1500);
-
-      } catch (err) {
-        showError(err.message || 'Đăng ký thất bại.');
-        btn.textContent = 'Tạo tài khoản';
-        btn.disabled    = false;
-      }
-    };
-
-    // Enter để submit
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleRegister();
-    });
-
-    const showError = (msg) => {
-      const el = document.getElementById('error-msg');
-      el.textContent = msg;
-      el.classList.add('show');
-      document.getElementById('success-msg').classList.remove('show');
-    };
-
-    const showSuccess = (msg) => {
-      const el = document.getElementById('success-msg');
-      el.textContent = msg;
-      el.classList.add('show');
-      document.getElementById('error-msg').classList.remove('show');
-    };
-  </script>
+  <script src="../js/client/register.js"></script>
 </body>
 </html>

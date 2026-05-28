@@ -146,6 +146,7 @@ Nếu thành công terminal sẽ hiện:
 | Vai trò | Username | Password | Email |
 |---------|----------|----------|-------|
 | Quản lý | `manager` | `Admin@123` | `manager@gosucore.com` |
+
 | Người dùng | `testuser` | `123456` | `test@gmail.com` |
 > ⚠️ **Đổi mật khẩu ngay sau khi chạy lần đầu!**
 
@@ -155,7 +156,7 @@ Nếu thành công terminal sẽ hiện:
 
 ```bash
 # Chế độ phát triển (tự restart khi sửa file)
-npm run dev
+npm run dev 
 
 # Chế độ production
 npm start

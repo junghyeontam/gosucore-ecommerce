@@ -96,12 +96,23 @@ BEGIN
         shipping_phone   NVARCHAR(20)  NOT NULL,
         shipping_address NVARCHAR(255) NOT NULL,
         note             NVARCHAR(500),
+        payment_method   NVARCHAR(30)  NOT NULL DEFAULT 'cod',
         created_at       DATETIME      NOT NULL DEFAULT GETDATE(),
         updated_at       DATETIME      NOT NULL DEFAULT GETDATE(),
         FOREIGN KEY (user_id)    REFERENCES Users(id),
         FOREIGN KEY (voucher_id) REFERENCES Vouchers(id)
     );
     PRINT 'Đã tạo bảng Orders';
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.tables WHERE name = 'Orders')
+   AND COL_LENGTH('dbo.Orders', 'payment_method') IS NULL
+BEGIN
+    ALTER TABLE Orders
+    ADD payment_method NVARCHAR(30) NOT NULL
+        CONSTRAINT DF_Orders_payment_method DEFAULT 'cod';
+    PRINT 'Da them cot payment_method vao bang Orders';
 END
 GO
 

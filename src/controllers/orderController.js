@@ -1,138 +1,251 @@
-// src/controllers/orderController.js
 const { getPool, sql } = require('../config/db');
 
-// ============================================================
-// POST /api/orders — Tạo đơn hàng mới
-// ============================================================
+const VALID_STATUSES = ['pending', 'confirmed', 'shipping', 'done', 'cancelled'];
+const VALID_PAYMENT_METHODS = ['cod', 'momo', 'bank', 'zalopay'];
+
+class HttpError extends Error {
+  constructor(status, message) {
+    super(message);
+    this.status = status;
+  }
+}
+
+const toPositiveInt = (value) => {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+};
+
+const normalizeOrderItems = (items) => {
+  if (!Array.isArray(items) || items.length === 0) {
+    throw new HttpError(400, 'Gio hang trong.');
+  }
+
+  const byProduct = new Map();
+  for (const item of items) {
+    const productId = toPositiveInt(item.product_id);
+    const quantity = toPositiveInt(item.quantity);
+
+    if (!productId || !quantity) {
+      throw new HttpError(400, 'San pham hoac so luong khong hop le.');
+    }
+
+    byProduct.set(productId, (byProduct.get(productId) || 0) + quantity);
+  }
+
+  return [...byProduct.entries()].map(([product_id, quantity]) => ({ product_id, quantity }));
+};
+
+const rollbackQuietly = async (transaction) => {
+  try {
+    if (transaction) await transaction.rollback();
+  } catch (_) {}
+};
+
+const applyCancellationEffects = async (transaction, orderId) => {
+  const restoreStock = new sql.Request(transaction);
+  await restoreStock
+    .input('order_id', sql.Int, orderId)
+    .query(`
+      UPDATE p
+      SET p.stock = p.stock + oi.quantity,
+          p.updated_at = GETDATE()
+      FROM Products p
+      JOIN OrderItems oi ON oi.product_id = p.id
+      WHERE oi.order_id = @order_id
+    `);
+
+  const restoreVoucher = new sql.Request(transaction);
+  await restoreVoucher
+    .input('order_id', sql.Int, orderId)
+    .query(`
+      UPDATE v
+      SET v.used_count = CASE WHEN v.used_count > 0 THEN v.used_count - 1 ELSE 0 END
+      FROM Vouchers v
+      JOIN Orders o ON o.voucher_id = v.id
+      WHERE o.id = @order_id
+    `);
+};
+
+// POST /api/orders
 const createOrder = async (req, res) => {
+  let transaction;
+
   try {
     const {
-      items, voucher_code,
-      shipping_name, shipping_phone, shipping_address, note,
+      items,
+      voucher_code,
+      shipping_name,
+      shipping_phone,
+      shipping_address,
+      note,
+      payment_method = 'cod',
     } = req.body;
 
-    if (!items || items.length === 0) {
-      return res.status(400).json({ success: false, message: 'Giỏ hàng trống.' });
-    }
     if (!shipping_name || !shipping_phone || !shipping_address) {
-      return res.status(400).json({ success: false, message: 'Vui lòng điền đầy đủ thông tin nhận hàng.' });
+      throw new HttpError(400, 'Vui long dien day du thong tin nhan hang.');
     }
 
+    if (!VALID_PAYMENT_METHODS.includes(payment_method)) {
+      throw new HttpError(400, 'Phuong thuc thanh toan khong hop le.');
+    }
+
+    const normalizedItems = normalizeOrderItems(items);
     const pool = getPool();
+    transaction = new sql.Transaction(pool);
+    await transaction.begin(sql.ISOLATION_LEVEL.READ_COMMITTED);
+
     let total_price = 0;
     const orderItems = [];
 
-    for (const item of items) {
-      const result = await pool.request()
-        .input('id', sql.Int, parseInt(item.product_id))
-        .query('SELECT id, name, price, stock FROM Products WHERE id = @id AND is_active = 1');
+    for (const item of normalizedItems) {
+      const productResult = await new sql.Request(transaction)
+        .input('id', sql.Int, item.product_id)
+        .query(`
+          SELECT id, name, price, stock
+          FROM Products WITH (UPDLOCK, ROWLOCK)
+          WHERE id = @id AND is_active = 1
+        `);
 
-      if (!result.recordset.length) {
-        return res.status(404).json({ success: false, message: `Sản phẩm ID ${item.product_id} không tồn tại.` });
+      if (!productResult.recordset.length) {
+        throw new HttpError(404, `San pham ID ${item.product_id} khong ton tai.`);
       }
 
-      const product = result.recordset[0];
+      const product = productResult.recordset[0];
       if (product.stock < item.quantity) {
-        return res.status(400).json({ success: false, message: `"${product.name}" chỉ còn ${product.stock} trong kho.` });
+        throw new HttpError(400, `"${product.name}" chi con ${product.stock} trong kho.`);
       }
 
-      total_price += product.price * item.quantity;
-      orderItems.push({ product_id: product.id, quantity: item.quantity, unit_price: product.price });
+      total_price += Number(product.price) * item.quantity;
+      orderItems.push({
+        product_id: product.id,
+        quantity: item.quantity,
+        unit_price: Number(product.price),
+      });
     }
 
     let discount_amount = 0;
     let voucher_id = null;
 
     if (voucher_code) {
-      const vr = await pool.request()
-        .input('code', sql.NVarChar, voucher_code)
-        .query('SELECT id, discount_percent, max_uses, used_count, expires_at FROM Vouchers WHERE code = @code AND is_active = 1');
+      const voucherResult = await new sql.Request(transaction)
+        .input('code', sql.NVarChar(50), String(voucher_code).trim().toUpperCase())
+        .query(`
+          SELECT id, discount_percent, max_uses, used_count, expires_at
+          FROM Vouchers WITH (UPDLOCK, ROWLOCK)
+          WHERE code = @code AND is_active = 1
+        `);
 
-      if (!vr.recordset.length) {
-        return res.status(400).json({ success: false, message: 'Mã giảm giá không hợp lệ.' });
+      if (!voucherResult.recordset.length) {
+        throw new HttpError(400, 'Ma giam gia khong hop le.');
       }
 
-      const v = vr.recordset[0];
-      if (v.used_count >= v.max_uses) {
-        return res.status(400).json({ success: false, message: 'Mã giảm giá đã hết lượt.' });
+      const voucher = voucherResult.recordset[0];
+      if (voucher.used_count >= voucher.max_uses) {
+        throw new HttpError(400, 'Ma giam gia da het luot.');
       }
-      if (v.expires_at && new Date(v.expires_at) < new Date()) {
-        return res.status(400).json({ success: false, message: 'Mã giảm giá đã hết hạn.' });
+      if (voucher.expires_at && new Date(voucher.expires_at) < new Date()) {
+        throw new HttpError(400, 'Ma giam gia da het han.');
       }
 
-      discount_amount = (total_price * v.discount_percent) / 100;
-      voucher_id = v.id;
+      discount_amount = Math.round((total_price * voucher.discount_percent) / 100);
+      voucher_id = voucher.id;
     }
 
     const final_price = total_price - discount_amount;
 
-    const orderResult = await pool.request()
-      .input('user_id',          sql.Int,      req.user.id)
-      .input('total_price',      sql.Decimal,  total_price)
-      .input('discount_amount',  sql.Decimal,  discount_amount)
-      .input('final_price',      sql.Decimal,  final_price)
-      .input('voucher_id',       sql.Int,      voucher_id)
-      .input('shipping_name',    sql.NVarChar, shipping_name)
-      .input('shipping_phone',   sql.NVarChar, shipping_phone)
-      .input('shipping_address', sql.NVarChar, shipping_address)
-      .input('note',             sql.NVarChar, note || null)
+    const orderResult = await new sql.Request(transaction)
+      .input('user_id', sql.Int, req.user.id)
+      .input('total_price', sql.Decimal(12, 2), total_price)
+      .input('discount_amount', sql.Decimal(12, 2), discount_amount)
+      .input('final_price', sql.Decimal(12, 2), final_price)
+      .input('voucher_id', sql.Int, voucher_id)
+      .input('shipping_name', sql.NVarChar(100), shipping_name)
+      .input('shipping_phone', sql.NVarChar(20), shipping_phone)
+      .input('shipping_address', sql.NVarChar(255), shipping_address)
+      .input('note', sql.NVarChar(500), note || null)
+      .input('payment_method', sql.NVarChar(30), payment_method)
       .query(`
         INSERT INTO Orders (
           user_id, total_price, discount_amount, final_price,
-          voucher_id, shipping_name, shipping_phone, shipping_address, note
+          voucher_id, shipping_name, shipping_phone, shipping_address,
+          note, payment_method
         )
-        OUTPUT INSERTED.id, INSERTED.status, INSERTED.created_at
+        OUTPUT INSERTED.id, INSERTED.status, INSERTED.created_at, INSERTED.payment_method
         VALUES (
           @user_id, @total_price, @discount_amount, @final_price,
-          @voucher_id, @shipping_name, @shipping_phone, @shipping_address, @note
+          @voucher_id, @shipping_name, @shipping_phone, @shipping_address,
+          @note, @payment_method
         )
       `);
 
     const newOrder = orderResult.recordset[0];
 
     for (const item of orderItems) {
-      await pool.request()
-        .input('order_id',   sql.Int,     newOrder.id)
-        .input('product_id', sql.Int,     item.product_id)
-        .input('quantity',   sql.Int,     item.quantity)
-        .input('unit_price', sql.Decimal, item.unit_price)
-        .query('INSERT INTO OrderItems (order_id, product_id, quantity, unit_price) VALUES (@order_id, @product_id, @quantity, @unit_price)');
-
-      await pool.request()
+      await new sql.Request(transaction)
+        .input('order_id', sql.Int, newOrder.id)
         .input('product_id', sql.Int, item.product_id)
-        .input('quantity',   sql.Int, item.quantity)
-        .query('UPDATE Products SET stock = stock - @quantity WHERE id = @product_id');
+        .input('quantity', sql.Int, item.quantity)
+        .input('unit_price', sql.Decimal(12, 2), item.unit_price)
+        .query(`
+          INSERT INTO OrderItems (order_id, product_id, quantity, unit_price)
+          VALUES (@order_id, @product_id, @quantity, @unit_price)
+        `);
+
+      const stockUpdate = await new sql.Request(transaction)
+        .input('product_id', sql.Int, item.product_id)
+        .input('quantity', sql.Int, item.quantity)
+        .query(`
+          UPDATE Products
+          SET stock = stock - @quantity, updated_at = GETDATE()
+          WHERE id = @product_id AND stock >= @quantity
+        `);
+
+      if (!stockUpdate.rowsAffected[0]) {
+        throw new HttpError(400, 'Ton kho khong du de tao don hang.');
+      }
     }
 
     if (voucher_id) {
-      await pool.request()
+      const voucherUpdate = await new sql.Request(transaction)
         .input('voucher_id', sql.Int, voucher_id)
-        .query('UPDATE Vouchers SET used_count = used_count + 1 WHERE id = @voucher_id');
+        .query(`
+          UPDATE Vouchers
+          SET used_count = used_count + 1
+          WHERE id = @voucher_id AND used_count < max_uses
+        `);
+
+      if (!voucherUpdate.rowsAffected[0]) {
+        throw new HttpError(400, 'Ma giam gia da het luot.');
+      }
     }
+
+    await transaction.commit();
+    transaction = null;
 
     res.status(201).json({
       success: true,
-      message: 'Đặt hàng thành công!',
+      message: 'Dat hang thanh cong!',
       data: {
-        order_id:       newOrder.id,
-        status:         newOrder.status,
+        order_id: newOrder.id,
+        status: newOrder.status,
+        payment_method: newOrder.payment_method,
         total_price,
         discount_amount,
         final_price,
-        created_at:     newOrder.created_at,
+        created_at: newOrder.created_at,
       },
     });
-
   } catch (error) {
-    console.error('Lỗi createOrder:', error);
-    res.status(500).json({ success: false, message: 'Lỗi server.' });
+    await rollbackQuietly(transaction);
+    console.error('Loi createOrder:', error);
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.status ? error.message : 'Loi server.',
+    });
   }
 };
 
-// ============================================================
-// GET /api/orders/my — Lịch sử đơn hàng của user hiện tại
-// Dùng ROW_NUMBER để đánh số thứ tự riêng cho từng user
-// ============================================================
+// GET /api/orders/my
 const getMyOrders = async (req, res) => {
   try {
     const pool = getPool();
@@ -150,6 +263,7 @@ const getMyOrders = async (req, res) => {
           o.total_price,
           o.discount_amount,
           o.final_price,
+          o.payment_method,
           o.shipping_name,
           o.shipping_phone,
           o.shipping_address,
@@ -178,46 +292,39 @@ const getMyOrders = async (req, res) => {
     }
 
     res.json({ success: true, data: orders });
-
   } catch (error) {
-    console.error('Lỗi getMyOrders:', error);
-    res.status(500).json({ success: false, message: 'Lỗi server.' });
+    console.error('Loi getMyOrders:', error);
+    res.status(500).json({ success: false, message: 'Loi server.' });
   }
 };
 
-// ============================================================
-// GET /api/orders/:id — Chi tiết đơn hàng
-// ============================================================
+// GET /api/orders/:id
 const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
-    const pool   = getPool();
+    const pool = getPool();
 
     const result = await pool.request()
-      .input('id', sql.Int, parseInt(id))
+      .input('id', sql.Int, parseInt(id, 10))
       .query(`
         SELECT o.*, v.code AS voucher_code, u.username, u.email
         FROM Orders o
         LEFT JOIN Vouchers v ON v.id = o.voucher_id
-        LEFT JOIN Users u    ON u.id = o.user_id
+        LEFT JOIN Users u ON u.id = o.user_id
         WHERE o.id = @id
       `);
 
     if (!result.recordset.length) {
-      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng.' });
+      return res.status(404).json({ success: false, message: 'Khong tim thay don hang.' });
     }
 
     const order = result.recordset[0];
-
-    // Kiểm tra quyền: chỉ chủ đơn hoặc admin/staff mới được xem
-    if (order.user_id !== req.user.id &&
-        req.user.role !== 'manager' &&
-        req.user.role !== 'staff') {
-      return res.status(403).json({ success: false, message: 'Bạn không có quyền xem đơn hàng này.' });
+    if (order.user_id !== req.user.id && req.user.role !== 'manager' && req.user.role !== 'staff') {
+      return res.status(403).json({ success: false, message: 'Ban khong co quyen xem don hang nay.' });
     }
 
     const items = await pool.request()
-      .input('order_id', sql.Int, parseInt(id))
+      .input('order_id', sql.Int, parseInt(id, 10))
       .query(`
         SELECT
           oi.quantity, oi.unit_price,
@@ -228,119 +335,156 @@ const getOrderById = async (req, res) => {
       `);
 
     res.json({ success: true, data: { ...order, items: items.recordset } });
-
   } catch (error) {
-    console.error('Lỗi getOrderById:', error);
-    res.status(500).json({ success: false, message: 'Lỗi server.' });
+    console.error('Loi getOrderById:', error);
+    res.status(500).json({ success: false, message: 'Loi server.' });
   }
 };
 
-// ============================================================
-// PATCH /api/orders/:id/cancel — Customer tự hủy đơn của mình
-// Chỉ cho phép hủy khi status = 'pending'
-// ============================================================
+// PATCH /api/orders/:id/cancel
 const cancelMyOrder = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const pool   = getPool();
+  let transaction;
 
-    const result = await pool.request()
-      .input('id', sql.Int, parseInt(id))
-      .query('SELECT id, status, user_id FROM Orders WHERE id = @id');
+  try {
+    const id = parseInt(req.params.id, 10);
+    const pool = getPool();
+    transaction = new sql.Transaction(pool);
+    await transaction.begin(sql.ISOLATION_LEVEL.READ_COMMITTED);
+
+    const result = await new sql.Request(transaction)
+      .input('id', sql.Int, id)
+      .query(`
+        SELECT id, status, user_id
+        FROM Orders WITH (UPDLOCK, ROWLOCK)
+        WHERE id = @id
+      `);
 
     if (!result.recordset.length) {
-      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng.' });
+      throw new HttpError(404, 'Khong tim thay don hang.');
     }
 
     const order = result.recordset[0];
-
-    // Chỉ chủ đơn mới được hủy
     if (order.user_id !== req.user.id) {
-      return res.status(403).json({ success: false, message: 'Bạn không có quyền hủy đơn hàng này.' });
+      throw new HttpError(403, 'Ban khong co quyen huy don hang nay.');
     }
-
-    // Chỉ hủy được khi đang pending
     if (order.status !== 'pending') {
-      return res.status(400).json({
-        success: false,
-        message: `Không thể hủy đơn hàng đang ở trạng thái "${order.status}". Chỉ có thể hủy khi đơn chưa được xác nhận.`,
-      });
+      throw new HttpError(400, 'Chi co the huy don hang khi don chua duoc xac nhan.');
     }
 
-    await pool.request()
-      .input('id', sql.Int, parseInt(id))
+    await applyCancellationEffects(transaction, id);
+    await new sql.Request(transaction)
+      .input('id', sql.Int, id)
       .query(`UPDATE Orders SET status = 'cancelled', updated_at = GETDATE() WHERE id = @id`);
 
-    res.json({ success: true, message: 'Đã hủy đơn hàng thành công!' });
+    await transaction.commit();
+    transaction = null;
 
+    res.json({ success: true, message: 'Da huy don hang thanh cong!' });
   } catch (error) {
-    console.error('Lỗi cancelMyOrder:', error);
-    res.status(500).json({ success: false, message: 'Lỗi server.' });
+    await rollbackQuietly(transaction);
+    console.error('Loi cancelMyOrder:', error);
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.status ? error.message : 'Loi server.',
+    });
   }
 };
 
-// ============================================================
-// PATCH /api/orders/:id/status — Admin cập nhật trạng thái
-// ============================================================
+// PATCH /api/orders/:id/status
 const updateOrderStatus = async (req, res) => {
+  let transaction;
+
   try {
-    const { id }     = req.params;
+    const id = parseInt(req.params.id, 10);
     const { status } = req.body;
 
-    const validStatuses = ['pending', 'confirmed', 'shipping', 'done', 'cancelled'];
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({ success: false, message: `Trạng thái không hợp lệ.` });
+    if (!VALID_STATUSES.includes(status)) {
+      throw new HttpError(400, 'Trang thai khong hop le.');
     }
 
     const pool = getPool();
+    transaction = new sql.Transaction(pool);
+    await transaction.begin(sql.ISOLATION_LEVEL.READ_COMMITTED);
 
-    const existing = await pool.request()
-      .input('id', sql.Int, parseInt(id))
-      .query('SELECT id FROM Orders WHERE id = @id');
+    const existing = await new sql.Request(transaction)
+      .input('id', sql.Int, id)
+      .query(`
+        SELECT id, status
+        FROM Orders WITH (UPDLOCK, ROWLOCK)
+        WHERE id = @id
+      `);
 
     if (!existing.recordset.length) {
-      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng.' });
+      throw new HttpError(404, 'Khong tim thay don hang.');
     }
 
-    await pool.request()
-      .input('id',     sql.Int,      parseInt(id))
-      .input('status', sql.NVarChar, status)
+    const currentStatus = existing.recordset[0].status;
+
+    if (currentStatus === status) {
+      await transaction.commit();
+      transaction = null;
+      return res.json({ success: true, message: 'Trang thai don hang khong thay doi.' });
+    }
+
+    if (currentStatus === 'cancelled' && status !== 'cancelled') {
+      throw new HttpError(400, 'Khong the khoi phuc don hang da huy.');
+    }
+
+    if (status === 'cancelled') {
+      await applyCancellationEffects(transaction, id);
+    }
+
+    await new sql.Request(transaction)
+      .input('id', sql.Int, id)
+      .input('status', sql.NVarChar(20), status)
       .query('UPDATE Orders SET status = @status, updated_at = GETDATE() WHERE id = @id');
 
-    res.json({ success: true, message: `Cập nhật trạng thái thành "${status}" thành công!` });
+    await transaction.commit();
+    transaction = null;
 
+    res.json({ success: true, message: `Cap nhat trang thai thanh "${status}" thanh cong!` });
   } catch (error) {
-    console.error('Lỗi updateOrderStatus:', error);
-    res.status(500).json({ success: false, message: 'Lỗi server.' });
+    await rollbackQuietly(transaction);
+    console.error('Loi updateOrderStatus:', error);
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.status ? error.message : 'Loi server.',
+    });
   }
 };
 
-// ============================================================
-// GET /api/admin/orders — Admin xem tất cả đơn hàng
-// ============================================================
+// GET /api/admin/orders
 const getAllOrders = async (req, res) => {
   try {
     const { status, page = 1, limit = 20 } = req.query;
     const pool = getPool();
 
-    const pageNum  = Math.max(1, parseInt(page));
-    const limitNum = Math.min(50, parseInt(limit));
-    const offset   = (pageNum - 1) * limitNum;
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10) || 20));
+    const offset = (pageNum - 1) * limitNum;
 
-    const request = pool.request();
+    const countRequest = pool.request();
+    const dataRequest = pool.request();
     let whereClause = '';
 
     if (status) {
       whereClause = 'WHERE o.status = @status';
-      request.input('status', sql.NVarChar, status);
+      countRequest.input('status', sql.NVarChar(20), status);
+      dataRequest.input('status', sql.NVarChar(20), status);
     }
 
-    request.input('offset', sql.Int, offset);
-    request.input('limit',  sql.Int, limitNum);
+    const countResult = await countRequest.query(`
+      SELECT COUNT(*) AS total
+      FROM Orders o
+      ${whereClause}
+    `);
 
-    const result = await request.query(`
+    dataRequest.input('offset', sql.Int, offset);
+    dataRequest.input('limit', sql.Int, limitNum);
+
+    const result = await dataRequest.query(`
       SELECT
-        o.id, o.status, o.final_price, o.created_at,
+        o.id, o.status, o.final_price, o.payment_method, o.created_at,
         o.shipping_name, o.shipping_phone,
         u.username, u.email
       FROM Orders o
@@ -350,15 +494,28 @@ const getAllOrders = async (req, res) => {
       OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
     `);
 
-    res.json({ success: true, data: result.recordset });
-
+    const total = countResult.recordset[0].total;
+    res.json({
+      success: true,
+      data: result.recordset,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        total_pages: Math.ceil(total / limitNum),
+      },
+    });
   } catch (error) {
-    console.error('Lỗi getAllOrders:', error);
-    res.status(500).json({ success: false, message: 'Lỗi server.' });
+    console.error('Loi getAllOrders:', error);
+    res.status(500).json({ success: false, message: 'Loi server.' });
   }
 };
 
 module.exports = {
-  createOrder, getMyOrders, getOrderById,
-  cancelMyOrder, updateOrderStatus, getAllOrders,
+  createOrder,
+  getMyOrders,
+  getOrderById,
+  cancelMyOrder,
+  updateOrderStatus,
+  getAllOrders,
 };

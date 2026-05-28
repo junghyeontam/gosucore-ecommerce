@@ -17,7 +17,9 @@ const dbConfig = {
   database: process.env.DB_NAME || 'GosuCoreDB',
   options: {
     encrypt: process.env.DB_ENCRYPT === 'true',
-    trustServerCertificate: process.env.DB_TRUST_CERT === 'true' || true,
+    trustServerCertificate: process.env.DB_TRUST_CERT
+      ? process.env.DB_TRUST_CERT === 'true'
+      : true,
     enableArithAbort: true,
     // Bật Windows Authentication nếu không có user/password
     trustedConnection: useWindowsAuth,
@@ -40,10 +42,24 @@ if (!useWindowsAuth) {
 // Biến lưu pool kết nối (dùng chung toàn app)
 let pool = null;
 
+const ensureDatabaseSchema = async () => {
+  await pool.request().query(`
+    IF OBJECT_ID('dbo.Orders', 'U') IS NOT NULL
+       AND COL_LENGTH('dbo.Orders', 'payment_method') IS NULL
+    BEGIN
+      ALTER TABLE dbo.Orders
+      ADD payment_method NVARCHAR(30) NOT NULL
+          CONSTRAINT DF_Orders_payment_method DEFAULT 'cod';
+    END
+  `);
+};
+
 // Hàm kết nối - gọi 1 lần khi khởi động server
 const connectDB = async () => {
   try {
     pool = await sql.connect(dbConfig);
+    await ensureDatabaseSchema();
+
     const authMode = useWindowsAuth ? 'Windows Authentication' : 'SQL Server Authentication';
     console.log(`✅ Kết nối SQL Server thành công! (${authMode})`);
     console.log(`   Database: ${process.env.DB_NAME}`);

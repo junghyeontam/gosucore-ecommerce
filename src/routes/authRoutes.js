@@ -9,6 +9,7 @@ const { register, login, getMe, updateMe, changePassword } = require('../control
 const { verifyToken } = require('../middlewares/authMiddleware');
 
 // Public routes (không cần đăng nhập)
+router.get('/ping', (req, res) => res.json({ success: true, message: 'Auth API OK' }));
 router.post('/register', register);
 router.post('/login', login);
 

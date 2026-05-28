@@ -9,6 +9,7 @@ const { verifyToken }  = require('../middlewares/authMiddleware');
 const { requireAdmin } = require('../middlewares/roleMiddleware');
 
 // Customer
+router.get('/ping',          (req, res) => res.json({ success: true, message: 'Orders API OK' }));
 router.post('/',            verifyToken, createOrder);
 router.get('/my',           verifyToken, getMyOrders);
 router.get('/:id',          verifyToken, getOrderById);

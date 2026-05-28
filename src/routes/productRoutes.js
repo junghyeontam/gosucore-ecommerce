@@ -10,6 +10,7 @@ const { verifyToken } = require('../middlewares/authMiddleware');
 const { requireAdmin, requireManager } = require('../middlewares/roleMiddleware');
 
 // Public
+router.get('/ping',       (req, res) => res.json({ success: true, message: 'Products API OK' }));
 router.get('/',            getAllProducts);
 router.get('/categories',  getCategories);
 router.get('/brands',      getBrands);

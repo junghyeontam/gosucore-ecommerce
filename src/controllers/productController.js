@@ -10,25 +10,42 @@ const getAllProducts = async (req, res) => {
     } = req.query;
 
     const pool = getPool();
+    const parsedMinPrice = min_price !== undefined && min_price !== '' ? parseFloat(min_price) : null;
+    const parsedMaxPrice = max_price !== undefined && max_price !== '' ? parseFloat(max_price) : null;
+
+    if (parsedMinPrice !== null && (!Number.isFinite(parsedMinPrice) || parsedMinPrice < 0)) {
+      return res.status(400).json({ success: false, message: 'Gia toi thieu khong hop le.' });
+    }
+    if (parsedMaxPrice !== null && (!Number.isFinite(parsedMaxPrice) || parsedMaxPrice < 0)) {
+      return res.status(400).json({ success: false, message: 'Gia toi da khong hop le.' });
+    }
+    if (parsedMinPrice !== null && parsedMaxPrice !== null && parsedMinPrice > parsedMaxPrice) {
+      return res.status(400).json({ success: false, message: 'Khoang gia khong hop le.' });
+    }
+
+    const parsedCategory = category !== undefined && category !== '' ? parseInt(category, 10) : null;
+    if (parsedCategory !== null && (!Number.isInteger(parsedCategory) || parsedCategory <= 0)) {
+      return res.status(400).json({ success: false, message: 'Danh muc khong hop le.' });
+    }
 
     let conditions = ['p.is_active = 1'];
     const request = pool.request();
 
-    if (category) {
+    if (parsedCategory !== null) {
       conditions.push('p.category_id = @category');
-      request.input('category', sql.Int, parseInt(category));
+      request.input('category', sql.Int, parsedCategory);
     }
     if (brand) {
       conditions.push('p.brand = @brand');
       request.input('brand', sql.NVarChar, brand);
     }
-    if (min_price) {
+    if (parsedMinPrice !== null) {
       conditions.push('p.price >= @min_price');
-      request.input('min_price', sql.Decimal, parseFloat(min_price));
+      request.input('min_price', sql.Decimal(12, 2), parsedMinPrice);
     }
-    if (max_price) {
+    if (parsedMaxPrice !== null) {
       conditions.push('p.price <= @max_price');
-      request.input('max_price', sql.Decimal, parseFloat(max_price));
+      request.input('max_price', sql.Decimal(12, 2), parsedMaxPrice);
     }
     if (search) {
       conditions.push('(p.name LIKE @search OR p.brand LIKE @search)');
@@ -46,8 +63,8 @@ const getAllProducts = async (req, res) => {
     };
     const orderBy = orderMap[sort] || 'p.created_at DESC';
 
-    const pageNum  = Math.max(1, parseInt(page));
-    const limitNum = Math.min(50, Math.max(1, parseInt(limit)));
+    const pageNum  = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10) || 12));
     const offset   = (pageNum - 1) * limitNum;
 
     request.input('offset', sql.Int, offset);
@@ -62,10 +79,10 @@ const getAllProducts = async (req, res) => {
     const total = countResult.recordset[0].total;
 
     const request2 = pool.request();
-    if (category)  request2.input('category',  sql.Int,      parseInt(category));
+    if (parsedCategory !== null) request2.input('category',  sql.Int,      parsedCategory);
     if (brand)     request2.input('brand',      sql.NVarChar, brand);
-    if (min_price) request2.input('min_price',  sql.Decimal,  parseFloat(min_price));
-    if (max_price) request2.input('max_price',  sql.Decimal,  parseFloat(max_price));
+    if (parsedMinPrice !== null) request2.input('min_price',  sql.Decimal(12, 2), parsedMinPrice);
+    if (parsedMaxPrice !== null) request2.input('max_price',  sql.Decimal(12, 2), parsedMaxPrice);
     if (search)    request2.input('search',     sql.NVarChar, `%${search}%`);
     request2.input('offset', sql.Int, offset);
     request2.input('limit',  sql.Int, limitNum);
@@ -248,6 +265,20 @@ const createProduct = async (req, res) => {
       });
     }
 
+    const parsedPrice = parseFloat(price);
+    const parsedStock = stock !== undefined ? parseInt(stock, 10) : 0;
+    const parsedCategoryId = parseInt(category_id, 10);
+
+    if (!Number.isFinite(parsedPrice) || parsedPrice <= 0) {
+      return res.status(400).json({ success: false, message: 'Gia san pham khong hop le.' });
+    }
+    if (!Number.isInteger(parsedStock) || parsedStock < 0) {
+      return res.status(400).json({ success: false, message: 'Ton kho khong hop le.' });
+    }
+    if (!Number.isInteger(parsedCategoryId) || parsedCategoryId <= 0) {
+      return res.status(400).json({ success: false, message: 'Danh muc khong hop le.' });
+    }
+
     const finalSlug = slug || name
       .toLowerCase()
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -255,6 +286,14 @@ const createProduct = async (req, res) => {
       .replace(/^-|-$/g, '');
 
     const pool = getPool();
+
+    const category = await pool.request()
+      .input('category_id', sql.Int, parsedCategoryId)
+      .query('SELECT id FROM Categories WHERE id = @category_id');
+
+    if (category.recordset.length === 0) {
+      return res.status(400).json({ success: false, message: 'Danh muc khong ton tai.' });
+    }
 
     const existing = await pool.request()
       .input('slug', sql.NVarChar, finalSlug)
@@ -271,9 +310,9 @@ const createProduct = async (req, res) => {
       .input('name',        sql.NVarChar, name)
       .input('slug',        sql.NVarChar, finalSlug)
       .input('description', sql.NVarChar, description || null)
-      .input('price',       sql.Decimal,  parseFloat(price))
-      .input('stock',       sql.Int,      parseInt(stock) || 0)
-      .input('category_id', sql.Int,      parseInt(category_id))
+      .input('price',       sql.Decimal(12, 2), parsedPrice)
+      .input('stock',       sql.Int,      parsedStock)
+      .input('category_id', sql.Int,      parsedCategoryId)
       .input('brand',       sql.NVarChar, brand || null)
       .input('specs',       sql.NVarChar, specs || null)
       .input('image_url',   sql.NVarChar, image_url || null)
@@ -317,13 +356,37 @@ const updateProduct = async (req, res) => {
       });
     }
 
+    const parsedPrice = price !== undefined && price !== null && price !== '' ? parseFloat(price) : null;
+    const parsedStock = stock !== undefined && stock !== null && stock !== '' ? parseInt(stock, 10) : null;
+    const parsedCategoryId = category_id !== undefined && category_id !== null && category_id !== '' ? parseInt(category_id, 10) : null;
+
+    if (parsedPrice !== null && (!Number.isFinite(parsedPrice) || parsedPrice <= 0)) {
+      return res.status(400).json({ success: false, message: 'Gia san pham khong hop le.' });
+    }
+    if (parsedStock !== null && (!Number.isInteger(parsedStock) || parsedStock < 0)) {
+      return res.status(400).json({ success: false, message: 'Ton kho khong hop le.' });
+    }
+    if (parsedCategoryId !== null) {
+      if (!Number.isInteger(parsedCategoryId) || parsedCategoryId <= 0) {
+        return res.status(400).json({ success: false, message: 'Danh muc khong hop le.' });
+      }
+
+      const category = await pool.request()
+        .input('category_id', sql.Int, parsedCategoryId)
+        .query('SELECT id FROM Categories WHERE id = @category_id');
+
+      if (category.recordset.length === 0) {
+        return res.status(400).json({ success: false, message: 'Danh muc khong ton tai.' });
+      }
+    }
+
     await pool.request()
       .input('id',          sql.Int,      parseInt(id))
       .input('name',        sql.NVarChar, name || null)
       .input('description', sql.NVarChar, description || null)
-      .input('price',       sql.Decimal,  price ? parseFloat(price) : null)
-      .input('stock',       sql.Int,      stock !== undefined ? parseInt(stock) : null)
-      .input('category_id', sql.Int,      category_id ? parseInt(category_id) : null)
+      .input('price',       sql.Decimal(12, 2), parsedPrice)
+      .input('stock',       sql.Int,      parsedStock)
+      .input('category_id', sql.Int,      parsedCategoryId)
       .input('brand',       sql.NVarChar, brand || null)
       .input('specs',       sql.NVarChar, specs || null)
       .input('image_url',   sql.NVarChar, image_url || null)

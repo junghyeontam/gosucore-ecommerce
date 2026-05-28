@@ -120,7 +120,7 @@ const deleteCategory = async (req, res) => {
     // Kiểm tra có sản phẩm trong danh mục không
     const products = await pool.request()
       .input('id', sql.Int, parseInt(id))
-      .query('SELECT COUNT(*) AS cnt FROM Products WHERE category_id = @id AND is_active = 1');
+      .query('SELECT COUNT(*) AS cnt FROM Products WHERE category_id = @id');
 
     if (products.recordset[0].cnt > 0) {
       return res.status(400).json({
