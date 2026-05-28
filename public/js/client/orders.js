@@ -103,9 +103,9 @@ if (!isLoggedIn()) window.location.href = 'login.html';
                 <div class="order-id">Đơn hàng #${displayNum}</div>
                 <div class="order-date">${formatDate(order.created_at)}</div>
               </div>
-              <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+              <div class="order-header-summary">
                 <span class="badge ${status.badge}">${status.label}</span>
-                <span style="font-weight:700">${formatPrice(order.final_price)}</span>
+                <span class="order-header-price">${formatPrice(order.final_price)}</span>
                 <span style="color:var(--text-muted)" id="arrow-${order.id}">▼</span>
               </div>
             </div>

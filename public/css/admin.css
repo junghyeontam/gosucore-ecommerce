@@ -93,6 +93,15 @@ img { max-width: 100%; }
   gap: 10px;
 }
 
+.sidebar-logo,
+.sidebar-footer {
+  display: none;
+}
+
+.sidebar {
+  padding-top: 12px;
+}
+
 .sidebar-logo-mark {
   width: 30px; height: 30px;
   background: var(--accent);
@@ -256,7 +265,24 @@ img { max-width: 100%; }
 
 .icon-btn:hover { background: var(--surface-3); color: var(--text-1); }
 .icon-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.icon-btn .notif-dot { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; background: var(--red); border-radius: 50%; border: 1.5px solid white; }
+.icon-btn .notif-dot {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--red);
+  color: #fff;
+  border-radius: 999px;
+  border: 2px solid var(--surface);
+  box-shadow: 0 2px 6px rgba(220,38,38,0.35);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
+}
 
 /* ================================================================
    CONTENT

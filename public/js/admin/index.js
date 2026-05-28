@@ -200,6 +200,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
   // ── Notifications ─────────────────────────────────────────
   let notifications = [];
   let readIds = JSON.parse(localStorage.getItem('gosucore_read_notifs') || '[]');
+  let pendingOrderCount = 0;
 
   const loadNotifications = async () => {
     try {
@@ -207,8 +208,9 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
       notifications = [];
 
       const pending = d.overview.pending_orders || 0;
+      pendingOrderCount = pending;
       if (pending > 0) notifications.push({
-        id: 'pending_orders', type: 'order',
+        id: `pending_orders_${pending}`, type: 'order',
         title: `${formatNumber(pending)} đơn hàng chờ xác nhận`,
         desc:  'Cần xử lý ngay để đảm bảo trải nghiệm khách hàng',
         link:  'orders.html?status=pending',
@@ -231,11 +233,26 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
       });
 
       renderNotifications();
-      const dot = document.getElementById('notif-dot');
-      const unread = notifications.filter(n => !readIds.includes(n.id)).length;
-      if (dot) dot.style.display = unread > 0 ? 'block' : 'none';
+      updateNotificationBadge(pending);
 
     } catch(e) {}
+  };
+
+  const updateNotificationBadge = (pendingCount = 0) => {
+    const dot = document.getElementById('notif-dot');
+    const btn = document.getElementById('notif-btn');
+    if (!dot) return;
+
+    const shouldShowBadge = pendingCount > 0 && !readIds.includes(`pending_orders_${pendingCount}`);
+    if (shouldShowBadge) {
+      dot.textContent = pendingCount > 99 ? '99+' : formatNumber(pendingCount);
+      dot.style.display = 'flex';
+      if (btn) btn.title = `${formatNumber(pendingCount)} đơn hàng chờ xác nhận`;
+    } else {
+      dot.textContent = '';
+      dot.style.display = 'none';
+      if (btn) btn.title = 'Không có đơn hàng chờ xác nhận';
+    }
   };
 
   const renderNotifications = () => {
@@ -273,5 +290,5 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
     readIds = notifications.map(n => n.id);
     localStorage.setItem('gosucore_read_notifs', JSON.stringify(readIds));
     renderNotifications();
-    document.getElementById('notif-dot').style.display = 'none';
+    updateNotificationBadge(pendingOrderCount);
   };

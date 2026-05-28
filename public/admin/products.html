@@ -86,10 +86,10 @@
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" id="search" placeholder="Tìm tên sản phẩm, hãng..." oninput="debounceSearch()">
         </div>
-        <select id="filter-category" onchange="loadProducts()">
+        <select id="filter-category" onchange="changeProductFilters()">
           <option value="">Tất cả danh mục</option>
         </select>
-        <select id="filter-sort" onchange="loadProducts()">
+        <select id="filter-sort" onchange="changeProductFilters()">
           <option value="newest">Mới nhất</option>
           <option value="price_asc">Giá thấp → cao</option>
           <option value="price_desc">Giá cao → thấp</option>

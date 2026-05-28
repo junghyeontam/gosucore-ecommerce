@@ -15,6 +15,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
 
   document.addEventListener('DOMContentLoaded', async () => {
     await loadCategories();
+    applyCategoryFromUrl();
     await loadProducts();
   });
 
@@ -29,6 +30,27 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
         sel2.innerHTML += `<option value="${c.id}">${c.name}</option>`;
       });
     } catch(e) {}
+  };
+
+  const applyCategoryFromUrl = () => {
+    const category = new URLSearchParams(window.location.search).get('category');
+    if (!category) return;
+
+    const sel = document.getElementById('filter-category');
+    const exists = Array.from(sel.options).some(option => option.value === category);
+    if (exists) sel.value = category;
+  };
+
+  const changeProductFilters = () => {
+    currentPage = 1;
+
+    const category = document.getElementById('filter-category').value;
+    const url = new URL(window.location.href);
+    if (category) url.searchParams.set('category', category);
+    else url.searchParams.delete('category');
+    window.history.replaceState({}, '', `${url.pathname}${url.search}`);
+
+    loadProducts();
   };
 
   const loadProducts = async () => {
