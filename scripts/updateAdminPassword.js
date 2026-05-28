@@ -32,6 +32,6 @@ const updatePasswords = async () => {
 };
 
 updatePasswords().catch(err => {
-  console.error('❌ Lỗi:', err.message);
+  console.error('Loi:', err.message);
   process.exit(1);
 });

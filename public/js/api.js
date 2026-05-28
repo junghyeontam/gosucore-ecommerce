@@ -72,8 +72,10 @@ const formatDate = (dateStr) => {
 
 const renderStars = (rating) => {
   const full  = Math.floor(rating);
-  const empty = 5 - full;
-  return '★'.repeat(full) + '☆'.repeat(empty);
+  const starSvg = '<svg class="rating-star-icon" viewBox="0 0 24 24"><path d="m12 3 2.7 5.5 6 .9-4.4 4.2 1 6-5.3-2.8-5.3 2.8 1-6-4.4-4.2 6-.9z"/></svg>';
+  return Array.from({ length: 5 }, (_, index) =>
+    `<span class="rating-star ${index < full ? 'filled' : 'empty'}">${starSvg}</span>`
+  ).join('');
 };
 
 const toast = {

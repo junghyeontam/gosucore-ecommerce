@@ -21,8 +21,8 @@
     .support-list { list-style: none; padding: 0; margin: 0; }
     .support-list li { display: flex; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border-light); font-size: 0.88rem; color: var(--text-primary); line-height: 1.5; }
     .support-list li:last-child { border-bottom: none; }
-    .support-list li::before { content: '✓'; color: #16a34a; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-    .support-list li.no::before { content: '✗'; color: var(--danger); }
+    .support-list li::before { content: '+'; color: #16a34a; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .support-list li.no::before { content: '-'; color: var(--danger); }
     .contact-strip { background: #16a34a; border-radius: var(--radius-lg); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
     .contact-strip-text { color: #fff; }
     .contact-strip-text strong { font-size: 1rem; display: block; margin-bottom: 0.2rem; }

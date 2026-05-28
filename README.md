@@ -1,4 +1,4 @@
-# 🎮 GosuCore Backend — Hướng dẫn cài đặt đầy đủ
+# GosuCore Backend — Hướng dẫn cài đặt đầy đủ
 
 ## Yêu cầu hệ thống
 
@@ -108,7 +108,7 @@ Kết quả: database `GosuCoreDB` được tạo với đầy đủ các bảng
 
 ### 3.2 Import dữ liệu mẫu (seed data)
 
-> ⚠️ **Bắt buộc thực hiện** — nếu bỏ qua bước này, trang web sẽ không hiển thị sản phẩm nào.
+> **Bắt buộc thực hiện** — nếu bỏ qua bước này, trang web sẽ không hiển thị sản phẩm nào.
 
 **Cách 1 — Chạy file SQL trực tiếp trong SSMS:**
 
@@ -148,7 +148,7 @@ Nếu thành công terminal sẽ hiện:
 | Quản lý | `manager` | `Admin@123` | `manager@gosucore.com` |
 
 | Người dùng | `testuser` | `123456` | `test@gmail.com` |
-> ⚠️ **Đổi mật khẩu ngay sau khi chạy lần đầu!**
+> **Đổi mật khẩu ngay sau khi chạy lần đầu!**
 
 ---
 
@@ -164,11 +164,11 @@ npm start
 
 Terminal sẽ hiện:
 ```
-🎮 ================================
-🎮  GOSUCORE BACKEND STARTED!
-🎮 ================================
-🚀 Server:   http://localhost:3000
-✅ Kết nối SQL Server thành công!
+================================
+GOSUCORE BACKEND STARTED!
+================================
+Server:   http://localhost:3000
+Kết nối SQL Server thành công!
    Database: GosuCoreDB
    Server:   localhost:1433
 ```
@@ -190,7 +190,7 @@ Mở trình duyệt và truy cập:
 
 ## Xử lý lỗi thường gặp
 
-### ❌ Login failed for user 'sa'
+### Login failed for user 'sa'
 **Nguyên nhân:** Sai mật khẩu hoặc SQL Server Authentication chưa bật.
 
 **Cách sửa:**
@@ -201,7 +201,7 @@ Mở trình duyệt và truy cập:
 
 ---
 
-### ❌ Cannot connect to localhost
+### Cannot connect to localhost
 **Nguyên nhân:** SQL Server chưa chạy hoặc sai tên instance.
 
 **Cách sửa:**
@@ -212,7 +212,7 @@ Mở trình duyệt và truy cập:
 
 ---
 
-### ❌ TCP/IP connection error — port 1433
+### TCP/IP connection error — port 1433
 **Nguyên nhân:** TCP/IP chưa được bật trong SQL Server.
 
 **Cách sửa:**
@@ -223,14 +223,14 @@ Mở trình duyệt và truy cập:
 
 ---
 
-### ❌ Trang web không hiện sản phẩm
+### Trang web không hiện sản phẩm
 **Nguyên nhân:** Chưa chạy seed data.
 
 **Cách sửa:** Thực hiện lại **Bước 3.2** ở trên.
 
 ---
 
-### ❌ Route không tồn tại (404)
+### Route không tồn tại (404)
 **Nguyên nhân:** Truy cập URL file HTML nhưng server trả về JSON.
 
 **Cách sửa:** Kiểm tra file `server.js` có đoạn sau không:

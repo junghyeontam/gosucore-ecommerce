@@ -160,7 +160,7 @@ const params    = new URLSearchParams(window.location.search);
               const pct   = total > 0 ? (count / total * 100) : 0;
               return `
                 <div class="rating-bar-item">
-                  <span>${star} ★</span>
+                  <span>${star}</span>
                   <div class="bar-track">
                     <div class="bar-fill" style="width:${pct}%"></div>
                   </div>
@@ -201,7 +201,7 @@ const params    = new URLSearchParams(window.location.search);
                     onmouseover="hoverStar(${s})"
                     onmouseout="resetStars()"
                     onclick="selectStar(${s})"
-                    data-star="${s}">★</span>`).join('')}
+                    data-star="${s}"><svg class="rating-star-icon" viewBox="0 0 24 24"><path d="m12 3 2.7 5.5 6 .9-4.4 4.2 1 6-5.3-2.8-5.3 2.8 1-6-4.4-4.2 6-.9z"/></svg></span>`).join('')}
               </div>
               <div class="form-group">
                 <textarea id="review-comment" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..." rows="3"></textarea>

@@ -61,12 +61,12 @@ const connectDB = async () => {
     await ensureDatabaseSchema();
 
     const authMode = useWindowsAuth ? 'Windows Authentication' : 'SQL Server Authentication';
-    console.log(`✅ Kết nối SQL Server thành công! (${authMode})`);
+    console.log(`Ket noi SQL Server thanh cong! (${authMode})`);
     console.log(`   Database: ${process.env.DB_NAME}`);
     console.log(`   Server:   ${process.env.DB_SERVER}:${process.env.DB_PORT}`);
     return pool;
   } catch (error) {
-    console.error('❌ Lỗi kết nối SQL Server:', error.message);
+    console.error('Loi ket noi SQL Server:', error.message);
     console.error('   Kiểm tra lại thông tin trong file .env');
     process.exit(1);
   }

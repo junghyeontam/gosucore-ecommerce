@@ -461,7 +461,28 @@ ul { list-style: none; }
   margin-bottom: 0.75rem;
 }
 
-.stars { color: var(--warning); font-size: 0.78rem; }
+.stars {
+  color: var(--warning);
+  font-size: 0.78rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.rating-star {
+  display: inline-flex;
+  color: var(--warning);
+}
+.rating-star.empty {
+  color: var(--border);
+}
+.rating-star-icon {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
 .rating-count { font-size: 0.72rem; color: var(--text-muted); }
 
 .product-card-footer {

@@ -80,7 +80,7 @@ const register = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Đăng ký thành công! Chào mừng đến với GosuCore 🎮',
+      message: 'Đăng ký thành công! Chào mừng đến với GosuCore.',
       token,
       user: {
         id:         newUser.id,
@@ -156,7 +156,7 @@ const login = async (req, res) => {
 
     res.json({
       success: true,
-      message: `Đăng nhập thành công! Chào mừng trở lại, ${user.full_name || user.username} 🎮`,
+      message: `Đăng nhập thành công! Chào mừng trở lại, ${user.full_name || user.username}.`,
       token,
       user: {
         id:        user.id,

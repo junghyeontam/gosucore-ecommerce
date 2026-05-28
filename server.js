@@ -53,7 +53,7 @@ app.use('/api/categories', categoryRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
-    message: '🎮 GosuCore API đang chạy!',
+    message: 'GosuCore API dang chay!',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
@@ -100,7 +100,7 @@ app.use((req, res) => {
 
 // 500 - Lỗi server
 app.use((err, req, res, next) => {
-  console.error('❌ Server Error:', err.stack);
+  console.error('Server Error:', err.stack);
   res.status(500).json({
     success: false,
     message: 'Đã xảy ra lỗi server. Vui lòng thử lại sau.',
@@ -117,15 +117,15 @@ const startServer = async () => {
 
   app.listen(PORT, () => {
     console.log('');
-    console.log('🎮 ================================');
-    console.log('🎮  GOSUCORE BACKEND STARTED!');
-    console.log('🎮 ================================');
-    console.log(`🚀 Server:   http://localhost:${PORT}`);
-    console.log(`📋 Health:   http://localhost:${PORT}/api/health`);
-    console.log(`🔐 Auth:     http://localhost:${PORT}/api/auth/ping`);
-    console.log(`📦 Products: http://localhost:${PORT}/api/products/ping`);
-    console.log(`🛒 Orders:   http://localhost:${PORT}/api/orders/ping`);
-    console.log('🎮 ================================');
+    console.log('================================');
+    console.log('GOSUCORE BACKEND STARTED!');
+    console.log('================================');
+    console.log(`Server:   http://localhost:${PORT}`);
+    console.log(`Health:   http://localhost:${PORT}/api/health`);
+    console.log(`Auth:     http://localhost:${PORT}/api/auth/ping`);
+    console.log(`Products: http://localhost:${PORT}/api/products/ping`);
+    console.log(`Orders:   http://localhost:${PORT}/api/orders/ping`);
+    console.log('================================');
     console.log('');
   });
 };
