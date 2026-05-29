@@ -143,7 +143,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
                  style="width:44px;height:44px;object-fit:contain;background:var(--surface-2);border-radius:var(--r-md);padding:4px;border:1px solid var(--border-2);flex-shrink:0">
             <div style="flex:1">
               <div style="font-weight:600;font-size:13px">${item.name}</div>
-              <div style="font-size:11px;color:var(--text-3)">x${item.quantity} · ${formatPrice(item.unit_price)}/cái</div>
+              <div style="font-size:11px;color:var(--text-3)">x${item.quantity} - ${formatPrice(item.unit_price)}/cái</div>
             </div>
             <div style="font-weight:700;font-size:13px;font-family:'JetBrains Mono',monospace">
               ${formatPrice(item.unit_price * item.quantity)}

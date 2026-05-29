@@ -1,294 +1,381 @@
-# GosuCore Backend — Hướng dẫn cài đặt đầy đủ
+# GosuCore Backend
 
-## Yêu cầu hệ thống
+GosuCore là project bán thiết bị gaming gồm frontend tĩnh trong `public/` và backend Node.js/Express kết nối SQL Server.
 
-| Phần mềm | Phiên bản | Link tải |
-|----------|-----------|----------|
-| Node.js | 18+ | https://nodejs.org |
-| SQL Server | 2019+ hoặc Express (miễn phí) | https://www.microsoft.com/sql-server |
-| SSMS | Mới nhất | https://aka.ms/ssms |
+README này hướng dẫn cách cài project trên máy khác, kết nối SQL Server, tạo database và import dữ liệu mẫu từ `seed_products.sql` để trang web hiển thị đầy đủ sản phẩm.
 
----
+## Yêu Cầu
 
-## Bước 1 — Cài đặt Node.js dependencies
+Máy cần có:
 
-Mở terminal trong thư mục `gosucore-backend/` và chạy:
+| Phần mềm | Gợi ý |
+| --- | --- |
+| Node.js | 18 trở lên |
+| SQL Server | SQL Server Developer, Express hoặc bản đầy đủ |
+| SQL Server Management Studio | Dùng để chạy file `.sql` |
+
+Kiểm tra Node.js:
+
+```bash
+node -v
+npm -v
+```
+
+## Cài Project
+
+Mở terminal tại thư mục project rồi chạy:
 
 ```bash
 npm install
 ```
 
-Các thư viện được cài:
+Các lệnh chạy server:
 
-| Thư viện | Mục đích |
-|----------|----------|
-| `express` | Web framework |
-| `mssql` | Kết nối SQL Server |
-| `jsonwebtoken` | Tạo và xác thực JWT |
-| `bcryptjs` | Mã hoá mật khẩu |
-| `dotenv` | Đọc biến môi trường từ `.env` |
-| `cors` | Cho phép frontend gọi API |
-| `nodemon` | Tự restart khi sửa code (dev) |
+```bash
+npm run dev
+```
 
----
+Hoặc:
 
-## Bước 2 — Cấu hình file .env
+```bash
+npm start
+```
 
-Tạo file `.env` trong thư mục gốc
+Mặc định web chạy ở:
+
+```text
+http://localhost:3000
+```
+
+## Cấu Hình Kết Nối SQL Server
+
+Tạo file `.env` ở thư mục gốc project, cùng cấp với `server.js`.
+
+Ví dụ cấu hình dùng SQL Server Authentication:
 
 ```env
 PORT=3000
 NODE_ENV=development
 
-# ── SQL Server ──────────────────────────────────────────────
 DB_SERVER=localhost
 DB_PORT=1433
-DB_USER=sa
-DB_PASSWORD=YourPassword123!
 DB_NAME=GosuCoreDB
+DB_USER=sa
+DB_PASSWORD=YourPasswordHere
 DB_ENCRYPT=false
 DB_TRUST_CERT=true
+DB_TRUSTED_CONNECTION=false
 
-# Dùng Windows Authentication (không cần user/pass)?
-# DB_TRUSTED_CONNECTION=true
-# DB_USER=
-# DB_PASSWORD=
-
-# ── JWT ─────────────────────────────────────────────────────
-JWT_SECRET=gosucore_super_secret_key_change_this
+JWT_SECRET=gosucore_secret_change_this
 JWT_EXPIRES_IN=7d
 BCRYPT_ROUNDS=10
 ```
 
-### Xác định tên DB_SERVER của bạn
+Nếu dùng Windows Authentication:
 
-Mở **SSMS** → xem tên ở ô **Server name** khi đăng nhập:
-
-| Trường hợp | Giá trị DB_SERVER |
-|------------|-------------------|
-| SQL Server mặc định | `localhost` |
-| SQL Server Express | `localhost\SQLEXPRESS` → trong `.env` viết: `localhost\\SQLEXPRESS` |
-| Tên máy tính | `DESKTOP-ABC123` |
-| Tên máy + instance | `DESKTOP-ABC123\\SQLEXPRESS` |
-
-### Chọn kiểu xác thực
-
-**SQL Server Authentication** (có username/password):
 ```env
-DB_USER=sa
-DB_PASSWORD=YourPassword123!
-DB_TRUSTED_CONNECTION=false
-```
+PORT=3000
+NODE_ENV=development
 
-**Windows Authentication** (không cần password):
-```env
+DB_SERVER=localhost
+DB_PORT=1433
+DB_NAME=GosuCoreDB
 DB_USER=
 DB_PASSWORD=
+DB_ENCRYPT=false
+DB_TRUST_CERT=true
 DB_TRUSTED_CONNECTION=true
+
+JWT_SECRET=gosucore_secret_change_this
+JWT_EXPIRES_IN=7d
+BCRYPT_ROUNDS=10
 ```
 
----
+Lưu ý quan trọng:
 
-## Bước 3 — Tạo Database và import dữ liệu
+- Project đang kết nối SQL Server bằng `DB_SERVER` và `DB_PORT`.
+- Cách dễ nhất là cho SQL Server nghe ở port `1433`, rồi dùng `DB_SERVER=localhost`.
+- Nếu máy bạn dùng SQL Express hoặc named instance, vẫn nên bật TCP/IP và cấu hình port tĩnh `1433`.
 
-### 3.1 Chạy file tạo cấu trúc database
+## Bật TCP/IP Và Port 1433
 
-1. Mở **SSMS** → kết nối SQL Server
-2. Menu **File → Open → File...** → chọn file `database_setup.sql`
-3. Nhấn **Execute** (F5)
-4. Kiểm tra kết quả: cửa sổ Messages hiện **"Commands completed successfully"**
+Nếu bạn bè chạy project mà không kết nối được SQL Server, thường là do SQL Server chưa bật TCP/IP.
 
-Kết quả: database `GosuCoreDB` được tạo với đầy đủ các bảng:
-- `Users` — tài khoản người dùng
-- `Categories` — danh mục sản phẩm
-- `Products` — sản phẩm
-- `Orders` + `OrderItems` — đơn hàng
-- `Reviews` — đánh giá
-- `Vouchers` — mã giảm giá
+Làm như sau:
 
-### 3.2 Import dữ liệu mẫu (seed data)
+1. Mở **SQL Server Configuration Manager**.
+2. Vào **SQL Server Network Configuration**.
+3. Chọn **Protocols for MSSQLSERVER** hoặc **Protocols for SQLEXPRESS**.
+4. Chuột phải **TCP/IP** rồi chọn **Enable**.
+5. Mở **TCP/IP Properties**.
+6. Qua tab **IP Addresses**.
+7. Kéo xuống phần **IPAll**.
+8. Đặt **TCP Port** là `1433`.
+9. Xóa trống **TCP Dynamic Ports** nếu đang có giá trị.
+10. Restart SQL Server service.
 
-> **Bắt buộc thực hiện** — nếu bỏ qua bước này, trang web sẽ không hiển thị sản phẩm nào.
+Sau đó giữ `.env` như sau:
 
-**Cách 1 — Chạy file SQL trực tiếp trong SSMS:**
+```env
+DB_SERVER=localhost
+DB_PORT=1433
+```
 
-1. Mở SSMS, đảm bảo đang kết nối đến `GosuCoreDB`
-2. Mở file `seed_products.sql`
-3. Kiểm tra dòng đầu có `USE GosuCoreDB;` — nếu chưa có thì thêm vào
-4. Nhấn **Execute** (F5)
-5. Kiểm tra: chạy câu lệnh sau để xác nhận dữ liệu đã vào:
+## Tạo Database
+
+Database được tạo bằng file:
+
+```text
+database_setup.sql
+```
+
+Cách chạy bằng SSMS:
+
+1. Mở **SQL Server Management Studio**.
+2. Kết nối vào SQL Server của máy bạn.
+3. Chọn **File > Open > File...**.
+4. Mở file `database_setup.sql`.
+5. Nhấn **Execute** hoặc phím `F5`.
+
+File này sẽ tạo database:
+
+```text
+GosuCoreDB
+```
+
+Và tạo các bảng chính:
+
+- `Users`
+- `Categories`
+- `Products`
+- `Orders`
+- `OrderItems`
+- `Reviews`
+- `Vouchers`
+
+Sau khi chạy xong, có thể kiểm tra:
 
 ```sql
 USE GosuCoreDB;
-SELECT COUNT(*) AS so_san_pham FROM Products;
-SELECT COUNT(*) AS so_danh_muc FROM Categories;
-SELECT COUNT(*) AS so_user     FROM Users;
+
+SELECT name
+FROM sys.tables
+ORDER BY name;
 ```
 
-Kết quả mong đợi: số sản phẩm > 0.
+## Import Dữ Liệu Mẫu
 
-**Cách 2 — Chạy script Node.js seed:**
+Dữ liệu sản phẩm, danh mục, user mẫu, voucher và một số dữ liệu liên quan nằm trong file:
+
+```text
+seed_products.sql
+```
+
+Đây là file quan trọng. Nếu không import file này, trang web có thể chạy nhưng danh sách sản phẩm sẽ trống.
+
+Cách import bằng SSMS:
+
+1. Mở **SQL Server Management Studio**.
+2. Kết nối SQL Server.
+3. Đảm bảo database `GosuCoreDB` đã được tạo trước bằng `database_setup.sql`.
+4. Chọn **File > Open > File...**.
+5. Mở file `seed_products.sql`.
+6. Kiểm tra dòng đầu file có:
+
+```sql
+USE [GosuCoreDB]
+GO
+```
+
+7. Nhấn **Execute** hoặc `F5`.
+
+Sau khi import, kiểm tra dữ liệu:
+
+```sql
+USE GosuCoreDB;
+
+SELECT COUNT(*) AS total_categories FROM Categories;
+SELECT COUNT(*) AS total_products FROM Products;
+SELECT COUNT(*) AS total_users FROM Users;
+```
+
+Nếu `total_products` lớn hơn `0`, dữ liệu sản phẩm đã vào database.
+
+Bạn cũng có thể xem thử vài sản phẩm:
+
+```sql
+USE GosuCoreDB;
+
+SELECT TOP 10 id, name, brand, price, stock, image_url
+FROM Products
+ORDER BY id;
+```
+
+## Chạy Server Sau Khi Import Database
+
+Sau khi đã có `.env`, đã chạy `database_setup.sql` và `seed_products.sql`, chạy:
 
 ```bash
-# Chạy từ thư mục gốc project
-node scripts/seed.js
+npm run dev
 ```
 
-Nếu thành công terminal sẽ hiện:
-```
-Đã thêm 6 danh mục
-Đã thêm 43 sản phẩm
-Đã tạo tài khoản admin mặc định
-```
+Terminal sẽ hiển thị dạng:
 
-### 3.3 Tài khoản mặc định sau khi seed
+```text
+Ket noi SQL Server thanh cong! (SQL Server Authentication)
+Database: GosuCoreDB
+Server:   localhost:1433
 
-| Vai trò | Username | Password | Email |
-|---------|----------|----------|-------|
-| Quản lý | `manager` | `Admin@123` | `manager@gosucore.com` |
-
-| Người dùng | `testuser` | `123456` | `test@gmail.com` |
-> **Đổi mật khẩu ngay sau khi chạy lần đầu!**
-
----
-
-## Bước 4 — Khởi động server
-
-```bash
-# Chế độ phát triển (tự restart khi sửa file)
-npm run dev 
-
-# Chế độ production
-npm start
-```
-
-Terminal sẽ hiện:
-```
 ================================
 GOSUCORE BACKEND STARTED!
 ================================
 Server:   http://localhost:3000
-Kết nối SQL Server thành công!
-   Database: GosuCoreDB
-   Server:   localhost:1433
+Health:   http://localhost:3000/api/health
+Auth:     http://localhost:3000/api/auth/ping
+Products: http://localhost:3000/api/products/ping
+Orders:   http://localhost:3000/api/orders/ping
+================================
 ```
 
----
+## Kiểm Tra Trên Trình Duyệt
 
-## Bước 5 — Kiểm tra hoạt động
+Mở các URL sau:
 
-Mở trình duyệt và truy cập:
+| Trang | URL |
+| --- | --- |
+| API health | `http://localhost:3000/api/health` |
+| API sản phẩm | `http://localhost:3000/api/products` |
+| Trang cửa hàng | `http://localhost:3000/client/index.html` |
+| Trang admin | `http://localhost:3000/admin/index.html` |
 
-| URL | Kết quả mong đợi |
-|-----|-----------------|
-| `http://localhost:3000/api/health` | `{"success":true}` |
-| `http://localhost:3000/api/products` | Danh sách sản phẩm |
-| `http://localhost:3000/client/index.html` | Trang chủ cửa hàng |
-| `http://localhost:3000/admin/index.html` | Trang quản trị |
+Nếu trang cửa hàng đã hiện sản phẩm, phần import `seed_products.sql` đã thành công.
 
----
+## Tài Khoản Mẫu
 
-## Xử lý lỗi thường gặp
+File `seed_products.sql` có sẵn một số tài khoản mẫu.
+
+Tài khoản quản lý thường dùng:
+
+| Vai trò | Email | Mật khẩu |
+| --- | --- | --- |
+| Manager | `manager@gosucore.com` | `Admin@123` |
+
+Tài khoản khách hàng mẫu:
+
+| Vai trò | Email | Mật khẩu |
+| --- | --- | --- |
+| Customer | `test@gmail.com` | `123456` |
+
+Sau khi dùng trên máy khác, nên đổi mật khẩu các tài khoản mẫu nếu project được đưa lên môi trường thật.
+
+## Lỗi Thường Gặp
+
+### Không kết nối được SQL Server
+
+Kiểm tra:
+
+- SQL Server service đã chạy chưa.
+- TCP/IP đã bật chưa.
+- Port `1433` đã cấu hình chưa.
+- `.env` có đúng `DB_SERVER`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` không.
+
+Kiểm tra service:
+
+1. Bấm `Windows + R`.
+2. Gõ `services.msc`.
+3. Tìm **SQL Server (MSSQLSERVER)** hoặc **SQL Server (SQLEXPRESS)**.
+4. Đảm bảo service đang ở trạng thái **Running**.
 
 ### Login failed for user 'sa'
-**Nguyên nhân:** Sai mật khẩu hoặc SQL Server Authentication chưa bật.
 
-**Cách sửa:**
-1. Mở SSMS → chuột phải vào server → **Properties → Security**
-2. Chọn **SQL Server and Windows Authentication mode**
-3. Restart SQL Server service
-4. Kiểm tra lại `DB_USER` và `DB_PASSWORD` trong `.env`
+Nguyên nhân thường gặp:
 
----
+- Sai mật khẩu `sa`.
+- SQL Server chưa bật SQL Server Authentication.
+- User `sa` đang bị disable.
 
-### Cannot connect to localhost
-**Nguyên nhân:** SQL Server chưa chạy hoặc sai tên instance.
+Cách xử lý:
 
-**Cách sửa:**
-1. Mở **Services** (Windows + R → `services.msc`)
-2. Tìm **SQL Server (MSSQLSERVER)** hoặc **SQL Server (SQLEXPRESS)**
-3. Đảm bảo trạng thái là **Running** — nếu không thì chuột phải → **Start**
-4. Kiểm tra lại tên instance trong `DB_SERVER`
+1. Mở SSMS.
+2. Chuột phải server, chọn **Properties**.
+3. Vào **Security**.
+4. Chọn **SQL Server and Windows Authentication mode**.
+5. Restart SQL Server.
+6. Kiểm tra lại mật khẩu trong `.env`.
 
----
+### Trang web chạy nhưng không có sản phẩm
 
-### TCP/IP connection error — port 1433
-**Nguyên nhân:** TCP/IP chưa được bật trong SQL Server.
+Nguyên nhân thường là chưa chạy `seed_products.sql`.
 
-**Cách sửa:**
-1. Tìm kiếm **SQL Server Configuration Manager**
-2. Vào **SQL Server Network Configuration → Protocols for MSSQLSERVER**
-3. Chuột phải **TCP/IP → Enable**
-4. Restart SQL Server service
+Kiểm tra:
 
----
-
-### Trang web không hiện sản phẩm
-**Nguyên nhân:** Chưa chạy seed data.
-
-**Cách sửa:** Thực hiện lại **Bước 3.2** ở trên.
-
----
-
-### Route không tồn tại (404)
-**Nguyên nhân:** Truy cập URL file HTML nhưng server trả về JSON.
-
-**Cách sửa:** Kiểm tra file `server.js` có đoạn sau không:
-```javascript
-app.use(express.static(path.join(__dirname, 'public')));
-```
-Nếu chưa có thì thêm vào trước phần routes.
-
----
-
-## Cấu trúc thư mục
-
-```
-gosucore-backend/
-├── .env                        ← Cấu hình môi trường (KHÔNG commit git)
-├── .env.example                ← File mẫu cho người mới clone
-├── .gitignore
-├── package.json
-├── server.js                   ← Điểm khởi động chính
-├── database_setup.sql          ← Tạo database + bảng (chạy 1 lần)
-├── seed_products.sql           ← Import dữ liệu mẫu
-├── README.md
-├── public/
-│   ├── client/                 ← Giao diện cửa hàng
-│   │   ├── index.html
-│   │   ├── product.html
-│   │   ├── cart.html
-│   │   └── ...
-│   ├── admin/                  ← Giao diện quản trị
-│   │   ├── index.html
-│   │   ├── products.html
-│   │   ├── orders.html
-│   │   └── ...
-│   ├── css/
-│   └── js/
-│       ├── api.js              ← HTTP client + format helpers
-│       └── auth.js             ← Xử lý đăng nhập/đăng xuất
-└── src/
-    ├── config/
-    │   └── db.js               ← Kết nối SQL Server
-    ├── routes/                 ← Định nghĩa endpoints
-    ├── controllers/            ← Logic xử lý + SQL queries
-    └── middlewares/
-        ├── authMiddleware.js   ← Xác thực JWT + kiểm tra is_active
-        └── roleMiddleware.js   ← Phân quyền theo role
+```sql
+USE GosuCoreDB;
+SELECT COUNT(*) FROM Products;
 ```
 
----
+Nếu kết quả là `0`, hãy chạy lại file `seed_products.sql`.
 
-## Thứ tự chạy lần đầu (tóm tắt)
+### Chạy seed bị lỗi trùng khóa chính
 
+`seed_products.sql` có dùng `IDENTITY_INSERT` và dữ liệu có id cố định. Nếu database đã có dữ liệu cũ, chạy lại seed có thể bị lỗi trùng `id`.
+
+Cách đơn giản nhất cho máy mới:
+
+1. Xóa database `GosuCoreDB`.
+2. Chạy lại `database_setup.sql`.
+3. Chạy lại `seed_products.sql`.
+
+Lệnh xóa database nếu cần:
+
+```sql
+USE master;
+ALTER DATABASE GosuCoreDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+DROP DATABASE GosuCoreDB;
 ```
-1. npm install
-2. Tạo file .env và điền thông tin
-3. Mở SSMS → chạy database_setup.sql
-4. Mở SSMS → chạy seed_products.sql
-5. npm run dev
-6. Mở http://localhost:3000/client/index.html
+
+Sau đó tạo lại từ đầu bằng `database_setup.sql`.
+
+## Thứ Tự Chạy Chuẩn Cho Máy Bạn Bè
+
+```text
+1. Cài Node.js
+2. Cài SQL Server và SSMS
+3. Clone hoặc copy project
+4. Chạy npm install
+5. Tạo file .env
+6. Bật TCP/IP và port 1433 cho SQL Server
+7. Mở SSMS và chạy database_setup.sql
+8. Mở SSMS và chạy seed_products.sql
+9. Chạy npm run dev
+10. Mở http://localhost:3000/client/index.html
 ```
 
-Nếu mọi thứ đúng, trang chủ sẽ hiển thị danh sách sản phẩm gaming ngay lập tức.
+## Cấu Trúc Chính
+
+```text
+gosucore_be/
+  server.js
+  package.json
+  database_setup.sql
+  seed_products.sql
+  public/
+    client/
+    admin/
+    css/
+    js/
+  src/
+    config/
+      db.js
+    controllers/
+    routes/
+    middlewares/
+```
+
+Trong đó:
+
+- `database_setup.sql`: tạo database và bảng.
+- `seed_products.sql`: import dữ liệu mẫu để có sản phẩm hiển thị.
+- `src/config/db.js`: cấu hình kết nối SQL Server từ `.env`.
+- `public/client`: giao diện người mua.
+- `public/admin`: giao diện quản trị.

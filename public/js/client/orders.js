@@ -106,7 +106,7 @@ if (!isLoggedIn()) window.location.href = 'login.html';
               <div class="order-header-summary">
                 <span class="badge ${status.badge}">${status.label}</span>
                 <span class="order-header-price">${formatPrice(order.final_price)}</span>
-                <span style="color:var(--text-muted)" id="arrow-${order.id}">▼</span>
+                <span class="order-header-arrow" id="arrow-${order.id}"></span>
               </div>
             </div>
 
@@ -131,7 +131,7 @@ if (!isLoggedIn()) window.location.href = 'login.html';
                       ${item.name}
                     </div>
                     <div class="order-item-meta">
-                      ${item.brand || ''} · x${item.quantity} · ${formatPrice(item.unit_price)}/cái
+                      ${item.brand || ''} - x${item.quantity} - ${formatPrice(item.unit_price)}/cái
                     </div>
                   </div>
                   <div class="order-item-price">${formatPrice(item.unit_price * item.quantity)}</div>
@@ -141,7 +141,7 @@ if (!isLoggedIn()) window.location.href = 'login.html';
                 <div>
                   ${order.voucher_code
                     ? `<div style="font-size:0.78rem;color:var(--success)">
-                        ${lineIcon('ticket')} Mã: ${order.voucher_code} · Giảm ${formatPrice(order.discount_amount)}
+                        ${lineIcon('ticket')} Mã: ${order.voucher_code} - Giảm ${formatPrice(order.discount_amount)}
                        </div>`
                     : ''}
                 </div>
@@ -149,7 +149,7 @@ if (!isLoggedIn()) window.location.href = 'login.html';
               </div>
 
               <div class="order-shipping">
-                ${lineIcon('box')}<strong>${order.shipping_name}</strong> · ${order.shipping_phone}<br>
+                ${lineIcon('box')}<strong>${order.shipping_name}</strong> - ${order.shipping_phone}<br>
                 ${lineIcon('mapPin')}${order.shipping_address}
                 ${order.note ? `<br>${lineIcon('note')}${order.note}` : ''}
               </div>
@@ -186,7 +186,7 @@ if (!isLoggedIn()) window.location.href = 'login.html';
       const body  = document.getElementById(`body-${id}`);
       const arrow = document.getElementById(`arrow-${id}`);
       body.classList.toggle('open');
-      arrow.textContent = body.classList.contains('open') ? '▲' : '▼';
+      arrow.classList.toggle('open', body.classList.contains('open'));
     }
 
     // ── Cancel modal ──────────────────────────────────────
@@ -230,7 +230,7 @@ if (!isLoggedIn()) window.location.href = 'login.html';
           const arrow = document.getElementById(`arrow-${cancelOrderId}`);
           if (body && !body.classList.contains('open')) {
             body.classList.add('open');
-            if (arrow) arrow.textContent = '▲';
+            if (arrow) arrow.classList.add('open');
           }
         }, 100);
 

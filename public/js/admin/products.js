@@ -124,12 +124,12 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
     const el = document.getElementById('pagination');
     if (!pag || pag.total_pages <= 1) { el.innerHTML = ''; return; }
     let h = '';
-    if (pag.page > 1) h += `<button class="btn btn-light btn-sm" onclick="changePage(${pag.page-1})">← Trước</button>`;
+    if (pag.page > 1) h += `<button class="btn btn-light btn-sm" onclick="changePage(${pag.page-1})">Trước</button>`;
     for (let i = 1; i <= pag.total_pages; i++) {
       if (Math.abs(i - pag.page) <= 2)
         h += `<button class="btn btn-sm ${i === pag.page ? 'btn-primary' : 'btn-light'}" onclick="changePage(${i})">${i}</button>`;
     }
-    if (pag.page < pag.total_pages) h += `<button class="btn btn-light btn-sm" onclick="changePage(${pag.page+1})">Tiếp →</button>`;
+    if (pag.page < pag.total_pages) h += `<button class="btn btn-light btn-sm" onclick="changePage(${pag.page+1})">Tiếp</button>`;
     el.innerHTML = h;
   };
 

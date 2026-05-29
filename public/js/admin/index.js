@@ -228,7 +228,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
       if (lowStock.length > 0) notifications.push({
         id: 'low_stock', type: 'stock',
         title: `${formatNumber(lowStock.length)} sản phẩm sắp hết hàng`,
-        desc:  lowStock.slice(0,2).map(p => `${p.name} — còn ${formatNumber(p.stock)}`).join(' · '),
+        desc:  lowStock.slice(0,2).map(p => `${p.name} - còn ${formatNumber(p.stock)}`).join(', '),
         link:  'products.html',
       });
 

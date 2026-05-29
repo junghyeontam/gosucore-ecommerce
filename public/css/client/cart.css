@@ -26,9 +26,6 @@
       font-size: 0.875rem;
     }
 
-    /* CART ITEMS */
-    .cart-items { }
-
     .cart-item {
       display: flex;
       gap: 1.25rem;

@@ -158,12 +158,12 @@ let currentPage     = 1;
       const el = document.getElementById('pagination');
       if (total_pages <= 1) { el.innerHTML = ''; return; }
       let h = '';
-      if (page > 1) h += `<button class="btn btn-light btn-sm" onclick="changePage(${page-1})">← Trước</button>`;
+      if (page > 1) h += `<button class="btn btn-light btn-sm" onclick="changePage(${page-1})">Trước</button>`;
       for (let i = 1; i <= total_pages; i++) {
         if (i === page) h += `<button class="btn btn-primary btn-sm">${i}</button>`;
         else if (Math.abs(i-page) <= 2) h += `<button class="btn btn-light btn-sm" onclick="changePage(${i})">${i}</button>`;
       }
-      if (page < total_pages) h += `<button class="btn btn-light btn-sm" onclick="changePage(${page+1})">Tiếp →</button>`;
+      if (page < total_pages) h += `<button class="btn btn-light btn-sm" onclick="changePage(${page+1})">Tiếp</button>`;
       el.innerHTML = h;
     };
 
