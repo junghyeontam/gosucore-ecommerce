@@ -60,7 +60,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
 
       tbody.innerHTML = cats.map(c => `
         <tr>
-          <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-3);font-weight:600">#${c.id}</td>
+          <td style="font-size:12px;color:var(--text-3);font-weight:600">#${c.id}</td>
           <td>
             <div style="display:flex;align-items:center;gap:10px">
               ${categoryIcon(c.name)}
@@ -74,7 +74,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
             ${c.description || '<span style="color:var(--text-3);font-style:italic">Chưa có mô tả</span>'}
           </td>
           <td>
-            <span style="font-weight:700;font-family:'JetBrains Mono',monospace;font-size:13px">${c.product_count}</span>
+            <span style="font-weight:700;font-size:13px">${c.product_count}</span>
             <span style="font-size:11px;color:var(--text-3)"> SP</span>
           </td>
           <td style="font-size:12px;color:var(--text-2)">${formatDate(c.created_at)}</td>

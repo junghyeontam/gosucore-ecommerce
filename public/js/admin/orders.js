@@ -56,7 +56,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
         return `
           <tr>
             <td>
-              <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--text-2);font-size:12px">
+              <span style="font-weight:700;color:var(--text-2);font-size:12px">
                 #${o.id}
               </span>
             </td>
@@ -64,7 +64,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
               <div style="font-weight:600;font-size:13px">${o.shipping_name}</div>
               <div style="font-size:11px;color:var(--text-3)">${o.email}</div>
             </td>
-            <td style="font-weight:700;font-size:13px;font-family:'JetBrains Mono',monospace">
+            <td style="font-weight:700;font-size:13px">
               ${formatPrice(o.final_price)}
             </td>
             <td><span class="badge ${s.badge}">${s.label}</span></td>
@@ -145,7 +145,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
               <div style="font-weight:600;font-size:13px">${item.name}</div>
               <div style="font-size:11px;color:var(--text-3)">x${item.quantity} - ${formatPrice(item.unit_price)}/cái</div>
             </div>
-            <div style="font-weight:700;font-size:13px;font-family:'JetBrains Mono',monospace">
+            <div style="font-weight:700;font-size:13px">
               ${formatPrice(item.unit_price * item.quantity)}
             </div>
           </div>`).join('')}
@@ -162,7 +162,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
             </div>` : ''}
           <div class="detail-row">
             <span class="label" style="font-weight:700;font-size:14px">Tổng cộng</span>
-            <span class="value" style="font-size:16px;color:var(--accent);font-family:'JetBrains Mono',monospace">
+            <span class="value" style="font-size:16px;color:var(--accent)">
               ${formatPrice(order.final_price)}
             </span>
           </div>

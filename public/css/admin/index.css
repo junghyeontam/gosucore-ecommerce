@@ -17,7 +17,7 @@
 
     .order-status-card { display:flex; flex-direction:column; gap:6px; text-align:left; }
     .os-label { font-size:11.5px; font-weight:500; color:var(--text-3); letter-spacing:0.2px; }
-    .os-count { font-size:28px; font-weight:700; letter-spacing:-1.5px; line-height:1; }
+    .os-count { font-size:28px; font-weight:700; line-height:1; }
     .os-bar   { height:2px; border-radius:1px; margin-top:2px; opacity:0.3; }
 
     /* Consistent number/text styles */
@@ -29,7 +29,7 @@
     .mono {
       font-variant-numeric: tabular-nums;
       font-size:12.5px;
-      letter-spacing: -0.2px;
+      letter-spacing: 0;
     }
     .mono-bold { font-weight:600; }
 

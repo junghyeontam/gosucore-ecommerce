@@ -33,12 +33,12 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
           <tr>
             <td><span class="voucher-code">${v.code}</span></td>
             <td>
-              <span style="font-size:16px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace">
+              <span style="font-size:16px;font-weight:800;color:var(--accent)">
                 ${v.discount_percent}%
               </span>
             </td>
             <td>
-              <div style="font-size:13px;margin-bottom:5px;font-family:'JetBrains Mono',monospace">
+              <div style="font-size:13px;margin-bottom:5px">
                 ${v.used_count} <span style="color:var(--text-3);font-family:inherit">/ ${v.max_uses}</span>
               </div>
               <div class="progress-bar">
