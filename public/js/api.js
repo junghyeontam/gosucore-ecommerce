@@ -2,8 +2,25 @@ const API_BASE = 'http://localhost:3000/api';
 
 const getToken = () => localStorage.getItem('gosucore_token');
 
+const clearSession = () => {
+  localStorage.removeItem('gosucore_token');
+  localStorage.removeItem('gosucore_user');
+};
+
+const isTokenExpired = (token) => {
+  if (!token) return true;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp ? payload.exp * 1000 <= Date.now() : false;
+  } catch (_) {
+    return true;
+  }
+};
+
 const apiFetch = async (endpoint, options = {}) => {
   const token = getToken();
+  const isAuthEndpoint = endpoint === '/auth/login' || endpoint === '/auth/register';
 
   const config = {
     headers: {
@@ -18,6 +35,12 @@ const apiFetch = async (endpoint, options = {}) => {
   const data = await response.json();
 
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      clearSession();
+      if (!isAuthEndpoint) {
+        window.location.href = '/client/login.html';
+      }
+    }
     throw { status: response.status, message: data.message || 'Lỗi server' };
   }
 
@@ -154,7 +177,14 @@ const cart = {
   },
 };
 
-const isLoggedIn    = () => !!getToken();
+const isLoggedIn    = () => {
+  const token = getToken();
+  if (!token || isTokenExpired(token)) {
+    clearSession();
+    return false;
+  }
+  return true;
+};
 const getUser       = () => { const u = localStorage.getItem('gosucore_user'); return u ? JSON.parse(u) : null; };
 const requireLogin  = () => { if (!isLoggedIn()) { window.location.href = '/client/login.html'; return false; } return true; };
 const requireAdminRole = () => {

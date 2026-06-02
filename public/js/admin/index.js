@@ -20,6 +20,27 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
     cancelled: { label:'Đã hủy',       cls:'dot-cancelled' },
   };
 
+  const handleDashboardError = (error) => {
+    console.error('Dashboard load failed:', error);
+
+    if (error?.status === 401 || error?.status === 403) {
+      window.location.href = '../client/login.html';
+      return;
+    }
+
+    const message = error?.message || 'Không tải được dữ liệu dashboard';
+    ['s-revenue', 's-orders', 's-customers', 's-products'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = 'Lỗi';
+    });
+    document.getElementById('top-products-table').innerHTML =
+      `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--red);font-size:13px">${message}</td></tr>`;
+    document.getElementById('recent-orders-table').innerHTML =
+      `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--red);font-size:13px">${message}</td></tr>`;
+    document.getElementById('low-stock-table').innerHTML =
+      `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--red);font-size:13px">${message}</td></tr>`;
+  };
+
   document.addEventListener('DOMContentLoaded', async () => {
     loadNotifications();
     setInterval(loadNotifications, 60000);
@@ -47,7 +68,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
       renderRecentOrders(d.recent_orders        || []);
       renderLowStock(d.low_stock_products       || []);
 
-    } catch(e) { console.error(e); }
+    } catch(e) { handleDashboardError(e); }
   });
 
   document.addEventListener('click', e => {
