@@ -6,7 +6,7 @@ const {
   updateUser, deleteUser, getRevenueStats,
 } = require('../controllers/adminController');
 const {
-  getAllOrders, updateOrderStatus, getOrderById,
+  createAdminOrder, getAllOrders, updateOrderStatus, getOrderById,
 } = require('../controllers/orderController');
 const { verifyToken }                       = require('../middlewares/authMiddleware');
 const { requireAdmin, requireManager }      = require('../middlewares/roleMiddleware');
@@ -26,6 +26,7 @@ router.delete('/users/:id', requireManager, deleteUser);   // chỉ manager: xó
 
 // Quản lý orders
 router.get('/orders',               getAllOrders);
+router.post('/orders',              createAdminOrder);
 router.get('/orders/:id',           getOrderById);
 router.patch('/orders/:id/status',  updateOrderStatus);
 

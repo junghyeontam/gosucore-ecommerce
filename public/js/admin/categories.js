@@ -46,7 +46,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
           <div class="stat-value">${totalProd}</div>
           <div class="stat-sub">Trong tất cả danh mục</div>
         </div>
-        ${cats.slice(0,3).map(c => `
+        ${[].map(c => `
           <div class="stat-card">
             <div class="stat-label stat-label-with-icon">${categoryIcon(c.name, true)} <span>${c.name}</span></div>
             <div class="stat-value">${c.product_count}</div>

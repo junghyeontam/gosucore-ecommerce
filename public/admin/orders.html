@@ -76,6 +76,10 @@
       </div>
       <div class="topbar-right">
         <span id="order-count" style="font-size:12px;color:var(--text-2)"></span>
+        <button class="btn btn-primary btn-sm" onclick="openAddOrderModal()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Thêm đơn hàng
+        </button>
       </div>
     </div>
 
@@ -110,6 +114,78 @@
       <div id="pagination" style="display:flex;gap:6px;justify-content:center;margin-top:14px"></div>
     </div>
   </main>
+</div>
+
+<!-- ADD ORDER MODAL -->
+<div class="modal-overlay" id="add-order-modal">
+  <div class="modal" style="max-width:720px">
+    <div class="modal-header">
+      <h3>Thêm đơn hàng mới</h3>
+      <button class="modal-close" onclick="closeAddOrderModal()">x</button>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Khách hàng *</label>
+        <select id="ao-user"><option value="">Chọn khách hàng</option></select>
+      </div>
+      <div class="form-group">
+        <label>Phương thức thanh toán</label>
+        <select id="ao-payment">
+          <option value="cod">COD</option>
+          <option value="bank">Chuyển khoản</option>
+          <option value="momo">MoMo</option>
+          <option value="zalopay">ZaloPay</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tên người nhận *</label>
+        <input type="text" id="ao-name" placeholder="Nguyễn Văn A">
+      </div>
+      <div class="form-group">
+        <label>Số điện thoại *</label>
+        <input type="text" id="ao-phone" placeholder="0901234567">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Địa chỉ giao hàng *</label>
+      <input type="text" id="ao-address" placeholder="Số nhà, phường/xã, quận/huyện, tỉnh/thành">
+    </div>
+
+    <div class="form-group">
+      <label>Sản phẩm *</label>
+      <div id="ao-items" style="display:flex;flex-direction:column;gap:8px"></div>
+      <button class="btn btn-light btn-sm" style="margin-top:8px" onclick="addOrderItemRow()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm sản phẩm
+      </button>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Mã voucher</label>
+        <input type="text" id="ao-voucher" placeholder="Nhập mã nếu có">
+      </div>
+      <div class="form-group">
+        <label>Tạm tính</label>
+        <input type="text" id="ao-total" value="0" disabled>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Ghi chú</label>
+      <textarea id="ao-note" rows="2" placeholder="Ghi chú nội bộ hoặc yêu cầu giao hàng..."></textarea>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-light" onclick="closeAddOrderModal()">Hủy</button>
+      <button class="btn btn-primary" id="add-order-btn" onclick="saveAdminOrder()">Tạo đơn hàng</button>
+    </div>
+  </div>
 </div>
 
 <!-- ORDER DETAIL MODAL -->

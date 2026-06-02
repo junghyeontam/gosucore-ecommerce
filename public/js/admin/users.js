@@ -53,7 +53,7 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
           <td><span class="role-badge ${roleCls[u.role] || 'role-customer'}">${roleLabel[u.role] || u.role}</span></td>
           <td>
             <span class="badge ${u.is_active ? 'badge-done' : 'badge-cancelled'}">
-              ${u.is_active ? 'Hoạt động' : 'Đã khóa'}
+              ${u.is_active ? 'Hoạt động' : 'Bị khóa'}
             </span>
           </td>
           <td style="font-size:12px;color:var(--text-2)">${formatDate(u.created_at)}</td>
@@ -67,9 +67,9 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
               </button>` : ''}
               ${isManager && u.id !== user.id ? `
               <button class="action-btn action-btn-delete"
-                      data-tooltip="Khóa tài khoản"
-                      onclick="confirmLock(${u.id},'${u.username}')">
-                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      data-tooltip="Xóa tài khoản"
+                      onclick="confirmDelete(${u.id},'${u.username}')">
+                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
               </button>` : ''}
             </div>
           </td>
@@ -137,26 +137,60 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
   };
 
   // ── Confirm lock ──────────────────────────────────────────
-  let _lockId = null;
+  let _statusUserId = null;
+  let _nextActive = true;
 
-  const confirmLock = (id, username) => {
-    _lockId = id;
+  const confirmStatusChange = (id, username, nextActive) => {
+    _statusUserId = id;
+    _nextActive = Boolean(nextActive);
+    const statusMessage = _nextActive
+      ? `Tài khoản <strong>@${username}</strong> sẽ được mở khóa và có thể đăng nhập lại.`
+      : `Tài khoản <strong>@${username}</strong> sẽ bị khóa và không thể đăng nhập.`;
     document.getElementById('confirm-desc').innerHTML =
       `Tài khoản <strong>@${username}</strong> sẽ bị vô hiệu hóa và không thể đăng nhập.`;
-    document.getElementById('confirm-ok-btn').onclick = doLock;
+    document.getElementById('confirm-ok-btn').textContent = _nextActive ? 'Mở khóa' : 'Khóa';
+    document.getElementById('confirm-ok-btn').onclick = doStatusChange;
+    document.getElementById('confirm-desc').innerHTML = statusMessage;
     document.getElementById('confirm-modal').classList.add('active');
   };
 
   const closeConfirm = () => {
     document.getElementById('confirm-modal').classList.remove('active');
-    _lockId = null;
+    _statusUserId = null;
+    _deleteId = null;
   };
 
-  const doLock = async () => {
-    if (!_lockId) return;
+  const doStatusChange = async () => {
+    if (!_statusUserId) return;
     try {
-      await api.delete(`/admin/users/${_lockId}`);
-      toast.success('Đã khóa tài khoản!');
+      await api.put(`/admin/users/${_statusUserId}`, { is_active: _nextActive });
+      toast.success(_nextActive ? 'Đã mở khóa tài khoản!' : 'Đã khóa tài khoản!');
       closeConfirm(); loadUsers();
     } catch(e) { toast.error(e.message); closeConfirm(); }
+  };
+
+  let _deleteId = null;
+
+  const confirmDelete = (id, username) => {
+    _deleteId = id;
+    const title = document.querySelector('#confirm-modal .confirm-modal-title');
+    if (title) title.textContent = 'Xóa tài khoản?';
+    document.getElementById('confirm-desc').innerHTML =
+      `Tài khoản <strong>@${username}</strong> sẽ bị xóa khỏi danh sách quản lý.`;
+    document.getElementById('confirm-ok-btn').textContent = 'Xóa';
+    document.getElementById('confirm-ok-btn').onclick = doDelete;
+    document.getElementById('confirm-modal').classList.add('active');
+  };
+
+  const doDelete = async () => {
+    if (!_deleteId) return;
+    try {
+      await api.delete(`/admin/users/${_deleteId}`);
+      toast.success('Đã xóa tài khoản!');
+      closeConfirm();
+      loadUsers();
+    } catch(e) {
+      toast.error(e.message);
+      closeConfirm();
+    }
   };

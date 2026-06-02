@@ -19,6 +19,8 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
 
   let currentStatus = null;
   let currentPage   = 1;
+  let orderProducts  = [];
+  let orderCustomers = [];
 
   const params = new URLSearchParams(window.location.search);
   if (params.get('status')) currentStatus = params.get('status');
@@ -31,6 +33,98 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
       });
     }
     loadOrders();
+  });
+
+  const ensureOrderFormData = async () => {
+    if (!orderCustomers.length) {
+      const data = await api.get('/admin/users?role=customer&limit=50');
+      orderCustomers = data.data || [];
+      const userSelect = document.getElementById('ao-user');
+      userSelect.innerHTML = '<option value="">Chọn khách hàng</option>' + orderCustomers.map(u =>
+        `<option value="${u.id}">
+          ${u.full_name || u.username} - ${u.email}
+        </option>`
+      ).join('');
+    }
+
+    if (!orderProducts.length) {
+      const data = await api.get('/products?limit=50&sort=name_asc');
+      orderProducts = data.data || [];
+    }
+  };
+
+  const productOptions = () => orderProducts.map(p =>
+    `<option value="${p.id}" data-price="${p.price}" data-stock="${p.stock}">
+      ${p.name} - ${formatPrice(p.price)} - tồn ${p.stock}
+    </option>`
+  ).join('');
+
+  const openAddOrderModal = async () => {
+    try {
+      await ensureOrderFormData();
+      document.getElementById('ao-user').value = '';
+      document.getElementById('ao-payment').value = 'cod';
+      document.getElementById('ao-name').value = '';
+      document.getElementById('ao-phone').value = '';
+      document.getElementById('ao-address').value = '';
+      document.getElementById('ao-voucher').value = '';
+      document.getElementById('ao-note').value = '';
+      document.getElementById('ao-items').innerHTML = '';
+      addOrderItemRow();
+      updateAddOrderTotal();
+      document.getElementById('add-order-modal').classList.add('active');
+    } catch (e) {
+      toast.error(e.message || 'Không tải được dữ liệu tạo đơn hàng');
+    }
+  };
+
+  const closeAddOrderModal = () => document.getElementById('add-order-modal').classList.remove('active');
+
+  const addOrderItemRow = () => {
+    const wrap = document.getElementById('ao-items');
+    const row = document.createElement('div');
+    row.className = 'form-row add-order-item-row';
+    row.style.gridTemplateColumns = '1fr 90px 34px';
+    row.innerHTML = `
+      <select class="ao-product" style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);padding:8px 12px;font-size:13.5px" onchange="updateAddOrderTotal()">
+        <option value="">Chọn sản phẩm</option>
+        ${productOptions()}
+      </select>
+      <input type="number" class="ao-qty" min="1" value="1" style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);padding:8px 10px;font-size:13.5px" onchange="updateAddOrderTotal()" oninput="updateAddOrderTotal()">
+      <button class="action-btn action-btn-delete" data-tooltip="Xóa dòng" onclick="removeOrderItemRow(this)">
+        <svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    `;
+    wrap.appendChild(row);
+  };
+
+  const removeOrderItemRow = (btn) => {
+    const rows = document.querySelectorAll('.add-order-item-row');
+    if (rows.length <= 1) {
+      toast.info('Đơn hàng cần ít nhất một sản phẩm');
+      return;
+    }
+    btn.closest('.add-order-item-row').remove();
+    updateAddOrderTotal();
+  };
+
+  const updateAddOrderTotal = () => {
+    let total = 0;
+    document.querySelectorAll('.add-order-item-row').forEach(row => {
+      const select = row.querySelector('.ao-product');
+      const qty = Math.max(1, parseInt(row.querySelector('.ao-qty').value, 10) || 1);
+      const option = select.selectedOptions[0];
+      total += Number(option?.dataset?.price || 0) * qty;
+    });
+    document.getElementById('ao-total').value = formatPrice(total);
+  };
+
+  document.addEventListener('change', e => {
+    if (e.target?.id === 'ao-user') {
+      const selectedUser = orderCustomers.find(u => String(u.id) === e.target.value);
+      document.getElementById('ao-name').value = selectedUser?.full_name || selectedUser?.username || '';
+      document.getElementById('ao-phone').value = selectedUser?.phone || '';
+    }
   });
 
   const loadOrders = async () => {
@@ -181,6 +275,61 @@ if (!isLoggedIn() || !['manager','staff'].includes(getUser()?.role)) {
       toast.success('Cập nhật trạng thái thành công!');
       loadOrders();
     } catch(e) { toast.error(e.message); }
+  };
+
+  const collectAddOrderItems = () => {
+    const items = [];
+    document.querySelectorAll('.add-order-item-row').forEach(row => {
+      const product_id = parseInt(row.querySelector('.ao-product').value, 10);
+      const quantity = parseInt(row.querySelector('.ao-qty').value, 10);
+      if (product_id && quantity > 0) items.push({ product_id, quantity });
+    });
+    return items;
+  };
+
+  const saveAdminOrder = async () => {
+    const btn = document.getElementById('add-order-btn');
+    const body = {
+      user_id: parseInt(document.getElementById('ao-user').value, 10),
+      shipping_name: document.getElementById('ao-name').value.trim(),
+      shipping_phone: document.getElementById('ao-phone').value.trim(),
+      shipping_address: document.getElementById('ao-address').value.trim(),
+      payment_method: document.getElementById('ao-payment').value,
+      voucher_code: document.getElementById('ao-voucher').value.trim() || undefined,
+      note: document.getElementById('ao-note').value.trim() || undefined,
+      items: collectAddOrderItems(),
+    };
+
+    if (!body.user_id) {
+      toast.error('Vui lòng chọn khách hàng');
+      return;
+    }
+    if (!body.shipping_name || !body.shipping_phone || !body.shipping_address) {
+      toast.error('Vui lòng nhập đầy đủ thông tin nhận hàng');
+      return;
+    }
+    if (!body.items.length) {
+      toast.error('Vui lòng chọn ít nhất một sản phẩm');
+      return;
+    }
+
+    btn.textContent = 'Đang tạo...';
+    btn.disabled = true;
+    try {
+      await api.post('/admin/orders', body);
+      toast.success('Tạo đơn hàng thành công!');
+      closeAddOrderModal();
+      currentStatus = null;
+      currentPage = 1;
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('.filter-tab').classList.add('active');
+      loadOrders();
+    } catch (e) {
+      toast.error(e.message || 'Tạo đơn hàng thất bại');
+    } finally {
+      btn.textContent = 'Tạo đơn hàng';
+      btn.disabled = false;
+    }
   };
 
   const closeModal = () => document.getElementById('order-modal').classList.remove('active');

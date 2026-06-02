@@ -120,7 +120,7 @@ const getDashboard = async (req, res) => {
 // ============================================================
 const getAllUsers = async (req, res) => {
   try {
-    const { search, role, page = 1, limit = 50, show_deleted = 'false' } = req.query;
+    const { search, role, page = 1, limit = 50 } = req.query;
     const pool = getPool();
 
     const pageNum  = Math.max(1, parseInt(page));
@@ -131,10 +131,10 @@ const getAllUsers = async (req, res) => {
     const countRequest = pool.request();
     const dataRequest  = pool.request();
 
-    let conditions = [];
+    let conditions = ['ISNULL(is_deleted, 0) = 0'];
 
     // BUG FIX 1: Mặc định chỉ hiện tài khoản is_active=1 trừ khi admin muốn xem tất cả
-    if (show_deleted !== 'true') {
+    if (false) {
       conditions.push('is_active = 1');
     }
 
@@ -233,9 +233,9 @@ const createUser = async (req, res) => {
       .input('password',  sql.NVarChar, hashedPassword)
       .input('role',      sql.NVarChar, role)
       .query(`
-        INSERT INTO Users (username, full_name, email, phone, password, role, is_active, created_at, updated_at)
+        INSERT INTO Users (username, full_name, email, phone, password, role, is_active, is_deleted, created_at, updated_at)
         OUTPUT INSERTED.id, INSERTED.username, INSERTED.email, INSERTED.role, INSERTED.created_at
-        VALUES (@username, @full_name, @email, @phone, @password, @role, 1, GETDATE(), GETDATE())
+        VALUES (@username, @full_name, @email, @phone, @password, @role, 1, 0, GETDATE(), GETDATE())
       `);
 
     res.status(201).json({
@@ -326,7 +326,7 @@ const deleteUser = async (req, res) => {
 
     await pool.request()
       .input('id', sql.Int, parseInt(id))
-      .query(`UPDATE Users SET is_active = 0, updated_at = GETDATE() WHERE id = @id`);
+      .query(`UPDATE Users SET is_active = 0, is_deleted = 1, updated_at = GETDATE() WHERE id = @id`);
 
     res.json({ success: true, message: 'Đã xoá tài khoản thành công.' });
 

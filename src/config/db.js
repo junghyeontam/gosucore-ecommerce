@@ -51,6 +51,14 @@ const ensureDatabaseSchema = async () => {
       ADD payment_method NVARCHAR(30) NOT NULL
           CONSTRAINT DF_Orders_payment_method DEFAULT 'cod';
     END
+
+    IF OBJECT_ID('dbo.Users', 'U') IS NOT NULL
+       AND COL_LENGTH('dbo.Users', 'is_deleted') IS NULL
+    BEGIN
+      ALTER TABLE dbo.Users
+      ADD is_deleted BIT NOT NULL
+          CONSTRAINT DF_Users_is_deleted DEFAULT 0;
+    END
   `);
 };
 

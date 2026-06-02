@@ -245,6 +245,35 @@ const createOrder = async (req, res) => {
   }
 };
 
+// POST /api/admin/orders
+const createAdminOrder = async (req, res) => {
+  try {
+    const userId = toPositiveInt(req.body.user_id);
+    if (!userId) {
+      return res.status(400).json({ success: false, message: 'Khach hang khong hop le.' });
+    }
+
+    const pool = getPool();
+    const userResult = await pool.request()
+      .input('id', sql.Int, userId)
+      .query(`
+        SELECT id
+        FROM Users
+        WHERE id = @id AND role = 'customer' AND is_active = 1
+      `);
+
+    if (!userResult.recordset.length) {
+      return res.status(404).json({ success: false, message: 'Khong tim thay khach hang hop le.' });
+    }
+
+    req.user = { ...req.user, id: userId };
+    return createOrder(req, res);
+  } catch (error) {
+    console.error('Loi createAdminOrder:', error);
+    res.status(500).json({ success: false, message: 'Loi server.' });
+  }
+};
+
 // GET /api/orders/my
 const getMyOrders = async (req, res) => {
   try {
@@ -513,6 +542,7 @@ const getAllOrders = async (req, res) => {
 
 module.exports = {
   createOrder,
+  createAdminOrder,
   getMyOrders,
   getOrderById,
   cancelMyOrder,
